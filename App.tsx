@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // --- TYPE DEFINITIONS ---
 interface NavLink {
@@ -8,48 +8,49 @@ interface NavLink {
   label: string;
 }
 
-interface Feature {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
+interface MetricCardInfo {
+    metric: string;
+    label: string;
+    description: string;
 }
 
-interface Tech {
-  name: string;
+interface ServiceInfo {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    features: string[];
 }
 
-interface ProcessStep {
-  step: string;
-  title: string;
-  description: string;
+interface UseCaseInfo {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
 }
 
-interface PricingTier {
-  title: string;
-  price: string;
-  description: string;
-  features: string[];
-  isFeatured: boolean;
-  cta: string;
+interface ResultInfo {
+    icon: React.ReactNode;
+    title: string;
+    value: number;
+    decimals?: number;
+    prefix?: string;
+    suffix?: string;
+    change: string;
+    description: string;
+}
+
+interface ProcessStepInfo {
+    step: number;
+    title: string;
+    subtitle: string;
+    description: string;
+}
+
+interface FAQItemInfo {
+    question: string;
+    answer: string;
 }
 
 // --- SVG ICON COMPONENTS ---
-
-const BrainCircuitIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 5a3 3 0 1 0 0 6 3 3 0 1 0 0-6Z"/><path d="M12 2v3"/><path d="m4.93 4.93 2.12 2.12"/><path d="M2 12h3"/><path d="m4.93 19.07 2.12-2.12"/><path d="M12 19v3"/><path d="m16.95 16.95 2.12 2.12"/><path d="M19 12h3"/><path d="m16.95 7.05 2.12-2.12"/></svg>
-);
-
-const RocketIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.33-.04-3.08S5.21 15.66 4.5 16.5Z"/><path d="m12 15-3-3a2.25 2.25 0 0 1 0-3l3-3a2.25 2.25 0 0 1 3 0l3 3a2.25 2.25 0 0 1 0 3l-3 3a2.25 2.25 0 0 1-3 0Z"/><path d="M9 12V2.5l3 3-3 3"/><path d="M12 15V21.5"/><path d="M15 12V2.5l-3 3 3 3"/></svg>
-);
-
-const ZapIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-);
-
-const CheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 6 9 17l-5-5"/></svg>
-);
 
 const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
@@ -59,366 +60,590 @@ const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 );
 
+const CheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#25D366" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 6 9 17l-5-5"/></svg>
+);
+
+const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m6 9 6 6 6-6"/></svg>
+  );
+
+const LeadGenIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+);
+
+const EcommIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+);
+
+const BookingIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="m9 14 2 2 4-4"/><path d="M3 10h18"/></svg>
+);
+
+const ClockIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+);
+
+const FilterIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+);
+
+const TrendingUpIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+);
+
+const SmileIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+);
+
+
+// Fix: Made the 'children' prop optional to resolve the TypeScript error.
+const ServiceIcon = ({ children }: { children?: React.ReactNode }) => (
+    <div className="w-12 h-12 rounded-lg bg-[#25D366]/10 flex items-center justify-center text-[#25D366]">
+        {children}
+    </div>
+);
 
 // --- DATA CONSTANTS ---
 
 const NAV_LINKS: NavLink[] = [
-  { href: "#", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#process", label: "Process" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#contact", label: "Contact" },
+    { href: "#", label: "Home" },
+    { href: "#services", label: "Services" },
+    { href: "#process", label: "Process" },
+    { href: "#faq", label: "FAQ" },
+    { href: "#contact", label: "Contact" },
 ];
 
-const FEATURES: Feature[] = [
-  {
-    icon: <BrainCircuitIcon className="w-8 h-8 text-[#E77E4D]" />,
-    title: "Intelligent Applications",
-    description: "AI-native solutions that learn, adapt, and automate complex tasks.",
-  },
-  {
-    icon: <RocketIcon className="w-8 h-8 text-[#E77E4D]" />,
-    title: "From Concept to Launch",
-    description: "Our agile process takes your idea to a production-ready app in record time.",
-  },
-  {
-    icon: <ZapIcon className="w-8 h-8 text-[#E77E4D]" />,
-    title: "Automate Everything",
-    description: "Streamline workflows and eliminate repetitive tasks with smart automation.",
-  },
+const METRIC_CARDS: MetricCardInfo[] = [
+    { metric: "98%", label: "Open Rate", description: "vs 20% for email - your messages actually get seen." },
+    { metric: "70%", label: "Response Rate", description: "Customers engage instantly with automated conversations." },
+    { metric: "5-10x", label: "ROI Potential", description: "From automated sales, support, and customer retention." }
 ];
 
-const TECH_STACK: Tech[] = [
-    { name: "Supabase" }, { name: "CopilotKit" }, { name: "Claude 3" }, { name: "OpenAI GPT-4" },
-    { name: "Next.js" }, { name: "Vercel" }, { name: "LangChain" }, { name: "Replicate" },
+const CORE_SERVICES: ServiceInfo[] = [
+    { 
+        icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="23"/><line x1="8" x2="16" y1="23" y2="23"/></svg>,
+        title: "WhatsApp Automation Setup",
+        description: "We set up your verified WhatsApp Business API and build intelligent workflows to greet, qualify, and convert leads automatically.",
+        features: ["Auto-replies", "Lead capture", "Payment & order updates", "Multi-language flows"]
+    },
+    {
+        icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/><path d="M18 14v-4.5a2.5 2.5 0 0 0-5 0V14"/><path d="M18 14v1a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Z"/><path d="M9.5 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/></svg>,
+        title: "AI Chat Agents & Copilots",
+        description: "We train AI agents to handle real conversations — qualifying leads, answering FAQs, booking services, and learning from each chat.",
+        features: ["Conversational memory", "Smart human handoff", "Personalized tone", "Analytics dashboard"]
+    },
+     {
+        icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+        title: "CRM & Pipeline Integration",
+        description: "We connect WhatsApp with your CRM or Supabase database so every interaction is tracked, tagged, and measurable.",
+        features: ["Lead syncing", "Follow-up automations", "Deal tracking", "Performance reports"]
+    },
 ];
 
-const PROCESS_STEPS: ProcessStep[] = [
-  { step: "01", title: "Design Sprint", description: "We kick off with an intensive workshop to define your product vision, strategy, and core features." },
-  { step: "02", title: "Rapid Build", description: "Our expert team builds your MVP using a modern tech stack, delivering a functional prototype in weeks." },
-  { step: "03", title: "Integration & Testing", description: "We integrate with your existing systems and conduct rigorous testing to ensure a seamless, reliable experience." },
-  { step: "04", title: "Launch & Scale", description: "Post-launch, we provide support and a roadmap for future iterations and scaling your application." },
+const USE_CASES: UseCaseInfo[] = [
+    { icon: <LeadGenIcon />, title: "Lead Generation Flow", description: "Ad → WhatsApp chat → AI qualifies lead → CRM sync" },
+    { icon: <EcommIcon />, title: "E-commerce Flow", description: "Customer chats → Browse catalog → Add to cart → Pays in-chat" },
+    { icon: <BookingIcon />, title: "Service Booking Flow", description: "Client messages → AI confirms slot → Invoice sent → Booking recorded" },
 ];
 
-const PRICING_TIERS: PricingTier[] = [
-  {
-    title: "Proof of Concept",
-    price: "$15K+",
-    description: "Validate your idea with a functional AI-powered MVP.",
-    features: ["1 Core AI Feature", "Basic UI/UX Design", "2-4 Week Delivery", "Dedicated Project Manager"],
-    isFeatured: false,
-    cta: "Start Your MVP"
-  },
-  {
-    title: "Production Ready",
-    price: "$50K - $150K",
-    description: "A robust, scalable application ready for your first users.",
-    features: ["Up to 3 AI Features", "Full UI/UX & Branding", "4-8 Week Delivery", "Scalable Architecture", "Post-Launch Support"],
-    isFeatured: true,
-    cta: "Build My App"
-  },
-  {
-    title: "Enterprise",
-    price: "$200K+",
-    description: "Custom solutions for complex business challenges.",
-    features: ["Unlimited AI Features", "Advanced Security & Compliance", "Dedicated AI/ML Engineers", "On-Premise Deployment", "24/7 Enterprise Support"],
-    isFeatured: false,
-    cta: "Contact Us"
-  },
+const RESULTS: ResultInfo[] = [
+    {
+        icon: <ClockIcon className="w-6 h-6" />,
+        title: "Response Time",
+        value: 2,
+        prefix: "< ",
+        suffix: " min",
+        change: "From 2 hours",
+        description: "Engage customers instantly, day or night, reducing wait times by over 98%."
+    },
+    {
+        icon: <FilterIcon className="w-6 h-6" />,
+        title: "Missed Leads",
+        value: 5,
+        prefix: "< ",
+        suffix: "%",
+        change: "Down from 40%",
+        description: "Capture and qualify every inquiry automatically, ensuring no potential customer slips through."
+    },
+    {
+        icon: <TrendingUpIcon className="w-6 h-6" />,
+        title: "Conversion Rate",
+        value: 216,
+        prefix: "+",
+        suffix: "%",
+        change: "Average increase",
+        description: "Guide users from conversation to conversion with automated product suggestions and checkouts."
+    },
+    {
+        icon: <SmileIcon className="w-6 h-6" />,
+        title: "Customer Satisfaction",
+        value: 9.4,
+        decimals: 1,
+        suffix: " / 10",
+        change: "Up from 7/10",
+        description: "Provide consistent, high-quality support that resolves issues faster and builds brand loyalty."
+    }
 ];
 
-// FIX: Moved UI component definitions before they are used to prevent "used before defined" errors.
-// --- UI COMPONENTS ---
+const WHATSAPP_PROCESS_STEPS: ProcessStepInfo[] = [
+    { step: 1, title: "Discovery Call", subtitle: "Understand Your Goals", description: "We start with a short consultation to map your communication needs, pain points, and automation potential." },
+    { step: 2, title: "Workflow Blueprint", subtitle: "Design Your Automation Flow", description: "Our experts design a custom WhatsApp journey — from first message to sale or booking." },
+    { step: 3, title: "Development & Integration", subtitle: "Build and Connect Everything", description: "We integrate with your WhatsApp Business API, CRM, Supabase, and any payment gateway you use." },
+    { step: 4, title: "AI Training & Testing", subtitle: "Train Your Chat Agents", description: "We teach your Copilot to answer real customer questions, qualify leads, and adapt over time." },
+    { step: 5, title: "Launch & Optimize", subtitle: "Go Live & Measure Results", description: "Once launched, we monitor performance, tweak flows, and report conversions every week." },
+];
 
-const Button = ({ children, variant = 'primary', className = '' }: { children: React.ReactNode, variant?: 'primary' | 'secondary', className?: string }) => {
-    const baseClasses = "px-6 py-3 rounded-full font-semibold transition-transform transform hover:scale-105";
-    const variants = {
-        primary: "bg-[#E77E4D] text-white shadow-lg hover:bg-opacity-90",
-        secondary: "bg-transparent border-2 border-[#E6E2DF] text-[#181818] hover:bg-white/50",
-    };
-    return <button className={`${baseClasses} ${variants[variant]} ${className}`}>{children}</button>;
+const TECH_LOGOS: string[] = ["Supabase", "n8n", "CopilotKit", "CrewAI", "LangChain", "Stripe", "WhatsApp Business API", "Cloudinary"];
+
+const FAQ_ITEMS: FAQItemInfo[] = [
+    { question: "Do you use the official WhatsApp Business API?", answer: "Yes, we only use the official WhatsApp Business API to ensure reliability, security, and access to all official features. This guarantees your business is fully compliant with WhatsApp's policies." },
+    { question: "Can I integrate WhatsApp with my CRM or database?", answer: "Absolutely. We specialize in integrating WhatsApp with CRMs like HubSpot, Salesforce, and custom databases like Supabase or PostgreSQL. This allows for seamless data syncing and automated follow-ups." },
+    { question: "Is this AI or just a bot?", answer: "We build advanced AI agents, not simple chatbots. Our systems use Large Language Models (LLMs) like GPT-4 to understand context, handle complex queries, and learn from conversations, providing a much more human-like experience." },
+    { question: "How long does setup take?", answer: "A typical setup, from discovery to launch, takes between 2 to 3 weeks. This includes designing the workflow, developing the integrations, training the AI, and testing everything thoroughly before going live." },
+];
+
+// --- ANIMATION HOOK & COMPONENT ---
+
+const useOnScreen = (ref: React.RefObject<HTMLElement>, options: IntersectionObserverInit = {}) => {
+    const [isIntersecting, setIntersecting] = useState(false);
+    useEffect(() => {
+        const currentRef = ref.current;
+        if (!currentRef) return;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setIntersecting(true);
+                observer.unobserve(entry.target);
+            }
+        }, options);
+        observer.observe(currentRef);
+        return () => { if(currentRef) observer.unobserve(currentRef) };
+    }, [ref, options]);
+    return isIntersecting;
 };
 
-const SectionContainer = ({ children, className = '', id = '' }: { children: React.ReactNode, className?: string, id?: string }) => (
-    <section id={id} className={`w-full py-16 md:py-24 ${className}`}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+interface AnimatedElementProps {
+    children?: React.ReactNode;
+    className?: string;
+    delay?: number;
+}
+const AnimatedElement: React.FC<AnimatedElementProps> = ({ children, className = '', delay = 0 }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const onScreen = useOnScreen(ref, { threshold: 0.1 });
+    return (
+        <div ref={ref} className={`${className} transition-all duration-700 ease-out ${onScreen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} style={{ transitionDelay: `${delay}ms` }}>
+            {children}
+        </div>
+    );
+};
+
+// --- UI COMPONENTS ---
+interface SectionContainerProps {
+    children?: React.ReactNode;
+    className?: string;
+    id?: string;
+}
+const SectionContainer: React.FC<SectionContainerProps> = ({ children, className = '', id = '' }) => (
+    <section id={id} className={`w-full py-20 md:py-28 overflow-hidden ${className}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {children}
         </div>
     </section>
 );
 
+const Counter: React.FC<{
+    endValue: number;
+    duration?: number;
+    decimals?: number;
+}> = ({ endValue, duration = 2000, decimals = 0 }) => {
+    const [count, setCount] = useState(0);
+    const ref = useRef<HTMLSpanElement>(null);
+    const onScreen = useOnScreen(ref);
+
+    useEffect(() => {
+        if (onScreen) {
+            let startTime: number | null = null;
+            const animate = (timestamp: number) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const easedProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+                const currentCount = easedProgress * endValue;
+                setCount(currentCount);
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    setCount(endValue);
+                }
+            };
+            requestAnimationFrame(animate);
+        }
+    }, [onScreen, endValue, duration]);
+
+    return <span ref={ref}>{count.toFixed(decimals)}</span>;
+};
+
 
 // --- PAGE SECTION COMPONENTS ---
-
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 10);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
-  return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-lg shadow-md border-b border-gray-200/50' : 'bg-transparent'}`}>
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center justify-between">
-          <a href="#" className="text-2xl font-serif font-bold text-[#181818]">AMO AI</a>
-          
-          <div className="hidden md:flex items-center space-x-8">
-            {NAV_LINKS.map(link => (
-              <a key={link.label} href={link.href} className="text-[#181818] hover:text-[#E77E4D] transition-colors">{link.label}</a>
-            ))}
-          </div>
-
-          <div className="hidden md:block">
-            <Button variant="primary">Start Project</Button>
-          </div>
-
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <XIcon className="w-6 h-6 text-[#181818]" /> : <MenuIcon className="w-6 h-6 text-[#181818]" />}
-            </button>
-          </div>
-        </div>
-        {isOpen && (
-          <div className="md:hidden mt-4 bg-white rounded-lg shadow-lg p-4">
-            <div className="flex flex-col space-y-4">
-              {NAV_LINKS.map(link => (
-                <a key={link.label} href={link.href} className="text-[#181818] hover:text-[#E77E4D] transition-colors block" onClick={() => setIsOpen(false)}>{link.label}</a>
-              ))}
-              <Button variant="primary" className="w-full">Start Project</Button>
-            </div>
-          </div>
-        )}
-      </nav>
-    </header>
-  );
+    return (
+        <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-lg border-b border-gray-200/80' : 'bg-white'}`}>
+            <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div className="flex items-center justify-between">
+                    <a href="#" className="flex items-center gap-2">
+                        <span className="w-8 h-8 bg-[#FF7A2F] rounded-full text-white flex items-center justify-center font-bold text-lg">A</span>
+                        <span className="text-xl font-semibold text-[#181818]">AMO AI</span>
+                    </a>
+                    <div className="hidden md:flex items-center space-x-8">
+                        {NAV_LINKS.map(link => (
+                            <a key={link.label} href={link.href} className="text-sm font-medium text-gray-600 hover:text-[#181818] transition-colors">{link.label}</a>
+                        ))}
+                    </div>
+                    <div className="hidden md:block">
+                        <button className="px-5 py-2.5 rounded-full font-medium text-sm bg-[#FF7A2F] text-white transition-transform transform hover:scale-105">Get Started</button>
+                    </div>
+                    <div className="md:hidden">
+                        <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+                            {isOpen ? <XIcon className="w-6 h-6 text-[#181818]" /> : <MenuIcon className="w-6 h-6 text-[#181818]" />}
+                        </button>
+                    </div>
+                </div>
+                {isOpen && (
+                    <div className="md:hidden mt-4 bg-white rounded-lg shadow-lg p-4">
+                        <div className="flex flex-col space-y-4">
+                            {NAV_LINKS.map(link => (<a key={link.label} href={link.href} className="text-[#181818] hover:text-[#25D366] transition-colors block" onClick={() => setIsOpen(false)}>{link.label}</a>))}
+                            <button className="w-full px-5 py-2.5 rounded-full font-medium text-sm bg-[#FF7A2F] text-white">Get Started</button>
+                        </div>
+                    </div>
+                )}
+            </nav>
+        </header>
+    );
 };
 
 const Hero = () => (
-    <div className="relative overflow-hidden">
-      <div className="absolute top-0 -left-16 w-48 h-48 bg-[#F9C97B] rounded-full opacity-30 blur-2xl"></div>
-      <div className="absolute bottom-0 -right-16 w-48 h-48 bg-[#E77E4D] rounded-full opacity-20 blur-2xl"></div>
-      <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-[#025A63] rounded-full opacity-20 blur-xl"></div>
-      
-      <SectionContainer className="pt-24 md:pt-32 text-center">
-        <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-[#181818] tracking-tight leading-tight">
-          Turn Ideas Into AI-Powered <br/> Applications in <span className="text-[#E77E4D]">Weeks</span>
-        </h1>
-        <p className="max-w-3xl mx-auto mt-6 text-lg md:text-xl text-gray-600">
-          We build intelligent systems using CopilotKit, Supabase, and GPT-4 to help businesses automate, scale, and innovate — faster than ever.
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button variant="primary" className="text-lg w-full sm:w-auto">Start Your AI Project</Button>
-          <Button variant="secondary" className="text-lg w-full sm:w-auto">View Live Projects</Button>
-        </div>
-        <div className="mt-12 text-sm text-gray-500">
-            <p>293% average ROI in 8 months. $3.5M in monthly client revenue already delivered.</p>
-        </div>
-      </SectionContainer>
-    </div>
-);
-
-const FeaturesSection = () => (
-    <SectionContainer id="services" className="bg-white/50">
-        <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#181818]">Intelligent AI Solutions, Delivered Fast</h2>
-            <p className="mt-4 text-lg text-gray-600">8 Weeks. Not 8 Months. That's our promise.</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {FEATURES.map(feature => (
-            <div key={feature.title} className="bg-white p-8 rounded-2xl border border-[#E6E2DF] shadow-sm hover:shadow-lg transition-shadow duration-300">
-              <div className="flex items-center justify-center w-16 h-16 bg-[#FDF7F2] rounded-full mb-6">
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-[#181818] mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-    </SectionContainer>
-);
-
-const TechStack = () => (
-    <div className="bg-[#025A63]">
-        <SectionContainer>
-            <div className="text-center">
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">We Build With The Best</h2>
-                <p className="mt-4 text-lg text-white/80">Our technology stack is built on modern, scalable, and AI-native tools.</p>
-                <div className="mt-10 flex flex-wrap justify-center gap-4 md:gap-6">
-                    {TECH_STACK.map(tech => (
-                        <div key={tech.name} className="bg-white/10 text-white px-5 py-2 rounded-full text-sm md:text-base font-medium">
-                            {tech.name}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </SectionContainer>
-    </div>
-);
-
-const Process = () => (
-    <SectionContainer id="process">
-        <div className="text-center mb-16">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#181818]">Our Proven Process</h2>
-            <p className="mt-4 text-lg text-gray-600">From initial idea to scalable application, we guide you every step of the way.</p>
-        </div>
-        <div className="relative">
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-[#E6E2DF] -translate-y-1/2"></div>
-            <div className="grid md:grid-cols-4 gap-12">
-                {PROCESS_STEPS.map((step, index) => (
-                    <div key={step.step} className="relative">
-                        <div className="md:hidden absolute top-0 left-4 bottom-0 w-0.5 bg-[#E6E2DF]"></div>
-                        <div className="flex items-center md:flex-col md:items-center md:text-center gap-6 md:gap-0">
-                           <div className="relative z-10 flex-shrink-0">
-                             <div className="w-12 h-12 flex items-center justify-center bg-[#FDF7F2] border-2 border-[#E6E2DF] text-[#025A63] font-bold text-lg rounded-full">
-                                {step.step}
-                             </div>
-                           </div>
-                           <div className="md:mt-6">
-                               <h3 className="text-xl font-semibold text-[#181818] mb-2">{step.title}</h3>
-                               <p className="text-gray-600">{step.description}</p>
-                           </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    </SectionContainer>
-);
-
-const Pricing = () => (
-    <SectionContainer id="pricing" className="bg-white/50">
-        <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#181818]">Investment Levels</h2>
-            <p className="mt-4 text-lg text-gray-600">Clear pricing for every stage of your AI journey.</p>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
-            {PRICING_TIERS.map(tier => (
-                <div key={tier.title} className={`p-8 rounded-2xl border transition-all duration-300 ${tier.isFeatured ? 'bg-[#025A63] text-white border-transparent shadow-2xl scale-105' : 'bg-white border-[#E6E2DF] shadow-sm'}`}>
-                    <h3 className={`font-serif text-2xl font-bold ${tier.isFeatured ? 'text-white' : 'text-[#181818]'}`}>{tier.title}</h3>
-                    <p className={`mt-2 ${tier.isFeatured ? 'text-white/80' : 'text-gray-600'}`}>{tier.description}</p>
-                    <p className={`font-serif text-4xl font-bold my-6 ${tier.isFeatured ? 'text-[#F9C97B]' : 'text-[#181818]'}`}>{tier.price}</p>
-                    <ul className="space-y-3">
-                        {tier.features.map(feature => (
-                            <li key={feature} className="flex items-start">
-                                <CheckIcon className={`flex-shrink-0 w-4 h-4 mt-1 mr-3 ${tier.isFeatured ? 'text-[#F9C97B]' : 'text-[#E77E4D]'}`} />
-                                <span className={tier.isFeatured ? 'text-white/90' : 'text-gray-600'}>{feature}</span>
-                            </li>
-                        ))}
-                    </ul>
-                    <button className={`w-full mt-8 px-6 py-3 rounded-full font-semibold transition-transform transform hover:scale-105 ${tier.isFeatured ? 'bg-[#E77E4D] text-white' : 'bg-transparent border-2 border-[#E6E2DF] text-[#181818] hover:bg-gray-50'}`}>
-                      {tier.cta}
+    <SectionContainer className="bg-white pt-16 md:pt-24">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+                <AnimatedElement>
+                    <h1 className="text-4xl md:text-6xl font-bold text-[#181818] tracking-tighter leading-tight">
+                        Automate, Sell & Support — <br/>All on <span className="text-[#25D366]">WhatsApp</span>
+                    </h1>
+                </AnimatedElement>
+                <AnimatedElement delay={100}>
+                    <p className="max-w-xl mx-auto lg:mx-0 mt-6 text-lg text-gray-600">
+                        We help businesses turn WhatsApp into a 24/7 sales and customer service channel — powered by automation, AI agents, and real data. No delays. No missed messages. Just seamless conversations that convert into revenue.
+                    </p>
+                </AnimatedElement>
+                <AnimatedElement delay={200}>
+                    <button className="mt-8 px-8 py-4 rounded-full font-semibold text-white bg-[#25D366] shadow-lg hover:opacity-90 transition-all transform hover:scale-105">
+                        <span className="mr-2">📞</span> Book a Free WhatsApp Automation Audit
                     </button>
+                </AnimatedElement>
+            </div>
+            <AnimatedElement delay={150}>
+                <div className="bg-gray-100 p-4 rounded-2xl shadow-lg">
+                    <div className="bg-white rounded-xl p-4 space-y-3">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center text-white">AI</div>
+                            <div>
+                                <p className="font-semibold">AMO AI Assistant</p>
+                                <p className="text-xs text-green-600">Always Active</p>
+                            </div>
+                        </div>
+                        <div className="bg-gray-100 p-3 rounded-xl self-start max-w-xs">Hi! How can I help you today? 👋</div>
+                        <div className="bg-gray-100 p-3 rounded-xl self-start max-w-xs">Check my order status</div>
+                        <div className="bg-[#E2FDD7] p-3 rounded-xl self-end max-w-xs ml-auto">Your order #4821 is out for delivery! 🚚</div>
+                    </div>
                 </div>
+            </AnimatedElement>
+        </div>
+    </SectionContainer>
+);
+
+const WhyMatters = () => (
+    <SectionContainer className="bg-[#0B0C10] text-white">
+        <div className="text-center max-w-3xl mx-auto">
+            <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">Why WhatsApp Automation Matters</h2>
+            </AnimatedElement>
+            <AnimatedElement delay={100}>
+                <p className="mt-4 text-lg text-gray-400">Your customers are already on WhatsApp — we just make it work harder for you. Over 2 billion people use WhatsApp daily. AMO AI connects you to them with AI-powered chat flows, CRM integrations, and automated campaigns that scale your communication and sales — all through the official WhatsApp Business API.</p>
+            </AnimatedElement>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8 mt-16 max-w-5xl mx-auto">
+            {METRIC_CARDS.map((card, index) => (
+                <AnimatedElement key={card.label} delay={100 * index}>
+                    <div className="bg-[#111111] p-8 rounded-2xl text-center border border-gray-800">
+                        <p className="text-5xl font-bold text-[#25D366]">{card.metric}</p>
+                        <p className="mt-2 text-xl font-semibold">{card.label}</p>
+                        <p className="mt-2 text-gray-400 text-sm">{card.description}</p>
+                    </div>
+                </AnimatedElement>
             ))}
         </div>
     </SectionContainer>
 );
 
-const CTA = () => (
-    <SectionContainer>
-      <div className="bg-white rounded-2xl shadow-lg border border-[#E6E2DF] overflow-hidden p-8 md:p-12 lg:flex lg:items-center lg:justify-between gap-8">
-        <div className="lg:w-1/2">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#181818]">Create Your Project Brief in Minutes</h2>
-            <p className="mt-4 text-lg text-gray-600">Save time and get a clear project scope. Our guided brief process ensures we understand your vision from day one.</p>
-            <Button variant="primary" className="mt-8 text-lg">Start Project Brief</Button>
+const CoreServices = () => (
+    <SectionContainer id="services" className="bg-white">
+        <div className="text-center max-w-3xl mx-auto">
+            <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-[#181818]">Our Core Services</h2>
+            </AnimatedElement>
+            <AnimatedElement delay={100}>
+                <p className="mt-4 text-lg text-gray-600">From setup to scale, we provide end-to-end WhatsApp automation solutions that drive real business results.</p>
+            </AnimatedElement>
         </div>
-        <div className="mt-8 lg:mt-0 lg:w-1/2 flex items-center justify-center">
-            <div className="w-full max-w-sm p-6 bg-[#FDF7F2] rounded-xl">
-                <p className="text-sm font-medium text-gray-500">Project Progress</p>
-                <div className="mt-2 flex items-center justify-between">
-                    <p className="text-lg font-semibold text-[#025A63]">30min</p>
-                    <p className="text-lg font-bold text-[#E77E4D]">98%</p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+            {CORE_SERVICES.map((service, index) => (
+                <AnimatedElement key={service.title} delay={100 * index}>
+                    <div className="bg-gray-50/50 p-8 rounded-2xl border border-gray-200/80 h-full flex flex-col">
+                        <ServiceIcon>{service.icon}</ServiceIcon>
+                        <h3 className="mt-4 text-xl font-semibold text-[#181818]">{service.title}</h3>
+                        <p className="mt-2 text-gray-600 flex-grow">{service.description}</p>
+                        <ul className="mt-6 space-y-2">
+                            {service.features.map(feature => (
+                                <li key={feature} className="flex items-center gap-3">
+                                    <CheckIcon className="w-4 h-4 flex-shrink-0" />
+                                    <span className="text-gray-700">{feature}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </AnimatedElement>
+            ))}
+        </div>
+    </SectionContainer>
+);
+
+const UseCases = () => (
+    <SectionContainer className="bg-[#0B0C10] text-white">
+        <div className="text-center max-w-3xl mx-auto">
+            <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">Real-World Use Cases</h2>
+            </AnimatedElement>
+             <AnimatedElement delay={100}>
+                <p className="mt-4 text-lg text-gray-400">See how businesses like yours are using WhatsApp automation to generate leads, close sales, and support customers.</p>
+            </AnimatedElement>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8 mt-16">
+            {USE_CASES.map((useCase, index) => (
+                <AnimatedElement key={useCase.title} delay={100*index}>
+                    <div className="bg-[#111111] p-8 rounded-2xl border border-gray-800 transition-all duration-300 hover:border-[#25D366]/50 hover:shadow-2xl hover:shadow-[#25D366]/10 h-full flex flex-col">
+                        <div className="w-12 h-12 rounded-lg bg-[#25D366]/10 flex items-center justify-center text-[#25D366]">
+                            {useCase.icon}
+                        </div>
+                        <h3 className="mt-6 text-xl font-semibold text-white">{useCase.title}</h3>
+                        <p className="mt-2 text-gray-400 text-base leading-relaxed flex-grow">{useCase.description}</p>
+                    </div>
+                </AnimatedElement>
+            ))}
+        </div>
+    </SectionContainer>
+);
+
+const Results = () => (
+    <SectionContainer className="bg-[#F2F7F5]">
+        <div className="text-center max-w-3xl mx-auto">
+             <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-[#181818]">Results That Speak for Themselves</h2>
+            </AnimatedElement>
+            <AnimatedElement delay={100}>
+                <p className="mt-4 text-lg text-gray-600">Our WhatsApp automation solutions deliver measurable improvements across the entire customer lifecycle.</p>
+            </AnimatedElement>
+        </div>
+        <div className="grid md:grid-cols-2 gap-8 mt-16 max-w-4xl mx-auto">
+            {RESULTS.map((result, index) => (
+                <AnimatedElement key={result.title} delay={100 * (index + 1)}>
+                    <div className="bg-white p-8 rounded-2xl border border-gray-200/80 shadow-sm h-full flex flex-col text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#25D366]/50">
+                        <div className="w-12 h-12 rounded-full bg-[#25D366]/10 flex items-center justify-center text-[#25D366]">
+                            {result.icon}
+                        </div>
+                        <p className="text-4xl lg:text-5xl font-bold text-[#181818] mt-6 tabular-nums">
+                            {result.prefix}
+                            <Counter endValue={result.value} decimals={result.decimals || 0} />
+                            {result.suffix}
+                        </p>
+                        <h3 className="text-xl font-semibold text-[#181818] mt-2">{result.title}</h3>
+                        <p className="text-sm text-gray-500">{result.change}</p>
+                        <p className="mt-4 text-gray-600 text-base leading-relaxed flex-grow">{result.description}</p>
+                    </div>
+                </AnimatedElement>
+            ))}
+        </div>
+    </SectionContainer>
+);
+
+const WhatsappProcess = () => (
+    <SectionContainer id="process" className="bg-[#0B0C10] text-white">
+        <div className="text-center max-w-3xl mx-auto">
+            <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">The AMO AI WhatsApp Process</h2>
+            </AnimatedElement>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mt-16 relative">
+             <div className="absolute top-6 left-0 w-full h-0.5 bg-gray-800 hidden lg:block"></div>
+            {WHATSAPP_PROCESS_STEPS.map((step, index) => (
+                <AnimatedElement key={step.step} delay={100 * index}>
+                    <div className="relative">
+                        <div className="w-12 h-12 bg-[#25D366] rounded-full flex items-center justify-center text-xl font-bold text-black">{step.step}</div>
+                        <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
+                        <p className="text-sm text-[#25D366]">{step.subtitle}</p>
+                        <p className="mt-2 text-gray-400 text-sm">{step.description}</p>
+                    </div>
+                </AnimatedElement>
+            ))}
+        </div>
+        <AnimatedElement delay={500}>
+            <div className="text-center mt-20">
+                <button className="px-8 py-4 rounded-full font-semibold text-black bg-[#25D366] shadow-lg hover:opacity-90 transition-all transform hover:scale-105">Start Your WhatsApp Project</button>
+                <p className="mt-4 text-sm text-gray-400">Launch in as little as 2 weeks.</p>
+            </div>
+        </AnimatedElement>
+    </SectionContainer>
+);
+
+const TechLogos = () => (
+    <SectionContainer className="bg-white">
+        <div className="text-center">
+            <AnimatedElement>
+                 <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-[#181818]">Built on Proven Technology</h2>
+            </AnimatedElement>
+            <AnimatedElement delay={100}>
+                <div className="mt-12 flex flex-wrap justify-center items-center gap-x-8 gap-y-4 max-w-4xl mx-auto">
+                    {TECH_LOGOS.map(logo => (
+                        <span key={logo} className="text-gray-500 font-medium px-3 py-1 bg-gray-100 rounded-lg">{logo}</span>
+                    ))}
                 </div>
-                <div className="w-full bg-[#E6E2DF] rounded-full h-2.5 mt-3">
-                    <div className="bg-[#E77E4D] h-2.5 rounded-full" style={{ width: '98%' }}></div>
-                </div>
-                <div className="mt-6">
-                    <img src="https://picsum.photos/400/250" alt="Project mockup" className="rounded-lg shadow-md" />
+            </AnimatedElement>
+        </div>
+    </SectionContainer>
+);
+
+const FAQItem: React.FC<{ item: FAQItemInfo; }> = ({ item }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <AnimatedElement className="border-b border-gray-200 py-6">
+            <button className="w-full flex justify-between items-center text-left" onClick={() => setIsOpen(!isOpen)}>
+                <h3 className="text-lg font-semibold text-[#181818]">{item.question}</h3>
+                <ChevronDownIcon className={`w-6 h-6 text-gray-500 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
+            </button>
+            <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                <div className="overflow-hidden">
+                    <p className="pt-4 text-gray-600">{item.answer}</p>
                 </div>
             </div>
+        </AnimatedElement>
+    );
+}
+
+const FAQ = () => (
+    <SectionContainer id="faq" className="bg-white">
+         <div className="text-center max-w-3xl mx-auto">
+             <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-[#181818]">Frequently Asked Questions</h2>
+            </AnimatedElement>
         </div>
-      </div>
+        <div className="mt-12 max-w-3xl mx-auto">
+            {FAQ_ITEMS.map((item) => (
+                <FAQItem key={item.question} item={item} />
+            ))}
+        </div>
     </SectionContainer>
 );
 
 const FinalCTA = () => (
-  <div className="bg-[#025A63]">
-    <SectionContainer id="contact">
-        <div className="text-center">
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-white">Ready to Build Something Extraordinary?</h2>
-          <p className="max-w-2xl mx-auto mt-4 text-lg text-white/80">From idea to production-ready AI in as little as 2-8 weeks.</p>
-          <Button variant="primary" className="mt-8 text-xl">Start Your AI Project</Button>
-          <div className="mt-6 text-sm text-white/60">
-            <p>Free 30-min strategy call • No commitment required • Expert AI guidance</p>
-          </div>
+    <SectionContainer id="contact" className="bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white">
+        <div className="text-center max-w-3xl mx-auto">
+            <AnimatedElement>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">Let’s automate your business on WhatsApp — start today.</h2>
+            </AnimatedElement>
+            <AnimatedElement delay={100}>
+                <p className="mt-4 text-lg text-gray-200">Whether you want faster sales responses, automated booking, or AI-driven campaigns, our team will design and deploy your WhatsApp system — from strategy to launch.</p>
+            </AnimatedElement>
+            <AnimatedElement delay={200}>
+                <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button className="px-8 py-3 rounded-full font-semibold bg-white text-black shadow-lg hover:opacity-90 transition-all transform hover:scale-105 w-full sm:w-auto">Book a Consultation</button>
+                    <button className="px-8 py-3 rounded-full font-semibold bg-transparent border-2 border-white text-white w-full sm:w-auto">Schedule a Demo Call</button>
+                </div>
+            </AnimatedElement>
         </div>
     </SectionContainer>
-  </div>
 );
 
 const Footer = () => (
-  <footer className="bg-[#FDF7F2] border-t border-[#E6E2DF]">
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
-            <div className="md:col-span-1">
-                <h3 className="text-xl font-serif font-bold text-[#181818]">AMO AI</h3>
-                <p className="mt-2 text-sm text-gray-600">Building the future of intelligent applications.</p>
+    <footer className="bg-white text-[#181818]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-4">
+                    <a href="#" className="flex items-center gap-2">
+                        <span className="w-8 h-8 bg-[#FF7A2F] rounded-full text-white flex items-center justify-center font-bold text-lg">A</span>
+                        <span className="text-xl font-semibold text-[#181818]">AMO AI</span>
+                    </a>
+                    <p className="mt-4 text-gray-600 text-sm">We build AI-powered platforms with speed, automation, and reliability.</p>
+                </div>
+                <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 className="font-semibold text-sm uppercase tracking-wider">Solutions</h3>
+                        <ul className="mt-4 space-y-2 text-sm">
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">AI Development</a></li>
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">WhatsApp Automation</a></li>
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">Process Automation</a></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h3 className="font-semibold text-sm uppercase tracking-wider">Resources</h3>
+                        <ul className="mt-4 space-y-2 text-sm">
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">Case Studies</a></li>
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">Blog</a></li>
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">FAQ & Support</a></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h3 className="font-semibold text-sm uppercase tracking-wider">Legal</h3>
+                        <ul className="mt-4 space-y-2 text-sm">
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">Privacy Policy</a></li>
+                            <li><a href="#" className="text-gray-600 hover:text-[#181818]">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                         <button className="px-5 py-2.5 w-full rounded-full font-medium text-sm bg-[#FF7A2F] text-white">Book a Consultation</button>
+                    </div>
+                </div>
             </div>
-            <div>
-              <h4 className="font-semibold text-[#181818]">Solutions</h4>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">AI Automation</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Custom Chatbots</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Data Analysis</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Enterprise AI</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-[#181818]">Resources</h4>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Blog</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Case Studies</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Whitepapers</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-[#181818]">Legal</h4>
-              <ul className="mt-4 space-y-2 text-sm">
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-[#E77E4D]">Terms of Service</a></li>
-              </ul>
+            <div className="mt-12 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; {new Date().getFullYear()} AMO AI — All Rights Reserved</p>
             </div>
         </div>
-        <div className="mt-12 border-t border-[#E6E2DF] pt-8 text-center text-sm text-gray-500">
-            <p>&copy; {new Date().getFullYear()} AMO AI. All Rights Reserved.</p>
-        </div>
-    </div>
-  </footer>
+    </footer>
 );
 
-
 // --- MAIN APP COMPONENT ---
-
 export default function App() {
-  return (
-    <div className="bg-[#FDF7F2] text-[#181818]">
-      <Header />
-      <main>
-        <Hero />
-        <FeaturesSection />
-        <TechStack />
-        <Process />
-        <Pricing />
-        <CTA />
-        <FinalCTA />
-      </main>
-      <Footer />
-    </div>
-  );
+    return (
+        <div className="bg-white text-[#181818] antialiased">
+            <Header />
+            <main>
+                <Hero />
+                <WhyMatters />
+                <CoreServices />
+                <UseCases />
+                <Results />
+                <WhatsappProcess />
+                <TechLogos />
+                <FAQ />
+                <FinalCTA />
+            </main>
+            <Footer />
+        </div>
+    );
 }
