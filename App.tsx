@@ -84,14 +84,12 @@ const INVESTMENT_LEVELS = [
 ];
 
 // --- ANIMATION HOOK & COMPONENTS ---
-// Fix: Updated useOnScreen to correctly handle a custom `triggerOnce` option.
 const useOnScreen = (ref: React.RefObject<HTMLElement>, options: IntersectionObserverInit & { triggerOnce?: boolean } = {}) => {
     const [isIntersecting, setIntersecting] = useState(false);
     useEffect(() => {
         const currentRef = ref.current;
         if (!currentRef) return;
         
-        // Destructure our custom `triggerOnce` property and pass the rest to the observer.
         const { triggerOnce, ...observerOptions } = options;
 
         const observer = new IntersectionObserver(([entry]) => {
@@ -185,7 +183,7 @@ const Header = ({ onNavigate, currentPage, onStartWizard }: { onNavigate: (page:
     };
 
     return (
-        <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-[#FFF7F1]/80 backdrop-blur-lg border-b border-black/5' : 'bg-[#FFF7F1]'}`}>
+        <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${isScrolled ? 'bg-[#FFF7F1]/80 backdrop-blur-lg border-b border-black/5' : 'bg-[#FFF7F1]'}`}>
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex items-center justify-between">
                     <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="flex items-center gap-2">
@@ -413,8 +411,8 @@ const HomePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
 
 // --- OTHER PAGES (PLACEHOLDERS) ---
 const PlaceholderPage = ({ title }: { title: string }) => (
-    <SectionContainer>
-        <div className="text-center">
+    <SectionContainer className="bg-[#FFF7F1]">
+        <div className="text-center py-24">
             <h1 className="text-4xl md:text-6xl font-bold text-[#0B0C10] tracking-tighter">{title}</h1>
             <p className="mt-4 text-lg text-gray-600">Content for this page is coming soon.</p>
         </div>
@@ -428,8 +426,6 @@ const AboutPage = () => <PlaceholderPage title="About Us" />;
 const ContactPage = () => <PlaceholderPage title="Contact Us" />;
 
 // --- AI BRIEF WIZARD ---
-// (Wizard component code remains largely the same, no need to repeat it all)
-const WIZARD_STEPS = ["Project Basics", "Add-on Services", "Customize Scope", "Finalize"];
 const WIZARD_QUESTIONS = [
     { id: 'projectType', question: 'First, what type of AI project are you planning?', options: ['AI Web Design', 'Social Media AI', 'Process Automation', 'Other'] },
     { id: 'primaryGoal', question: 'Great! What is your primary goal for this project?', options: ['Generate Leads', 'Increase Sales', 'Improve Support', 'Boost Engagement'] },
@@ -442,33 +438,127 @@ const WIZARD_SERVICES = [
     { id: 'automation', icon: <ZapIcon/>, title: "AI Automation & Integration", description: "Workflow design, CopilotKit orchestration, database & deployment." },
     { id: 'data', icon: <DatabaseIcon/>, title: "Data Infrastructure & Analytics", description: "Supabase, LangChain, real-time dashboards." }
 ];
-// ... (rest of the wizard component functions from previous turn)
-// The full wizard component is large, so I'll put a condensed version here to save space
-const AIBriefWizard = ({ onExit }: { onExit: () => void; }) => {
-     const [step, setStep] = useState(0);
-     const [brief, setBrief] = useState({});
-     const nextStep = () => setStep(s => s + 1);
-     if (step === 0) {
-         return (
-            <div className="bg-[#0B0C10] text-white min-h-screen flex flex-col items-center justify-center text-center p-8">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">AI Brief Wizard</h1>
-                <p className="mt-4 text-lg text-gray-400">Let's build your project brief.</p>
-                <button onClick={nextStep} className="mt-8 px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white">Start</button>
-                <button onClick={onExit} className="mt-4 text-sm text-gray-500">Exit</button>
-            </div>
-         );
-     }
-     return (
-         <div className="bg-[#0B0C10] text-white min-h-screen p-8">
-             <h1 className="text-3xl font-bold">Step {step}</h1>
-             <p>Brief: {JSON.stringify(brief)}</p>
-             <button onClick={() => setBrief(b => ({...b, step: step}))} className="bg-blue-500 p-2">Add Data</button>
-             {step < 4 && <button onClick={nextStep} className="bg-green-500 p-2">Next</button>}
-             <button onClick={onExit} className="bg-red-500 p-2">Exit</button>
-         </div>
-     )
-};
 
+const AIBriefWizard = ({ onExit }: { onExit: () => void; }) => {
+    const [step, setStep] = useState(0); // 0: Welcome, 1: Questions, 2: Services, 3: Summary, 4: Thank you
+    const [brief, setBrief] = useState<Record<string, any>>({});
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+    const handleAnswer = (questionId: string, answer: string) => {
+        setBrief(prev => ({ ...prev, [questionId]: answer }));
+        if (currentQuestionIndex < WIZARD_QUESTIONS.length - 1) {
+            setCurrentQuestionIndex(i => i + 1);
+        } else {
+            setStep(2); // Move to services
+        }
+    };
+    
+    const toggleService = (serviceId: string) => {
+        setBrief(prev => ({
+            ...prev,
+            services: {
+                ...(prev.services || {}),
+                [serviceId]: !prev.services?.[serviceId]
+            }
+        }));
+    };
+
+    const nextStep = () => setStep(s => s + 1);
+    
+    // Welcome Screen (step 0)
+    if (step === 0) {
+        return (
+            <div className="fixed inset-0 bg-[#0B0C10]/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-center p-8 text-white">
+                <AnimatedElement className="bg-[#0B0C10] p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
+                    <BotIcon className="w-16 h-16 mx-auto text-[#FFC96A]" />
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mt-6">Let’s build your AI project brief</h1>
+                    <p className="mt-4 text-lg text-gray-400 max-w-xl">Answer a few questions and get a complete project scope tailored for AMO AI in under 5 minutes.</p>
+                    <button onClick={nextStep} className="mt-8 px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white transition-transform transform hover:scale-105">Start Building</button>
+                    <button onClick={onExit} className="mt-4 text-sm text-gray-500 hover:text-white">Exit Wizard</button>
+                </AnimatedElement>
+            </div>
+        );
+    }
+    
+    // Thank you screen (step 4)
+    if (step === 4) {
+        return (
+            <div className="fixed inset-0 bg-[#0B0C10]/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-center p-8 text-white">
+                 <AnimatedElement className="bg-[#0B0C10] p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
+                    <CheckCircleIcon className="w-16 h-16 mx-auto text-green-400" />
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mt-6">All set, your brief is ready.</h1>
+                    <p className="mt-4 text-lg text-gray-400 max-w-xl">We’ll review it and you’ll get a full project proposal within 24 hours.</p>
+                    <button className="mt-8 px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white transition-transform transform hover:scale-105 inline-flex items-center gap-2"><DownloadIcon className="w-5 h-5"/> Download PDF</button>
+                    <button onClick={onExit} className="mt-4 text-sm text-gray-500 hover:text-white">Back to site</button>
+                </AnimatedElement>
+            </div>
+        )
+    }
+
+    // Main Wizard flow
+    return (
+        <div className="fixed inset-0 bg-[#0B0C10]/80 backdrop-blur-sm z-50 text-white overflow-y-auto">
+            <div className="min-h-screen flex flex-col justify-center items-center p-4 sm:p-8">
+                <div className="w-full max-w-2xl bg-[#0B0C10] border border-white/10 rounded-3xl shadow-2xl p-8">
+                    {/* Header */}
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-2xl font-bold font-poppins">AI Brief Wizard</h2>
+                         <button onClick={onExit} className="text-gray-500 hover:text-white text-2xl">&times;</button>
+                    </div>
+
+                    {/* Questions (Step 1) */}
+                    {step === 1 && (
+                        <AnimatedElement key={currentQuestionIndex}>
+                            <h3 className="text-2xl md:text-3xl font-semibold mb-6">{WIZARD_QUESTIONS[currentQuestionIndex].question}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {WIZARD_QUESTIONS[currentQuestionIndex].options.map(option => (
+                                    <button key={option} onClick={() => handleAnswer(WIZARD_QUESTIONS[currentQuestionIndex].id, option)}
+                                        className="p-4 rounded-lg bg-[#121318] hover:bg-[#FF7A2F] text-left transition-colors">
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </AnimatedElement>
+                    )}
+                    
+                    {/* Services (Step 2) */}
+                    {step === 2 && (
+                        <AnimatedElement>
+                            <h3 className="text-2xl md:text-3xl font-semibold mb-6">Add optional services to your brief.</h3>
+                            <div className="grid grid-cols-1 gap-4">
+                                {WIZARD_SERVICES.map(service => (
+                                    <div key={service.id} onClick={() => toggleService(service.id)}
+                                        className={`p-4 rounded-lg flex items-center gap-4 cursor-pointer transition-all border-2 ${brief.services?.[service.id] ? 'bg-[#004B6B] border-[#FFC96A]' : 'bg-[#121318] border-transparent hover:border-gray-700'}`}>
+                                        <div className="flex-shrink-0 w-8 h-8 text-[#FFC96A]">{service.icon}</div>
+                                        <div>
+                                            <h4 className="font-semibold">{service.title}</h4>
+                                            <p className="text-sm text-gray-400">{service.description}</p>
+                                        </div>
+                                        <div className={`ml-auto w-6 h-6 rounded-full flex items-center justify-center border-2 ${brief.services?.[service.id] ? 'bg-[#FFC96A] border-[#FFC96A]' : 'border-gray-500'}`}>
+                                            {brief.services?.[service.id] && <CheckIcon className="w-4 h-4 text-[#004B6B]" />}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <button onClick={nextStep} className="mt-8 w-full px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white">Continue</button>
+                        </AnimatedElement>
+                    )}
+                    
+                    {/* Summary (Step 3) */}
+                    {step === 3 && (
+                         <AnimatedElement>
+                            <h3 className="text-2xl md:text-3xl font-semibold mb-6">Review your brief.</h3>
+                             <div className="bg-[#121318] p-6 rounded-lg max-h-60 overflow-y-auto">
+                                <pre className="whitespace-pre-wrap text-sm">{JSON.stringify(brief, null, 2)}</pre>
+                             </div>
+                             <button onClick={nextStep} className="mt-8 w-full px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white">Finalize & Submit</button>
+                        </AnimatedElement>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+};
 
 // --- MAIN APP COMPONENT ---
 export default function App() {
@@ -485,10 +575,16 @@ export default function App() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [currentPage]);
-
-    if (view === 'wizard') {
-        return <AIBriefWizard onExit={exitWizard} />;
-    }
+    
+    useEffect(() => {
+        // Prevent scrolling on the body when the wizard is open
+        if (view === 'wizard') {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        return () => { document.body.style.overflow = 'auto' }; // Cleanup on unmount
+    }, [view]);
 
     const renderPage = () => {
         switch(currentPage) {
@@ -507,6 +603,7 @@ export default function App() {
             <Header onStartWizard={startWizard} onNavigate={handleNavigate} currentPage={currentPage} />
             {renderPage()}
             <Footer onStartWizard={startWizard} onNavigate={handleNavigate} />
+            {view === 'wizard' && <AIBriefWizard onExit={exitWizard} />}
         </div>
     );
 }
