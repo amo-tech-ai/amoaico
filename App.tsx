@@ -226,6 +226,20 @@ const Footer = ({ onNavigate, onStartWizard }: { onNavigate: (page: Page) => voi
     return (
         <footer className="bg-[#0B0C10] text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div className="text-center mb-16">
+                    <AnimatedElement>
+                        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-white">Have a project in mind?</h2>
+                        <p className="mt-4 text-lg text-[#C5D7E0] max-w-2xl mx-auto">Let's turn your idea into a detailed project brief in just a few minutes.</p>
+                        <div className="mt-8">
+                            <button
+                                onClick={onStartWizard}
+                                className="px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white shadow-lg shadow-[#FF7A2F]/30 hover:opacity-90 transition-all transform hover:scale-105"
+                            >
+                                Start Your AI Brief →
+                            </button>
+                        </div>
+                    </AnimatedElement>
+                </div>
                  <div className="border-t border-[#FFC96A]/20 mb-16"></div>
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <div className="lg:col-span-4">
@@ -606,4 +620,4 @@ export default function App() {
             {view === 'wizard' && <AIBriefWizard onExit={exitWizard} />}
         </div>
     );
-}
+} 
