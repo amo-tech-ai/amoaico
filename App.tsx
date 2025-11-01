@@ -228,14 +228,14 @@ const Footer = ({ onNavigate, onStartWizard }: { onNavigate: (page: Page) => voi
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="text-center mb-16">
                     <AnimatedElement>
-                        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-white">Have a project in mind?</h2>
-                        <p className="mt-4 text-lg text-[#C5D7E0] max-w-2xl mx-auto">Let's turn your idea into a detailed project brief in just a few minutes.</p>
+                        <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-white">Ready to Build Your AI Vision?</h2>
+                        <p className="mt-4 text-lg text-[#C5D7E0] max-w-2xl mx-auto">Use our AI Brief Generator to scope your project in minutes. It's fast, free, and the first step to production.</p>
                         <div className="mt-8">
                             <button
                                 onClick={onStartWizard}
-                                className="px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white shadow-lg shadow-[#FF7A2F]/30 hover:opacity-90 transition-all transform hover:scale-105"
+                                className="px-8 py-3 rounded-full font-semibold bg-[#FF7A2F] text-white shadow-lg shadow-[#FF7A2F]/30 hover:opacity-90 transition-all transform hover:scale-105 inline-flex items-center gap-2"
                             >
-                                Start Your AI Brief →
+                                <BotIcon className="w-5 h-5" /> Start Your AI Brief
                             </button>
                         </div>
                     </AnimatedElement>
@@ -620,4 +620,4 @@ export default function App() {
             {view === 'wizard' && <AIBriefWizard onExit={exitWizard} />}
         </div>
     );
-} 
+}
