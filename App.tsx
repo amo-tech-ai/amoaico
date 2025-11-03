@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
 
 // --- TYPE DEFINITIONS ---
 type Page = 'home' | 'services' | 'process' | 'projects' | 'about' | 'contact' | 'ai-brief' | 
@@ -78,6 +78,16 @@ const UserCheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const BarChartIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
 );
+const FileTextIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+);
+const ShieldCheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+);
+const UsersIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+);
+
 
 const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m6 9 6 6 6-6"/></svg>
@@ -431,14 +441,22 @@ interface SectionContainerProps {
     children?: React.ReactNode;
     className?: string;
     id?: string;
+    contained?: boolean;
 }
-const SectionContainer: React.FC<SectionContainerProps> = ({ children, className = '', id = '' }) => (
-    <section id={id} className={`w-full py-20 md:py-28 overflow-hidden ${className}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {children}
-        </div>
-    </section>
-);
+const SectionContainer = forwardRef<HTMLElement, SectionContainerProps>(({ children, className = '', id = '', contained = true }, ref) => {
+    const content = <>{children}</>;
+    return (
+        <section id={id} ref={ref} className={`w-full py-20 md:py-28 overflow-hidden ${className}`}>
+            {contained ? (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {content}
+                </div>
+            ) : content}
+        </section>
+    );
+});
+SectionContainer.displayName = 'SectionContainer';
+
 
 const Header = ({ onNavigate, currentPage, onStartWizard }: { onNavigate: (page: Page) => void; currentPage: Page; onStartWizard: () => void; }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -656,7 +674,7 @@ const HomePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
             </SectionContainer>
 
             {/* Process Section */}
-            <SectionContainer className="bg-[#F3F6F9]">
+            <SectionContainer className="bg-slate-50">
                 <div className="text-center max-w-3xl mx-auto">
                     <AnimatedElement><h2 className="text-3xl md:text-5xl font-bold font-poppins tracking-tighter text-[#0F172A]">From Brief to Production in 8 Weeks</h2></AnimatedElement>
                 </div>
@@ -702,10 +720,399 @@ const HomePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
             </SectionContainer>
 
             {/* Investment Levels */}
-            <SectionContainer className="bg-[#F3F6F9]">
+            <SectionContainer className="bg-slate-50">
                  <div className="text-center max-w-3xl mx-auto">
                     <AnimatedElement><h2 className="text-3xl md:text-5xl font-bold font-poppins tracking-tighter text-[#00334F]">Investment Levels</h2></AnimatedElement>
                  </div>
                  <div className="grid lg:grid-cols-3 gap-8 mt-16 max-w-5xl mx-auto items-center">
                     {INVESTMENT_LEVELS.map((level, i) => (
-                        <AnimatedElement key={level.name} delay={100 * i} className={`p-8 rounded-2xl border ${level.recommended ? 'bg-[#00334F] text-white border-transparent shadow-2xl shadow-[#00334F]/20' : 'bg-white
+                        <AnimatedElement key={level.name} delay={100 * i} className={`p-8 rounded-2xl border ${level.recommended ? 'bg-[#00334F] text-white border-transparent shadow-2xl shadow-[#00334F]/20' : 'bg-white border-gray-200 shadow-lg'}`}>
+                            {level.recommended && <div className="text-center mb-4"><span className="text-xs font-bold uppercase tracking-wider bg-[#F97316] text-white px-3 py-1 rounded-full">Recommended</span></div>}
+                            <h3 className="text-2xl font-bold font-poppins text-center">{level.name}</h3>
+                            <p className={`text-4xl font-bold font-poppins text-center my-4 ${level.recommended ? 'text-white' : 'text-[#00334F]'}`}>{level.price}</p>
+                            <ul className="space-y-3 text-sm">
+                                {level.features.map(feature => (
+                                    <li key={feature} className="flex items-center gap-3">
+                                        <CheckIcon className={`${level.recommended ? 'text-[#F97316]' : 'text-green-500'}`} />
+                                        <span>{feature}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </AnimatedElement>
+                    ))}
+                 </div>
+            </SectionContainer>
+        </main>
+    );
+};
+
+// --- AI WEB APPLICATIONS PAGE ---
+const AiWebApplicationsPage = ({ onStartWizard, onNavigate }: { onStartWizard: () => void; onNavigate: (page: Page) => void; }) => {
+    
+    const WEB_APP_FEATURES = [
+        { icon: <MessageCircleIcon className="w-8 h-8"/>, title: 'Natural-Language Interfaces', description: 'Intuitive, conversational UI for any workflow.' },
+        { icon: <FileTextIcon className="w-8 h-8"/>, title: 'Retrieval-Augmented Apps (RAG)', description: 'Query your data with natural language.' },
+        { icon: <UserCheckIcon className="w-8 h-8"/>, title: 'Personalization Engines', description: 'Adaptive user experiences that drive engagement.' },
+        { icon: <BotIcon className="w-8 h-8"/>, title: 'AI Agents & Automations', description: 'Autonomous agents to execute complex tasks.' },
+        { icon: <PencilRulerIcon className="w-8 h-8" strokeWidth="1.5"/>, title: 'AI Content Services', description: 'Generate, summarize, and moderate content at scale.' },
+        { icon: <UsersIcon className="w-8 h-8"/>, title: 'CX Chatbots', description: 'Deflect support tickets and improve user satisfaction.' },
+        { icon: <BrainCircuitIcon className="w-8 h-8"/>, title: 'Predictive & Decision Models', description: 'Forecast trends and inform strategic decisions.' },
+    ];
+    
+    const WEB_APP_USE_CASES = [
+        { title: "Sales & Marketing Copilots", metric: "+30% Lead Quality" },
+        { title: "Support Deflection", metric: "-40% Ticket Volume" },
+        { title: "Knowledge Ops", metric: "90% Faster Info Retrieval" },
+        { title: "E-commerce Uplift", metric: "+15% Conversion Rate" },
+        { title: "Risk & Finance", metric: "-25% Error Rate" },
+    ];
+
+    const WEB_APP_ROI = [
+        { value: "72", unit: "%", label: "Adoption Rate" },
+        { value: "1-4", unit: "mo", label: "Deployment Cycle" },
+        { value: "45", unit: "%", label: "Productivity Gain", prefix: "+" },
+    ];
+    
+    const WEB_APP_PATTERNS = [
+        { title: "AI Help Center", description: "Instant, accurate answers from your knowledge base." },
+        { title: "Proposal/Scope Builder", description: "Generate project scopes from client requirements." },
+        { title: "AI Product Advisor", description: "Guide users to the right product with smart recommendations." },
+        { title: "Ops Co-pilot", description: "Automate repetitive operational tasks with an AI assistant." },
+    ];
+    
+    const WEB_APP_BLUEPRINT = [
+        { step: "01", title: "Discovery & KPI", description: "Align on measurable business goals." },
+        { step: "02", title: "Data & Permissions", description: "Securely connect and prep your data sources." },
+        { step: "03", title: "Prototype (RAG/Agent)", description: "Build and test the core AI logic." },
+        { step: "04", title: "Human-in-loop & Evals", description: "Refine responses with expert feedback." },
+        { step: "05", title: "Hardening & Guardrails", description: "Implement security and reliability checks." },
+        { step: "06", title: "Launch & A/B", description: "Deploy and optimize based on user data." },
+    ];
+
+    const WEB_APP_TOOL_STACK = [
+        { name: "OpenAI API / Claude SDK", description: "State-of-the-art models for reasoning and generation." },
+        { name: "LangChain / LangGraph", description: "Frameworks for building context-aware, stateful agents." },
+        { name: "CopilotKit", description: "Embed AI copilots and agents directly into your application's UI." },
+        { name: "Supabase", description: "The open-source backend for authentication, database, and storage." },
+        { name: "Weaviate / Pinecone", description: "Vector databases for efficient similarity search in RAG." },
+        { name: "Vercel / Next.js", description: "The modern framework for building performant web applications." },
+    ];
+    
+    const WEB_APP_EXTRA_FEATURES = ["Agent Handoffs", "Citations & Sources", "Ask My Data Widgets", "Proactive Assistants"];
+
+    const pageSections = [
+        { id: 'features', title: 'What We Build' },
+        { id: 'use-cases', title: 'Where It Pays' },
+        { id: 'roi-snapshot', title: 'ROI Snapshot' },
+        { id: 'patterns', title: 'Real-World Patterns' },
+        { id: 'blueprint', title: 'Delivery Blueprint' },
+        { id: 'tool-stack', title: 'Tool Stack' },
+        { id: 'extra-features', title: 'Extra Features' },
+        { id: 'architecture', title: 'Architecture' },
+    ];
+
+    const [activeSection, setActiveSection] = useState('');
+    const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { rootMargin: '-25% 0px -75% 0px', threshold: 0.1 }
+        );
+    
+        const currentRefs = sectionRefs.current;
+        Object.values(currentRefs).forEach(ref => {
+            if (ref) observer.observe(ref);
+        });
+    
+        return () => {
+            Object.values(currentRefs).forEach(ref => {
+                if (ref) observer.unobserve(ref);
+            });
+        };
+    }, []);
+
+    const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    return (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:grid lg:grid-cols-[1fr_3.5fr] lg:gap-12">
+                <aside className="hidden lg:block py-28">
+                    <div className="sticky top-28">
+                        <h3 className="font-semibold font-poppins text-sm text-[#00334F] mb-4">On this page</h3>
+                        <nav>
+                            <ul className="space-y-2">
+                                {pageSections.map(section => (
+                                    <li key={section.id}>
+                                        <a href={`#${section.id}`} 
+                                           onClick={(e) => handleAnchorClick(e, section.id)}
+                                           aria-current={activeSection === section.id ? 'true' : 'false'}
+                                           className={`block text-sm transition-all duration-200 border-l-2 pl-4 py-1 ${activeSection === section.id ? 'text-[#F97316] font-semibold border-[#F97316]' : 'text-gray-500 hover:text-[#0F172A] border-transparent hover:border-gray-300'}`}>
+                                            {section.title}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </div>
+                </aside>
+                <main>
+                    {/* Hero Section */}
+                    <SectionContainer className="bg-white text-center" contained={false}>
+                        <AnimatedElement>
+                            <h1 className="text-4xl md:text-6xl font-bold font-poppins text-[#0F172A] tracking-tighter max-w-4xl mx-auto">
+                                AI Development for Web Apps
+                            </h1>
+                        </AnimatedElement>
+                        <AnimatedElement delay={100}>
+                            <p className="max-w-2xl mx-auto mt-6 text-lg text-[#0F172A]/80">
+                                Build assistants, search, and automations that measurably move your KPIs.
+                            </p>
+                        </AnimatedElement>
+                        <AnimatedElement delay={200} className="mt-8">
+                            <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">Start Your AI Brief →</button>
+                        </AnimatedElement>
+                    </SectionContainer>
+                    
+                    {/* What We Build (Core Features) */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="features" ref={el => { sectionRefs.current['features'] = el; }} className="bg-slate-50" contained={false}>
+                        <div className="text-center max-w-3xl mx-auto">
+                            <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">What We Build</h2></AnimatedElement>
+                        </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+                            {WEB_APP_FEATURES.map((feature, index) => (
+                                <AnimatedElement key={feature.title} delay={100 * (index % 3)}>
+                                    <div className="bg-white p-6 rounded-xl border border-gray-100 h-full text-center flex flex-col items-center">
+                                        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#FFD6B0]/40 text-[#0F172A]">{feature.icon}</div>
+                                        <h3 className="mt-4 text-lg font-semibold font-poppins text-[#00334F]">{feature.title}</h3>
+                                        <p className="mt-1 text-sm text-[#0F172A]/80 flex-grow">{feature.description}</p>
+                                    </div>
+                                </AnimatedElement>
+                            ))}
+                        </div>
+                    </SectionContainer>
+
+                    {/* Where It Pays (Use Cases & Value) */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="use-cases" ref={el => { sectionRefs.current['use-cases'] = el; }} className="bg-white" contained={false}>
+                        <div className="text-center max-w-3xl mx-auto">
+                            <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Where It Pays Off</h2></AnimatedElement>
+                        </div>
+                        <div className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
+                            {WEB_APP_USE_CASES.map((useCase, index) => (
+                                <AnimatedElement key={useCase.title} delay={100*index}>
+                                    <div className="p-6 rounded-xl border border-gray-200 bg-slate-50 text-center">
+                                        <h4 className="font-semibold text-[#00334F] font-poppins">{useCase.title}</h4>
+                                        <p className="mt-2 text-sm font-bold text-[#F97316]">{useCase.metric}</p>
+                                    </div>
+                                </AnimatedElement>
+                            ))}
+                        </div>
+                    </SectionContainer>
+
+                    {/* ROI Snapshot */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="roi-snapshot" ref={el => { sectionRefs.current['roi-snapshot'] = el; }} className="bg-[#00334F] text-white" contained={false}>
+                        <div className="grid md:grid-cols-3 gap-8 text-center">
+                            {WEB_APP_ROI.map((item, index) => (
+                                <AnimatedElement key={item.label} delay={100 * index}>
+                                    <p className="text-5xl md:text-6xl font-bold font-poppins">
+                                        {item.prefix}<Counter endValue={parseInt(item.value)} />{item.unit}
+                                    </p>
+                                    <p className="mt-2 text-gray-300">{item.label}</p>
+                                </AnimatedElement>
+                            ))}
+                        </div>
+                        <p className="text-center text-xs text-gray-400 mt-12">Source: McKinsey 2024</p>
+                    </SectionContainer>
+                    
+                    {/* Real-World Patterns */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="patterns" ref={el => { sectionRefs.current['patterns'] = el; }} className="bg-white" contained={false}>
+                        <div className="text-center max-w-3xl mx-auto">
+                            <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Real-World Patterns</h2></AnimatedElement>
+                        </div>
+                        <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {WEB_APP_PATTERNS.map((pattern, index) => (
+                                <AnimatedElement key={pattern.title} delay={100 * index}>
+                                    <div className="p-6 rounded-xl border-2 border-slate-100 bg-white h-full">
+                                        <CheckCircleIcon className="w-8 h-8 text-[#F97316]"/>
+                                        <h3 className="mt-4 text-lg font-semibold font-poppins text-[#00334F]">{pattern.title}</h3>
+                                        <p className="mt-2 text-[#0F172A]/80">{pattern.description}</p>
+                                    </div>
+                                </AnimatedElement>
+                            ))}
+                        </div>
+                    </SectionContainer>
+                    
+                    {/* Delivery Blueprint */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="blueprint" ref={el => { sectionRefs.current['blueprint'] = el; }} className="bg-slate-50" contained={false}>
+                        <div className="text-center max-w-3xl mx-auto">
+                            <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Our Delivery Blueprint</h2></AnimatedElement>
+                        </div>
+                        <div className="mt-16 max-w-3xl mx-auto">
+                            {WEB_APP_BLUEPRINT.map((step, index) => (
+                                <AnimatedElement key={step.step} delay={100 * index} className="flex items-start gap-6 my-4">
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#FFD6B0] text-[#0F172A] font-bold text-lg">{step.step}</div>
+                                        {index < WEB_APP_BLUEPRINT.length - 1 && <div className="w-px h-16 bg-gray-300 my-2"></div>}
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-semibold font-poppins text-[#00334F] mt-2.5">{step.title}</h3>
+                                        <p className="text-[#0F172A]/80">{step.description}</p>
+                                    </div>
+                                </AnimatedElement>
+                            ))}
+                        </div>
+                    </SectionContainer>
+                    
+                    {/* Recommended Tool Stack */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="tool-stack" ref={el => { sectionRefs.current['tool-stack'] = el; }} className="bg-white" contained={false}>
+                        <div className="grid lg:grid-cols-2 gap-16 items-center">
+                            <div>
+                                <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Recommended Tool Stack</h2></AnimatedElement>
+                                <AnimatedElement delay={100}><p className="mt-4 text-lg text-[#0F172A]/80">We build on a modern, scalable, and reliable foundation to ensure your application performs from day one.</p></AnimatedElement>
+                                <AnimatedElement delay={200} className="mt-6">
+                                    <button onClick={() => onNavigate('tech-stack')} className="font-semibold text-[#F97316] hover:text-orange-700 transition-colors">Explore Our Tech Stack →</button>
+                                </AnimatedElement>
+                            </div>
+                            <div className="space-y-4">
+                                {WEB_APP_TOOL_STACK.slice(0, 3).map((tool, index) => (
+                                    <AnimatedElement key={tool.name} delay={100 * index}>
+                                        <div className="p-4 rounded-lg border border-gray-200">
+                                            <h4 className="font-semibold text-[#00334F]">{tool.name}</h4>
+                                            <p className="text-sm text-[#0F172A]/80">{tool.description}</p>
+                                        </div>
+                                    </AnimatedElement>
+                                ))}
+                            </div>
+                        </div>
+                    </SectionContainer>
+
+                    {/* Extra AI Features */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="extra-features" ref={el => { sectionRefs.current['extra-features'] = el; }} className="bg-slate-50" contained={false}>
+                        <div className="grid lg:grid-cols-2 gap-16 items-center">
+                            <div>
+                                <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">More Than Just a Chatbot</h2></AnimatedElement>
+                                <AnimatedElement delay={100}><p className="mt-4 text-lg text-[#0F172A]/80">We integrate advanced capabilities to create truly intelligent and useful AI experiences.</p></AnimatedElement>
+                            </div>
+                            <div className="grid grid-cols-2 gap-6">
+                                {WEB_APP_EXTRA_FEATURES.map((feature, index) => (
+                                    <AnimatedElement key={feature} delay={100 * index}>
+                                        <div className="bg-white p-4 rounded-lg border border-gray-200 flex items-center gap-3">
+                                            <CheckIcon className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                            <span className="font-medium text-[#00334F]">{feature}</span>
+                                        </div>
+                                    </AnimatedElement>
+                                ))}
+                            </div>
+                        </div>
+                    </SectionContainer>
+
+                    {/* Visuals / Architecture */}
+                    {/* FIX: Correct ref callback. It should not return a value. */}
+                    <SectionContainer id="architecture" ref={el => { sectionRefs.current['architecture'] = el; }} className="bg-white" contained={false}>
+                        <div className="text-center max-w-3xl mx-auto">
+                            <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Example Architecture</h2></AnimatedElement>
+                            <AnimatedElement delay={100}><p className="mt-4 text-[#0F172A]/80">A typical RAG (Retrieval-Augmented Generation) application flow, built on our recommended stack.</p></AnimatedElement>
+                        </div>
+                        <AnimatedElement delay={200} className="mt-16 p-8 bg-slate-50 rounded-2xl border border-gray-200">
+                            <div className="flex flex-col md:flex-row justify-center items-center gap-2 font-mono text-sm text-center">
+                                <div className="p-4 bg-white border rounded-lg">User Query</div>
+                                <ArrowRightIcon className="mx-2 hidden md:block" /> <ChevronDownIcon className="my-2 md:hidden" />
+                                <div className="p-4 bg-white border rounded-lg">Next.js Frontend</div>
+                                <ArrowRightIcon className="mx-2 hidden md:block" /> <ChevronDownIcon className="my-2 md:hidden" />
+                                <div className="p-4 bg-[#FFD6B0]/40 border border-orange-200 rounded-lg">CopilotKit</div>
+                                <ArrowRightIcon className="mx-2 hidden md:block" /> <ChevronDownIcon className="my-2 md:hidden" />
+                                <div className="p-4 bg-white border rounded-lg">LangGraph Agent</div>
+                                <ArrowRightIcon className="mx-2 hidden md:block" /> <ChevronDownIcon className="my-2 md:hidden" />
+                                <div className="p-4 bg-white border rounded-lg flex flex-col gap-2"><span>OpenAI API</span><span>Weaviate DB</span></div>
+                            </div>
+                        </AnimatedElement>
+                    </SectionContainer>
+                </main>
+            </div>
+        </div>
+    );
+};
+
+
+const App = () => {
+    const [currentPage, setCurrentPage] = useState<Page>('home');
+    const [isWizardOpen, setIsWizardOpen] = useState(false);
+
+    useEffect(() => {
+        const handleHashChange = () => {
+            const hash = window.location.hash.replace('#', '') as Page;
+            setCurrentPage(hash || 'home');
+            window.scrollTo(0, 0);
+        };
+        window.addEventListener('hashchange', handleHashChange);
+        handleHashChange(); // Initial load
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    const navigateTo = (page: Page) => {
+        window.location.hash = page;
+    };
+    
+    const startWizard = useCallback(() => setIsWizardOpen(true), []);
+
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'home':
+                return <HomePage onStartWizard={startWizard} />;
+            case 'services/web-applications':
+                return <AiWebApplicationsPage onStartWizard={startWizard} onNavigate={navigateTo} />;
+            // Add other page components here as they are built
+            default:
+                // For now, redirect unhandled pages to home
+                 // Find if it's a sub-service page
+                if (currentPage.startsWith('services/')) {
+                    // This is where you would render a generic service page or a specific one.
+                    // For now, we only have web-applications.
+                    return <AiWebApplicationsPage onStartWizard={startWizard} onNavigate={navigateTo} />;
+                }
+                return <HomePage onStartWizard={startWizard} />;
+        }
+    };
+    
+    // A simple AI Brief Wizard placeholder
+    if (isWizardOpen) {
+        return (
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-lg p-8 max-w-lg w-full relative">
+                    <button onClick={() => setIsWizardOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"><XIcon /></button>
+                    <h2 className="text-2xl font-bold font-poppins text-center mb-4">AI Brief Wizard</h2>
+                    <p className="text-center text-gray-600">This is a placeholder for the interactive AI Brief wizard. It would guide users through a series of questions to define their project scope.</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-[#FFF9F5]">
+            <Header onNavigate={navigateTo} currentPage={currentPage} onStartWizard={startWizard} />
+            {renderPage()}
+            <Footer onNavigate={navigateTo} onStartWizard={startWizard} />
+        </div>
+    );
+};
+
+export default App;
