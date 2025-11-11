@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
-import { BriefData } from '../../types';
+import { Brief, BriefData } from '../../types';
 import { XIcon, CheckCircleIcon } from '../../assets/icons';
+import { generateBriefFromApi } from '../../services/aiService';
+import { saveBrief as persistBrief } from '../../services/briefService';
+
 
 export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     const [step, setStep] = useState(1);
@@ -70,7 +72,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         );
     };
     
-    const generateBrief = useCallback(async () => {
+    const generateAndSaveBrief = useCallback(async () => {
         setGenerationStatus('loading');
         const loadingMessages = [
             "Analyzing your website...",
@@ -88,60 +90,30 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         setGenerationMessage(loadingMessages[0]);
 
         try {
-            if (!process.env.API_KEY) {
-                throw new Error("API_KEY environment variable not set.");
-            }
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            
-            const getBriefFunctionDeclaration: FunctionDeclaration = {
-                name: 'get_brief',
-                description: 'Returns a structured project brief based on user input and website analysis.',
-                parameters: {
-                    type: Type.OBJECT,
-                    properties: {
-                        overview: { type: Type.STRING, description: 'A concise company overview based on the website content.' },
-                        key_goals: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of the primary project goals.' },
-                        suggested_deliverables: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of suggested deliverables that align with the goals.' },
-                        brand_tone: { type: Type.STRING, description: 'The perceived brand tone from the website.' },
-                        budget_band: { type: Type.STRING, description: 'The estimated budget band for the project.' },
-                        website_summary_points: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'Key takeaways or summary points from the website.' },
-                    },
-                    required: ['overview', 'key_goals', 'suggested_deliverables', 'brand_tone', 'budget_band', 'website_summary_points'],
-                },
-            };
-            
-            const prompt = `You are a senior project strategist at a top-tier development agency. A potential client has provided the following details:
-            - Company Name: ${companyName}
-            - Website URL: ${websiteUrl}
-            - Project Type: ${projectType}
-            - Primary Goals: ${selectedGoals.join(', ')}
-            - Estimated Budget: ${BUDGET_MARKS[budget]}
-
-            Analyze the content of the provided website URL. Based on ALL the information, generate a structured project brief by calling the 'get_brief' function. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional.`;
-            
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: prompt,
-                config: {
-                    temperature: 0.2,
-                    tools: [{ functionDeclarations: [getBriefFunctionDeclaration] }],
-                },
+            const generatedData = await generateBriefFromApi({
+                companyName,
+                websiteUrl,
+                projectType,
+                selectedGoals,
+                budget: BUDGET_MARKS[budget]
             });
-            
-            const functionCall = response.functionCalls?.[0];
 
-            if (functionCall && functionCall.name === 'get_brief') {
-                // FIX: Cast to 'unknown' first to satisfy TypeScript's type assertion rules for complex types.
-                // This is safe because the function declaration schema ensures the structure matches BriefData.
-                const parsedBrief = functionCall.args as unknown as BriefData;
-                setBrief(parsedBrief);
+            if (generatedData && generatedData.overview) {
+                const briefToSave: Omit<Brief, 'id' | 'created_at'> = {
+                    ...generatedData,
+                    company_name: companyName,
+                    project_type: projectType,
+                    status: 'draft',
+                };
+                await persistBrief(briefToSave);
+
+                setBrief(generatedData);
                 setGenerationStatus('success');
-                
                 setTimeout(() => {
                     setStep(4);
                 }, 1000);
             } else {
-                 throw new Error("AI did not return the expected function call.");
+                 throw new Error("AI service did not return a valid brief object.");
             }
 
         } catch (error) {
@@ -159,7 +131,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         if (step === 1 && isStep1Complete) setStep(2);
         else if (step === 2 && isStep2Complete) {
             setStep(3);
-            generateBrief();
+            generateAndSaveBrief();
         } else if (step === 4) setStep(5);
         else setStep(s => Math.min(s + 1, WIZARD_STEPS.length));
     };
@@ -271,7 +243,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                                  </div>
                                  <h2 className="text-2xl font-bold font-poppins mt-8 text-[#00334F]">Generation Failed</h2>
                                  <p className="text-gray-600 mt-2">We couldn't generate the brief. Please try again.</p>
-                                 <button onClick={generateBrief} className="mt-6 px-6 py-2 rounded-lg font-semibold bg-[#F97316] text-white">Retry</button>
+                                 <button onClick={generateAndSaveBrief} className="mt-6 px-6 py-2 rounded-lg font-semibold bg-[#F97316] text-white">Retry</button>
                              </>
                          )}
                     </div>
@@ -292,12 +264,12 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                             </div>
                         </div>
                          <div className="mt-8 flex justify-between items-center">
-                             <button onClick={handlePrevStep} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100 transition-all">Back</button>
+                             <button onClick={() => setStep(2)} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100 transition-all">Back</button>
                             <button 
                                 onClick={onClose}
                                 className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all transform hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F97316]"
                             >
-                                Save & Finish
+                                Save & Close
                             </button>
                         </div>
                     </div>

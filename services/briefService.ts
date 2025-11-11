@@ -1,8 +1,9 @@
 import { Brief } from '../types';
 
-// Mock brief data service
-// In a real app, this would fetch data from Supabase
-const mockBriefs: Brief[] = [
+const STORAGE_KEY = 'sunai_user_briefs';
+
+// Mock data to initialize if local storage is empty
+const initialMockBriefs: Brief[] = [
     {
         id: '1',
         company_name: 'Innovate Inc.',
@@ -29,26 +30,57 @@ const mockBriefs: Brief[] = [
         budget_band: '$25k - $50k',
         website_summary_points: ['Specializes in B2B marketing', 'Proven results for SaaS companies'],
     },
-    {
-        id: '3',
-        company_name: 'Connecta',
-        project_type: 'WhatsApp AI Assistant',
-        status: 'draft',
-        created_at: '2024-08-20T18:45:00Z',
-        overview: 'A 24/7 AI assistant for customer support on WhatsApp.',
-        key_goals: ['Reduce support tickets by 40%', 'Improve customer satisfaction'],
-        suggested_deliverables: ['FAQ chatbot', 'Live agent handoff system'],
-        brand_tone: 'Friendly and helpful',
-        budget_band: '$10k - $25k',
-        website_summary_points: ['Provides instant support solutions', 'Integrates with existing CRMs'],
-    },
 ];
 
+// Helper to get all briefs from localStorage
+const getAllBriefs = (): Brief[] => {
+    try {
+        const storedBriefs = localStorage.getItem(STORAGE_KEY);
+        if (storedBriefs) {
+            return JSON.parse(storedBriefs);
+        } else {
+            // If nothing is stored, initialize with mock data
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialMockBriefs));
+            return initialMockBriefs;
+        }
+    } catch (error) {
+        console.error("Failed to parse briefs from localStorage", error);
+        return initialMockBriefs;
+    }
+};
+
+// Helper to save all briefs to localStorage
+const saveAllBriefs = (briefs: Brief[]) => {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(briefs));
+    } catch (error) {
+        console.error("Failed to save briefs to localStorage", error);
+    }
+};
+
+// Public API: Get all briefs
 export const getBriefsForUser = (userId: string): Promise<Brief[]> => {
-    console.log(`Fetching briefs for user ${userId}...`);
+    console.log(`Fetching briefs for user ${userId} from localStorage...`);
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(mockBriefs);
-        }, 1000); // Simulate network delay
+            resolve(getAllBriefs());
+        }, 500); // Simulate network delay
+    });
+};
+
+// Public API: Save a new brief
+export const saveBrief = (newBriefData: Omit<Brief, 'id' | 'created_at'>): Promise<Brief> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const currentBriefs = getAllBriefs();
+            const newBrief: Brief = {
+                ...newBriefData,
+                id: Math.random().toString(36).substring(2, 9), // Simple unique ID
+                created_at: new Date().toISOString(),
+            };
+            const updatedBriefs = [newBrief, ...currentBriefs];
+            saveAllBriefs(updatedBriefs);
+            resolve(newBrief);
+        }, 200);
     });
 };

@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { NavLink as NavLinkType } from '../types';
-// FIX: Import MobileIcon from assets/icons and remove local definition.
 import { 
     CodeIcon, Share2Icon, MessageCircleIcon, PencilRulerIcon, DatabaseIcon, ZapIcon, 
     CheckCircleIcon, FlaskConicalIcon, RocketIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, 
@@ -95,9 +93,9 @@ export const PROJECTS_DATA = [
     challenge: 'Fashion Week Global struggled with a complex 3-day event setup process requiring 190+ staff members with a 1.2% error rate.',
     solution: 'Built FashionOS, a comprehensive AI-powered event management platform automating 90% of coordination between designers, models, venues, and sponsors.',
     metrics: [
-      { value: '97%', label: 'Time Reduction', icon: React.createElement(ClockIcon, { className: "w-5 h-5" }) },
-      { value: '$406K', label: 'Cost Savings', icon: React.createElement(DollarSignIcon, { className: "w-5 h-5" }) },
-      { value: '300%', label: 'ROI', icon: React.createElement(TrendingUpIcon, { className: "w-5 h-5" }) },
+      { value: '97', label: 'Time Reduction', unit: '%', icon: React.createElement(ClockIcon, { className: "w-5 h-5" }) },
+      { value: '406', label: 'Cost Savings', unit: 'K', prefix: '$', icon: React.createElement(DollarSignIcon, { className: "w-5 h-5" }) },
+      { value: '300', label: 'ROI', unit: '%', icon: React.createElement(TrendingUpIcon, { className: "w-5 h-5" }) },
     ],
     technologies: ['React', 'Next.js', 'Supabase', 'CrewAI', 'WhatsApp API', 'Stripe'],
     testimonial: {
@@ -116,9 +114,9 @@ export const PROJECTS_DATA = [
     challenge: 'Needed to connect 500 dealers with a unified platform handling 50,000+ vehicle listings while providing intelligent search capabilities.',
     solution: 'Developed a comprehensive AI marketplace with advanced search algorithms, real-time inventory sync, and ML-powered recommendations.',
      metrics: [
-      { value: '$4.3M', label: 'Monthly GMV', icon: React.createElement(DollarSignIcon, { className: "w-5 h-5" }) },
-      { value: '500+', label: 'Dealers Connected', icon: React.createElement(Share2Icon, { className: "w-5 h-5" }) },
-      { value: '95%', label: 'Search Accuracy', icon: React.createElement(CheckCircleIcon, { className: "w-5 h-5" }) },
+      { value: '4.3', label: 'Monthly GMV', unit: 'M', prefix: '$', decimals: 1, icon: React.createElement(DollarSignIcon, { className: "w-5 h-5" }) },
+      { value: '500', label: 'Dealers Connected', unit: '+', icon: React.createElement(Share2Icon, { className: "w-5 h-5" }) },
+      { value: '95', label: 'Search Accuracy', unit: '%', icon: React.createElement(CheckCircleIcon, { className: "w-5 h-5" }) },
     ],
     technologies: ['React', 'Next.js', 'Supabase', 'OpenAI', 'Elasticsearch', 'Stripe Connect'],
     testimonial: {
@@ -151,10 +149,10 @@ export const TECH_STACK_CATEGORIES = [
 ];
 
 export const PROJECTS_METRICS = [
-    { value: "47+", label: "Projects Delivered" },
+    { value: "47", label: "Projects Delivered", unit: "+" },
     { value: "8.2", label: "Weeks Average Delivery Time" },
-    { value: "94%", label: "On-Time Delivery" },
-    { value: "293%", label: "ROI Average" }
+    { value: "94", label: "On-Time Delivery", unit: "%" },
+    { value: "293", label: "ROI Average", unit: "%" }
 ];
 
 // Services Page Data
