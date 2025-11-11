@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SectionContainer } from './SectionContainer';
 import { AnimatedElement } from '../animations/AnimatedElement';
-import { BotIcon } from '../../assets/icons';
+import { BotIcon, LogoIcon } from '../../assets/icons';
 
 export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     return (
@@ -29,6 +28,7 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         <div className="lg:col-span-3">
                             <Link to="/" className="flex items-center gap-2">
+                                <LogoIcon className="w-8 h-8" />
                                 <span className="text-xl font-semibold font-poppins">Sunai</span>
                             </Link>
                             <p className="mt-4 text-gray-300 text-sm">Built by Intelligence, Measured by Results.</p>
