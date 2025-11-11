@@ -1,8 +1,9 @@
-# 🗺️ AMO AI Website Sitemap
+
+# 🗺️ Sunai Website Sitemap
 
 **Document Status:** Published - 2024-08-19
 **Author:** Senior Frontend Architect
-**Goal:** To provide a clear, hierarchical overview of all current and planned pages, routes, and key interactive features for the AMO AI website.
+**Goal:** To provide a clear, hierarchical overview of all current and planned pages, routes, and key interactive features for the Sunai website.
 
 ---
 
@@ -11,7 +12,7 @@
 This section outlines the primary pages accessible from the main header and footer navigation.
 
 -   **/ (Home)**
-    -   **Purpose:** The main landing page introducing AMO AI's value proposition, core services, process, and key results.
+    -   **Purpose:** The main landing page introducing Sunai's value proposition, core services, process, and key results.
     -   **Component:** `HomePage.tsx`
     -   **Status:** ✅ Implemented
 
@@ -37,7 +38,7 @@ This section outlines the primary pages accessible from the main header and foot
     -   **Status:** 🔴 Not Implemented
 
 -   **/about**
-    -   **Purpose:** A page introducing the AMO AI team, mission, and company values.
+    -   **Purpose:** A page introducing the Sunai team, mission, and company values.
     -   **Status:** 🔴 Not Implemented
 
 -   **/contact**

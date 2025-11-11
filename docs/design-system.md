@@ -1,8 +1,9 @@
-# 🎨 Design System & UI Kit: AMO AI
+
+# 🎨 Design System & UI Kit: Sunai
 
 **Document Status:** Version 1.0 - Published
 **Author:** Senior UI/UX Engineer
-**Goal:** To establish a single source of truth for the visual and interactive elements of the AMO AI website. This document ensures consistency, accelerates development, and maintains a high-quality user experience.
+**Goal:** To establish a single source of truth for the visual and interactive elements of the Sunai website. This document ensures consistency, accelerates development, and maintains a high-quality user experience.
 
 ---
 
@@ -11,7 +12,7 @@
 Our design is guided by three core principles:
 
 -   **Clarity:** The interface should be clean, intuitive, and easy to navigate. Information is presented in a structured and digestible manner.
--   **Professionalism:** The visual language conveys trust, expertise, and innovation, reflecting the high-quality services AMO AI provides.
+-   **Professionalism:** The visual language conveys trust, expertise, and innovation, reflecting the high-quality services Sunai provides.
 -   **Efficiency:** Components and layouts are designed to guide users toward their goals quickly and with minimal friction, especially within the AI Brief Wizard.
 
 ---

@@ -33,7 +33,7 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2">
-                        <span className="text-xl font-semibold font-poppins text-[#0F172A]">AMO AI</span>
+                        <span className="text-xl font-semibold font-poppins text-[#0F172A]">Sunai</span>
                     </Link>
                     <div className="hidden md:flex items-center space-x-8">
                         {NAV_LINKS.map(link => {

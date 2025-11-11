@@ -1,8 +1,9 @@
-# 🗄️ Database Schema & Setup Plan: AMO AI Agency Platform
+
+# 🗄️ Database Schema & Setup Plan: Sunai Agency Platform
 
 **Document Status:** Published - 2024-08-19
 **Author:** Senior Full-Stack Architect
-**Goal:** To define a production-ready PostgreSQL schema for the AMO AI agency website. This schema is designed to support user authentication and the core "AI Brief Wizard" feature for client project scoping and lead capture.
+**Goal:** To define a production-ready PostgreSQL schema for the Sunai agency website. This schema is designed to support user authentication and the core "AI Brief Wizard" feature for client project scoping and lead capture.
 
 ---
 
@@ -95,7 +96,7 @@ This SQL script is designed for PostgreSQL 15+ and can be used as a migration fi
 
 ```sql
 -- 20240819120000_init_agency_schema.sql
--- AMO AI Agency Platform: Initial Database Schema
+-- Sunai Agency Platform: Initial Database Schema
 
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -215,7 +216,7 @@ The process for setting up the instance remains the same.
 # Set your project and desired region
 export PROJECT_ID="your-gcp-project-id"
 export REGION="us-central1"
-export INSTANCE_NAME="amo-ai-agency-db-prod"
+export INSTANCE_NAME="sunai-agency-db-prod"
 
 gcloud config set project $PROJECT_ID
 
@@ -229,7 +230,7 @@ gcloud sql instances create $INSTANCE_NAME \
 
 **2. Create the Database & User**
 ```bash
-gcloud sql databases create amo_agency_prod --instance=$INSTANCE_NAME
+gcloud sql databases create sunai_agency_prod --instance=$INSTANCE_NAME
 gcloud sql users create api_user --instance=$INSTANCE_NAME --password="CHOOSE_A_STRONG_PASSWORD"
 ```
 
@@ -240,7 +241,7 @@ Save the SQL schema above to a file (e.g., `20240819120000_init_agency_schema.sq
 ./cloud-sql-proxy $PROJECT_ID:$REGION:$INSTANCE_NAME
 
 # In another terminal, connect and import the schema
-psql "host=127.0.0.1 port=5432 dbname=amo_agency_prod user=api_user" \
+psql "host=127.0.0.1 port=5432 dbname=sunai_agency_prod user=api_user" \
     -f 20240819120000_init_agency_schema.sql
 ```
 
@@ -248,4 +249,4 @@ psql "host=127.0.0.1 port=5432 dbname=amo_agency_prod user=api_user" \
 
 ### 7. **Conclusion**
 
-This revised schema is tailored specifically for the AMO AI agency website. It provides a secure and scalable foundation for the core user journey—capturing high-quality project briefs—while providing clear, separate structures for administrative content like portfolio projects and contact form submissions. This is the correct foundation to build upon.
+This revised schema is tailored specifically for the Sunai agency website. It provides a secure and scalable foundation for the core user journey—capturing high-quality project briefs—while providing clear, separate structures for administrative content like portfolio projects and contact form submissions. This is the correct foundation to build upon.

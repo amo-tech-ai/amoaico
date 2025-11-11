@@ -29,7 +29,7 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         <div className="lg:col-span-3">
                             <Link to="/" className="flex items-center gap-2">
-                                <span className="text-xl font-semibold font-poppins">AMO AI</span>
+                                <span className="text-xl font-semibold font-poppins">Sunai</span>
                             </Link>
                             <p className="mt-4 text-gray-300 text-sm">Built by Intelligence, Measured by Results.</p>
                         </div>
@@ -68,7 +68,7 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                         </div>
                     </div>
                     <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-                        <p>&copy; {new Date().getFullYear()} AMO AI — All Rights Reserved</p>
+                        <p>&copy; {new Date().getFullYear()} Sunai — All Rights Reserved</p>
                     </div>
                 </div>
             </footer>

@@ -198,7 +198,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                         <div className="space-y-6">
                             <div>
                                 <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                                <input type="text" id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="e.g., AMO AI" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] transition" autoFocus />
+                                <input type="text" id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="e.g., Sunai" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] transition" autoFocus />
                             </div>
                             <div>
                                 <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 mb-1">Website URL</label>

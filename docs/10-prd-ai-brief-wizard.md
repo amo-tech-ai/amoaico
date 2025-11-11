@@ -1,22 +1,23 @@
+
 # 📄 Product Requirements Document (PRD): AI Brief Wizard
 
 **Document Status:** Version 1.0 - Published
 **Author:** Senior Full-Stack Engineer
-**Goal:** To define the product, technical, and user experience requirements for transforming the AI Brief Wizard from a functional prototype into a secure, scalable, and production-ready lead-generation platform for AMO AI.
+**Goal:** To define the product, technical, and user experience requirements for transforming the AI Brief Wizard from a functional prototype into a secure, scalable, and production-ready lead-generation platform for Sunai.
 
 ---
 
 ## 1. Executive Summary
 
 ### 1.1. Product Purpose & Value
-The **AI Brief Wizard** is an intelligent, interactive tool designed to streamline the initial project scoping process for potential AMO AI clients. By guiding users through a series of questions and analyzing their existing company website, the wizard uses the Google Gemini API to instantly generate a structured, comprehensive project brief.
+The **AI Brief Wizard** is an intelligent, interactive tool designed to streamline the initial project scoping process for potential Sunai clients. By guiding users through a series of questions and analyzing their existing company website, the wizard uses the Google Gemini API to instantly generate a structured, comprehensive project brief.
 
 ### 1.2. Problem Solved
-Traditional client onboarding is often slow, manual, and prone to miscommunication. It requires multiple meetings and long email chains just to establish a baseline project scope. This creates friction for potential clients and consumes valuable time for the agency. The AI Brief Wizard solves this by automating the initial discovery phase, providing immediate value to the user and delivering a high-quality, pre-qualified lead to the AMO AI team.
+Traditional client onboarding is often slow, manual, and prone to miscommunication. It requires multiple meetings and long email chains just to establish a baseline project scope. This creates friction for potential clients and consumes valuable time for the agency. The AI Brief Wizard solves this by automating the initial discovery phase, providing immediate value to the user and delivering a high-quality, pre-qualified lead to the Sunai team.
 
 ### 1.3. Target Audience
 -   **Primary:** Startup Founders, Product Managers, and Marketing Leads who need to quickly scope a new AI-powered web or mobile application.
--   **Secondary:** Internal AMO AI team (Sales, Project Managers) who will receive and act on the generated briefs.
+-   **Secondary:** Internal Sunai team (Sales, Project Managers) who will receive and act on the generated briefs.
 
 ---
 
@@ -60,14 +61,14 @@ graph TD
 ## 3. User Journeys
 
 ### 3.1. New Client Journey
-1.  **Discovery:** A potential client lands on the AMO AI website.
+1.  **Discovery:** A potential client lands on the Sunai website.
 2.  **Initiation:** They click a "Start Your AI Brief" CTA.
 3.  **Authentication (MVP):** They are prompted to sign up or log in to save their progress.
 4.  **Wizard Step 1 (Welcome):** They enter their company name and website URL.
 5.  **Wizard Step 2 (Scope):** They define their project type, goals, and budget.
 6.  **Wizard Step 3 (Generation):** The system securely calls the Gemini API to generate the brief.
 7.  **Wizard Step 4 (Review):** The user reviews the AI-generated brief.
-8.  **Completion (MVP):** The user saves the brief, which becomes visible on their personal dashboard. The AMO AI team is notified of the new lead.
+8.  **Completion (MVP):** The user saves the brief, which becomes visible on their personal dashboard. The Sunai team is notified of the new lead.
 
 ### 3.2. Agency Admin Journey
 1.  **Notification:** An admin receives a notification about a new brief submission.
@@ -96,7 +97,7 @@ The goal is to deliver the core value proposition in a secure, production-grade 
 | :--- | :--- | :--- | :--- |
 | **Brief Editor** | Allow users to edit and refine their AI-generated brief. | Rich text editor (e.g., Tiptap), Supabase DB updates | Changes are saved in real-time. User can customize the brief. |
 | **Brief Sharing** | Enable users to share a read-only link to their brief. | New `brief_shares` table, public-facing route | A public, shareable link can be generated for any brief. |
-| **Admin Dashboard** | A portal for the AMO AI team to review and manage briefs. | Admin UI, Supabase RLS with admin roles | Admins can view, sort, and filter all submitted client briefs. |
+| **Admin Dashboard** | A portal for the Sunai team to review and manage briefs. | Admin UI, Supabase RLS with admin roles | Admins can view, sort, and filter all submitted client briefs. |
 | **Multi-Source Input** | Allow users to upload documents (PDF, DOCX) as context. | Supabase Storage, Gemini File Search | The wizard can generate a brief from a user's business plan. |
 
 ### Phase 3: Automation — From Brief to Proposal
@@ -122,7 +123,7 @@ The goal is to deliver the core value proposition in a secure, production-grade 
 ## 6. Real-World Use Cases
 
 1.  **Startup Founder Seeking Funding:** A founder with a live landing page needs a structured project scope to show potential investors. She uses the AI Brief Wizard, pastes her website URL, and in 90 seconds receives a downloadable brief outlining key deliverables, goals, and budget, which she includes in her pitch.
-2.  **Marketing Manager Scoping a Project:** A manager at an established company is tasked with building an internal AI-powered tool. He uses the wizard to generate an initial brief. He then uses the "Edit" and "Share" features (Phase 2) to collaborate with his team and get internal buy-in before formally submitting it to AMO AI.
+2.  **Marketing Manager Scoping a Project:** A manager at an established company is tasked with building an internal AI-powered tool. He uses the wizard to generate an initial brief. He then uses the "Edit" and "Share" features (Phase 2) to collaborate with his team and get internal buy-in before formally submitting it to Sunai.
 
 ---
 

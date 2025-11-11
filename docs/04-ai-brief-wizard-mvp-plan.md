@@ -1,3 +1,4 @@
+
 # 🎯 **AI Brief Wizard MVP Plan (Frontend + AI Flow)**
 
 **Goal:**
@@ -75,8 +76,8 @@ The AI component is focused on a single, powerful Gemini API call.
 *   **Input Payload:**
     ```javascript
     {
-      company_name: "AMO AI",
-      website_url: "https://amo.ai",
+      company_name: "Sunai",
+      website_url: "https://sunai.com",
       project_type: "AI Web Application",
       goals: ["Increase lead conversion", "Automate customer support"],
       budget: 50000
@@ -90,7 +91,7 @@ The AI component is focused on a single, powerful Gemini API call.
 *   **Expected Output (Strict JSON Schema):**
     ```json
     {
-      "overview": "AMO AI is a development agency specializing in creating AI-powered applications. They focus on rapid development cycles and delivering measurable business results.",
+      "overview": "Sunai is a development agency specializing in creating AI-powered applications. They focus on rapid development cycles and delivering measurable business results.",
       "key_goals": [
         "Develop a system to increase lead quality and conversion rates.",
         "Implement an automated chatbot to handle initial customer support queries."
