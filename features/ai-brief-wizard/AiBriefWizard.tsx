@@ -94,19 +94,6 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
             }
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
-            const schema = {
-                type: Type.OBJECT,
-                properties: {
-                    overview: { type: Type.STRING, description: "A concise overview of the company based on its website." },
-                    key_goals: { type: Type.ARRAY, items: { type: Type.STRING }, description: "A list of key goals for the project." },
-                    suggested_deliverables: { type: Type.ARRAY, items: { type: Type.STRING }, description: "A list of suggested deliverables to achieve the goals." },
-                    brand_tone: { type: Type.STRING, description: "The brand's tone of voice (e.g., Professional, Friendly)." },
-                    budget_band: { type: Type.STRING, description: "The estimated budget band for the project." },
-                    website_summary_points: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Key summary points extracted from the website." },
-                },
-                required: ['overview', 'key_goals', 'suggested_deliverables', 'brand_tone', 'budget_band', 'website_summary_points']
-            };
-
             const prompt = `You are a senior project strategist at a top-tier development agency. A potential client has provided the following details:
             - Company Name: ${companyName}
             - Website URL: ${websiteUrl}
@@ -114,9 +101,16 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
             - Primary Goals: ${selectedGoals.join(', ')}
             - Estimated Budget: ${BUDGET_MARKS[budget]}
 
-            Analyze the content of the provided website URL. Based on ALL the information, generate a structured project brief. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional. Respond ONLY with the JSON object.`;
+            Analyze the content of the provided website URL. Based on ALL the information, generate a structured project brief as a valid JSON object. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional. Respond ONLY with the JSON object, without any markdown formatting. The JSON schema should be:
+            {
+                "overview": "string",
+                "key_goals": ["string"],
+                "suggested_deliverables": ["string"],
+                "brand_tone": "string",
+                "budget_band": "string",
+                "website_summary_points": ["string"]
+            }`;
             
-            // FIX: Replaced the non-standard `urlContext` with the correct `googleSearch` tool for web grounding.
             const googleSearchTool: Tool = {
                 googleSearch: {}
             };
@@ -125,14 +119,18 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                 model: 'gemini-2.5-flash',
                 contents: prompt,
                 config: {
-                    responseMimeType: "application/json",
-                    responseSchema: schema,
                     temperature: 0.2,
                     tools: [googleSearchTool],
                 },
             });
             
-            const jsonText = response.text.trim();
+            let jsonText = response.text.trim();
+            if (jsonText.startsWith('```json')) {
+                jsonText = jsonText.substring(7, jsonText.length - 3).trim();
+            } else if (jsonText.startsWith('```')) {
+                 jsonText = jsonText.substring(3, jsonText.length - 3).trim();
+            }
+
             const parsedBrief = JSON.parse(jsonText) as Brief;
             setBrief(parsedBrief);
             setGenerationStatus('success');
