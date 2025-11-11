@@ -9,15 +9,15 @@ export const useAuth = () => {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     
-    const { user: supabaseUser, loading, logout } = context;
+    const { user: supabaseUser, profile, loading, logout } = context;
 
     let user: User | null = null;
     if (supabaseUser) {
         user = {
             id: supabaseUser.id,
-            // Supabase user_metadata is where custom fields like fullName are stored.
-            fullName: supabaseUser.user_metadata?.full_name || supabaseUser.email || 'User',
-            avatarUrl: supabaseUser.user_metadata?.avatar_url || `https://i.pravatar.cc/150?u=${supabaseUser.id}`
+            fullName: profile?.full_name || supabaseUser.email || 'User',
+            avatarUrl: profile?.avatar_url || `https://i.pravatar.cc/150?u=${supabaseUser.id}`,
+            role: profile?.role || 'user'
         };
     }
 

@@ -12,6 +12,7 @@ import { AiSocialMediaPage } from './pages/AiSocialMediaPage';
 import { EcommercePage } from './pages/EcommercePage';
 import { WhatsAppAutomationPage } from './pages/WhatsAppAutomationPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { ProcessPage } from './pages/ProcessPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { TechStackPage } from './pages/TechStackPage';
@@ -23,6 +24,7 @@ import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
 // Feature Components
 import { AiBriefWizard } from './features/ai-brief-wizard/AiBriefWizard';
+import { AdminRoute } from './components/AdminRoute';
 
 const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -64,6 +66,11 @@ const App = () => {
 
                     {/* User Pages */}
                     <Route path="/dashboard" element={<DashboardPage onStartWizard={startWizard} />} />
+
+                    {/* Admin Pages */}
+                    <Route path="/admin" element={<AdminRoute />}>
+                        <Route path="dashboard" element={<AdminDashboardPage />} />
+                    </Route>
 
                     {/* Legal Pages */}
                     <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

@@ -20,12 +20,18 @@ export interface Brief extends BriefData {
     id: string;
     company_name: string;
     project_type: string;
-    status: 'draft' | 'submitted' | 'in-review';
+    status: 'draft' | 'submitted' | 'in-review' | 'approved' | 'rejected';
     created_at: string;
+    user?: {
+      id: string;
+      full_name: string;
+      email: string;
+    }
 }
 
 export interface User {
     id: string;
     fullName: string;
     avatarUrl?: string;
+    role?: string;
 }

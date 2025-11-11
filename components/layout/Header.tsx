@@ -69,6 +69,7 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                             }
                             return <NavLink key={link.label} to={link.href} end={link.href==='/'} className={navLinkClasses}>{link.label}</NavLink>
                         })}
+                        {user && user.role === 'admin' && <NavLink to="/admin/dashboard" className={navLinkClasses}>Admin</NavLink>}
                         {user && <NavLink to="/dashboard" className={navLinkClasses}>Dashboard</NavLink>}
                     </div>
                     <div className="hidden md:block">
@@ -99,6 +100,7 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                 }
                                 return <NavLink key={link.label} to={link.href} end={link.href==='/'} className="text-[#0F172A] hover:text-[#F97316] transition-colors block">{link.label}</NavLink>
                             })}
+                             {user && user.role === 'admin' && <NavLink to="/admin/dashboard" className="text-[#0F172A] hover:text-[#F97316] transition-colors block">Admin</NavLink>}
                              {user && <NavLink to="/dashboard" className="text-[#0F172A] hover:text-[#F97316] transition-colors block">Dashboard</NavLink>}
                             <button onClick={() => { onStartWizard(); setIsOpen(false); }} className="w-full px-5 py-2.5 rounded-lg font-medium text-sm bg-[#F97316] text-white">Start Your AI Brief</button>
                         </div>
