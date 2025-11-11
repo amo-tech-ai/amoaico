@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Brief, BriefData } from '../../types';
 import { XIcon, CheckCircleIcon } from '../../assets/icons';
 import { generateBriefFromApi } from '../../services/aiService';
@@ -194,9 +195,11 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                             {renderBriefSection("Budget", brief.budget_band)}
                         </div>
                     </div>
-                     <div className="mt-8 flex justify-between items-center">
-                         <button onClick={() => { setCurrentStep('form'); setFormStep(2); }} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back</button>
-                        <button onClick={onClose} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all">Save & Close</button>
+                     <div className="mt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
+                        <button onClick={() => { setCurrentStep('form'); setFormStep(2); }} className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back to Edit</button>
+                        <Link to="/dashboard" onClick={onClose} className="w-full sm:w-auto text-center px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all transform hover:scale-105">
+                            Go to Dashboard
+                        </Link>
                     </div>
                 </div>
             );

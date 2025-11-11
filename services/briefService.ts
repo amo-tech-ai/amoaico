@@ -23,15 +23,24 @@ export const getBriefsForUser = async (): Promise<Brief[]> => {
 
     if (!data) return [];
 
-    // The data from Supabase has 'brief_data' JSONB column. We need to flatten it
-    // to match the application's 'Brief' type.
-    return data.map(brief => ({
-        id: brief.id,
-        company_name: brief.company_name,
-        project_type: brief.project_type,
-        status: brief.status,
-        created_at: brief.created_at,
-        // Spread the content of the brief_data JSON object
-        ...brief.brief_data 
-    }));
+    // The data from Supabase has a 'brief_data' JSONB column. This mapping
+    // safely handles it and provides defaults to prevent crashes,
+    // transforming the DB record into the application's 'Brief' type.
+    return data.map((brief): Brief => {
+        const briefData = brief.brief_data || {};
+        return {
+            id: brief.id,
+            company_name: brief.company_name || 'Untitled Project',
+            project_type: brief.project_type || 'N/A',
+            status: brief.status || 'draft',
+            created_at: brief.created_at,
+            // Safely access properties from the briefData object, providing defaults
+            overview: briefData.overview || 'No overview available.',
+            key_goals: briefData.key_goals || [],
+            suggested_deliverables: briefData.suggested_deliverables || [],
+            brand_tone: briefData.brand_tone || 'N/A',
+            budget_band: briefData.budget_band || 'N/A',
+            website_summary_points: briefData.website_summary_points || [],
+        };
+    });
 };

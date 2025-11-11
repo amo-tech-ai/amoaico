@@ -5,7 +5,7 @@ import { getBriefsForUser } from '../services/briefService';
 import { Brief } from '../types';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { BotIcon, FileTextIcon, ClockIcon, PlusCircleIcon } from '../assets/icons';
+import { BotIcon, FileTextIcon, ClockIcon, PlusCircleIcon, XIcon } from '../assets/icons';
 
 const BriefCard = ({ brief, index }: { brief: Brief; index: number }) => {
     const statusStyles: { [key: string]: string } = {
@@ -44,14 +44,25 @@ export const DashboardPage = ({ onStartWizard }: { onStartWizard: () => void; })
     const { user, loading: authLoading } = useAuth();
     const [briefs, setBriefs] = useState<Brief[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (user) {
+        const fetchBriefs = async () => {
             setLoading(true);
-            getBriefsForUser().then(data => {
+            setError(null);
+            try {
+                const data = await getBriefsForUser();
                 setBriefs(data);
+            } catch (err) {
+                console.error("Failed to fetch briefs:", err);
+                setError("Could not load your project briefs. Please try again later.");
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        if (user) {
+            fetchBriefs();
         } else if (!authLoading) {
             // If auth is done and there's no user, stop loading.
             setLoading(false);
@@ -116,6 +127,14 @@ export const DashboardPage = ({ onStartWizard }: { onStartWizard: () => void; })
                             </div>
                         ))}
                     </div>
+                ) : error ? (
+                    <AnimatedElement className="text-center py-16 border-2 border-dashed border-red-300 rounded-2xl bg-red-50/50">
+                        <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+                            <XIcon className="w-8 h-8 text-red-500" />
+                        </div>
+                        <h2 className="mt-6 text-xl font-semibold font-poppins text-red-800">Something Went Wrong</h2>
+                        <p className="mt-2 text-red-700">{error}</p>
+                    </AnimatedElement>
                 ) : briefs.length > 0 ? (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {briefs.map((brief, index) => <BriefCard key={brief.id} brief={brief} index={index} />)}
