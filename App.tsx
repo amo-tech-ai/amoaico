@@ -1052,6 +1052,148 @@ const AiWebApplicationsPage = ({ onStartWizard, onNavigate }: { onStartWizard: (
     );
 };
 
+// --- AI BRIEF WIZARD COMPONENT ---
+const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
+    const [step, setStep] = useState(1);
+    const [companyName, setCompanyName] = useState('');
+    const [websiteUrl, setWebsiteUrl] = useState('');
+    const [urlError, setUrlError] = useState<string | null>(null);
+
+    const WIZARD_STEPS = [
+        { number: 1, name: 'Welcome' },
+        { number: 2, name: 'Scope Builder' },
+        { number: 3, name: 'AI Enrichment' },
+        { number: 4, name: 'Review Brief' },
+        { number: 5, name: 'Dashboard' }
+    ];
+
+    const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setWebsiteUrl(value);
+        if (urlError !== null) { // Only validate after the first interaction
+            validateUrl(value);
+        }
+    };
+    
+    const validateUrl = (value: string): boolean => {
+        if (!value) {
+            setUrlError('Website URL is required.');
+            return false;
+        }
+
+        let urlToTest = value;
+        if (!/^https?:\/\//i.test(urlToTest)) {
+            urlToTest = 'https://' + urlToTest;
+        }
+
+        try {
+            const url = new URL(urlToTest);
+            if (url.hostname === 'localhost' || url.hostname.includes('.')) {
+                setUrlError('');
+                return true;
+            }
+        } catch (_) {
+             // Fall through to error
+        }
+
+        setUrlError('Please enter a valid URL format.');
+        return false;
+    };
+    
+    const handleUrlBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        validateUrl(e.target.value);
+    };
+
+    const handleNextStep = () => {
+        const isUrlValid = validateUrl(websiteUrl);
+        if (companyName.trim() && isUrlValid) {
+            setStep(s => Math.min(s + 1, WIZARD_STEPS.length));
+        }
+    };
+    
+    const handlePrevStep = () => {
+        setStep(s => Math.max(s - 1, 1));
+    };
+
+    const isStep1Complete = companyName.trim() !== '' && websiteUrl.trim() !== '' && urlError === '';
+
+    return (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative transform transition-all duration-300 ease-out animate-slide-up">
+                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors"><XIcon className="w-6 h-6" /></button>
+                
+                <div className="mb-8">
+                    <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
+                        <span>Step {step} of {WIZARD_STEPS.length}</span>
+                        <span className="font-semibold">{WIZARD_STEPS[step-1].name}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-[#F97316] h-2 rounded-full transition-all duration-500 ease-out" style={{ width: `${(step/WIZARD_STEPS.length)*100}%` }}></div>
+                    </div>
+                </div>
+
+                {step === 1 && (
+                    <div>
+                        <h2 className="text-3xl font-bold font-poppins text-center mb-2 text-[#00334F]">Let's Start Your AI Brief</h2>
+                        <p className="text-center text-gray-600 mb-8">Tell us about your company to get started.</p>
+                        
+                        <div className="space-y-6">
+                            <div>
+                                <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                                <input 
+                                    type="text" 
+                                    id="companyName"
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
+                                    placeholder="e.g., AMO AI"
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] transition"
+                                    autoFocus
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                                <input 
+                                    type="text" 
+                                    id="websiteUrl"
+                                    value={websiteUrl}
+                                    onChange={handleUrlChange}
+                                    onBlur={handleUrlBlur}
+                                    placeholder="e.g., https://www.example.com"
+                                    className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 transition ${urlError ? 'border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-[#F97316] focus:border-[#F97316]'}`}
+                                    aria-invalid={!!urlError}
+                                    aria-describedby="url-error"
+                                />
+                                {urlError && <p id="url-error" className="text-red-600 text-sm mt-1">{urlError}</p>}
+                            </div>
+                        </div>
+
+                        <div className="mt-8 text-right">
+                            <button 
+                                onClick={handleNextStep}
+                                disabled={!isStep1Complete}
+                                className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all transform disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F97316]"
+                            >
+                                Next: Define Scope →
+                            </button>
+                        </div>
+                    </div>
+                )}
+                
+                {step > 1 && (
+                     <div className="text-center py-12">
+                        <h2 className="text-2xl font-bold font-poppins mb-4">Step {step}: {WIZARD_STEPS[step-1].name}</h2>
+                        <p className="text-gray-600 mb-8">This is a placeholder for the next steps of the wizard.</p>
+                         <div className="flex justify-center gap-4">
+                            <button onClick={handlePrevStep} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100 transition-all">Back</button>
+                            <button onClick={handleNextStep} disabled={step === WIZARD_STEPS.length} className="px-6 py-2 rounded-lg font-semibold bg-[#F97316] text-white transition-all disabled:bg-gray-300">Next</button>
+                         </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
 
 const App = () => {
     const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -1073,6 +1215,7 @@ const App = () => {
     };
     
     const startWizard = useCallback(() => setIsWizardOpen(true), []);
+    const closeWizard = useCallback(() => setIsWizardOpen(false), []);
 
     const renderPage = () => {
         switch (currentPage) {
@@ -1093,24 +1236,12 @@ const App = () => {
         }
     };
     
-    // A simple AI Brief Wizard placeholder
-    if (isWizardOpen) {
-        return (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg p-8 max-w-lg w-full relative">
-                    <button onClick={() => setIsWizardOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"><XIcon /></button>
-                    <h2 className="text-2xl font-bold font-poppins text-center mb-4">AI Brief Wizard</h2>
-                    <p className="text-center text-gray-600">This is a placeholder for the interactive AI Brief wizard. It would guide users through a series of questions to define their project scope.</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="bg-[#FFF9F5]">
             <Header onNavigate={navigateTo} currentPage={currentPage} onStartWizard={startWizard} />
             {renderPage()}
             <Footer onNavigate={navigateTo} onStartWizard={startWizard} />
+            {isWizardOpen && <AiBriefWizard onClose={closeWizard} />}
         </div>
     );
 };
