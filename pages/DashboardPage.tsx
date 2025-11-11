@@ -47,27 +47,35 @@ export const DashboardPage = ({ onStartWizard }: { onStartWizard: () => void; })
 
     useEffect(() => {
         if (user) {
-            getBriefsForUser(user.id).then(data => {
+            setLoading(true);
+            getBriefsForUser().then(data => {
                 setBriefs(data);
                 setLoading(false);
             });
+        } else if (!authLoading) {
+            // If auth is done and there's no user, stop loading.
+            setLoading(false);
+            setBriefs([]);
         }
-    }, [user]);
+    }, [user, authLoading]);
 
-    if (authLoading || loading && user) {
+    if (authLoading) {
         return (
             <SectionContainer className="text-center">
                  <div className="w-12 h-12 border-4 border-t-[#F97316] border-gray-200 rounded-full animate-spin mx-auto"></div>
-                 <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+                 <p className="mt-4 text-gray-600">Authenticating...</p>
             </SectionContainer>
         );
     }
 
     if (!user) {
          return (
-            <SectionContainer className="text-center">
-                 <h1 className="text-2xl font-bold font-poppins">Access Denied</h1>
-                 <p className="mt-2 text-gray-600">Please log in to view your dashboard.</p>
+            <SectionContainer className="text-center max-w-md mx-auto">
+                 <h1 className="text-2xl font-bold font-poppins">Access Your Dashboard</h1>
+                 <p className="mt-2 text-gray-600">Please sign in to view your project briefs. Click "Start Your AI Brief" to begin.</p>
+                 <button onClick={onStartWizard} className="mt-6 px-6 py-2.5 rounded-lg font-semibold bg-[#00334F] text-white hover:opacity-90 transition-opacity">
+                    Sign In or Sign Up
+                </button>
             </SectionContainer>
         );
     }
@@ -97,7 +105,18 @@ export const DashboardPage = ({ onStartWizard }: { onStartWizard: () => void; })
             </SectionContainer>
 
             <SectionContainer>
-                {briefs.length > 0 ? (
+                {loading ? (
+                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="border border-gray-200 rounded-xl p-6 bg-white animate-pulse">
+                                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                                <div className="h-4 bg-gray-200 rounded w-1/2 mt-2"></div>
+                                <div className="h-4 bg-gray-200 rounded mt-6"></div>
+                                <div className="h-4 bg-gray-200 rounded w-5/6 mt-2"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : briefs.length > 0 ? (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {briefs.map((brief, index) => <BriefCard key={brief.id} brief={brief} index={index} />)}
                     </div>

@@ -1,31 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
 import { User } from '../types';
 
-// Mock authentication hook
-// In a real app, this would be replaced with Supabase Auth
+// This hook adapts the Supabase user from our AuthContext to the application's expected User type.
 export const useAuth = () => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    
+    const { user: supabaseUser, loading, logout } = context;
 
-    useEffect(() => {
-        // Simulate fetching user data
-        setTimeout(() => {
-            setUser({
-                id: '8d5c4b1a-8c1c-4b3b-9c2b-1a1a1a1a1a1a',
-                fullName: 'Alex Doe',
-                avatarUrl: 'https://i.pravatar.cc/150?u=alexdoe'
-            });
-            setLoading(false);
-        }, 500);
-    }, []);
-
-    const logout = () => {
-        setLoading(true);
-        setTimeout(() => {
-            setUser(null);
-            setLoading(false);
-        }, 300);
-    };
+    let user: User | null = null;
+    if (supabaseUser) {
+        user = {
+            id: supabaseUser.id,
+            // Supabase user_metadata is where custom fields like fullName are stored.
+            fullName: supabaseUser.user_metadata?.full_name || supabaseUser.email || 'User',
+            avatarUrl: supabaseUser.user_metadata?.avatar_url || `https://i.pravatar.cc/150?u=${supabaseUser.id}`
+        };
+    }
 
     return { user, loading, logout };
 };

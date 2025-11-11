@@ -1,4 +1,5 @@
 import { BriefData } from '../types';
+import { supabase } from './supabaseClient';
 
 interface GenerationPayload {
     companyName: string;
@@ -8,38 +9,24 @@ interface GenerationPayload {
     budget: string;
 }
 
-// This service simulates a secure call to a backend Edge Function.
-// The actual Gemini API call would happen there, not on the client.
-export const generateBriefFromApi = async (
-    payload: GenerationPayload
-): Promise<BriefData> => {
-    console.log("Simulating secure API call to backend for brief generation with payload:", payload);
-    
-    // Simulate network delay of a real AI call
-    await new Promise(resolve => setTimeout(resolve, 4000));
+// This service makes a secure call to our Supabase Edge Function.
+export const generateBriefFromApi = async (payload: GenerationPayload): Promise<BriefData> => {
+    console.log("Invoking secure Supabase Edge Function 'generate-brief' with payload:", payload);
 
-    // Simulate potential failure
-    if (payload.companyName.toLowerCase().includes('fail')) {
-         throw new Error("Simulated API error: The company name triggered a failure condition.");
+    const { data, error } = await supabase.functions.invoke('generate-brief', {
+        body: payload,
+    });
+
+    if (error) {
+        console.error("Error invoking Supabase function:", error);
+        throw new Error(`Failed to generate brief: ${error.message}`);
+    }
+    
+    // The function returns the full new brief object from the DB.
+    // We just need to return the brief_data part to the UI for the review screen.
+    if (!data || !data.brief_data) {
+        throw new Error("Invalid response from Edge Function.");
     }
 
-    // Return a mock response that matches the expected schema and incorporates user input
-    const mockResponse: BriefData = {
-        overview: `This is a generated overview for ${payload.companyName}. Based on their website, they appear to be a key player in their industry, focusing on innovative solutions.`,
-        key_goals: payload.selectedGoals,
-        suggested_deliverables: [
-            `A new ${payload.projectType} to address the goal of "${payload.selectedGoals[0]}"`,
-            "An integrated analytics dashboard.",
-            "A comprehensive user onboarding flow."
-        ],
-        brand_tone: "Professional, innovative, and customer-focused",
-        budget_band: payload.budget,
-        website_summary_points: [
-            "Highlights a strong value proposition on their homepage.",
-            "Features several positive customer testimonials.",
-            "Clearly outlines their primary services or products."
-        ]
-    };
-
-    return mockResponse;
+    return data.brief_data as BriefData;
 };
