@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, Tool } from "@google/genai";
 
 // --- TYPE DEFINITIONS ---
 type Page = 'home' | 'services' | 'process' | 'projects' | 'about' | 'contact' | 'ai-brief' | 
@@ -1149,7 +1149,14 @@ const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         setGenerationMessage(loadingMessages[0]);
 
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+            // DANGER: This is a placeholder for a secure backend call.
+            // Do NOT use client-side API keys in production.
+            const API_KEY = "YOUR_API_KEY_HERE"; 
+            if (API_KEY === "YOUR_API_KEY_HERE") {
+                // Simulate an error if the key is not replaced
+                throw new Error("API_KEY not configured. Please replace the placeholder.");
+            }
+            const ai = new GoogleGenAI({ apiKey: API_KEY });
             const model = 'gemini-2.5-flash';
             
             const schema = {
@@ -1167,12 +1174,17 @@ const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
 
             const prompt = `You are a senior project strategist at a top-tier development agency. A potential client has provided the following details:
             - Company Name: ${companyName}
-            - Website URL: ${websiteUrl}
             - Project Type: ${projectType}
             - Primary Goals: ${selectedGoals.join(', ')}
             - Estimated Budget: ${BUDGET_MARKS[budget]}
 
-            Analyze the content of the website at the provided URL. Based on ALL the information, generate a structured project brief. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional. Respond ONLY with the JSON object.`;
+            Use the provided urlContext tool to analyze the content of the website. Based on ALL the information, generate a structured project brief. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional. Respond ONLY with the JSON object.`;
+            
+            const urlContextTool: Tool = {
+                urlContext: {
+                    uris: [websiteUrl]
+                }
+            };
             
             const response = await ai.models.generateContent({
                 model,
@@ -1181,7 +1193,8 @@ const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                     responseMimeType: "application/json",
                     responseSchema: schema,
                     temperature: 0.2,
-                }
+                },
+                tools: [urlContextTool]
             });
             
             const jsonText = response.text.trim();
@@ -1315,7 +1328,9 @@ const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                          )}
                          {generationStatus === 'error' && (
                              <>
-                                 <XIcon className="w-20 h-20 text-red-500 bg-red-100 rounded-full p-4"/>
+                                 <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
+                                     <XIcon className="w-10 h-10 text-red-500" />
+                                 </div>
                                  <h2 className="text-2xl font-bold font-poppins mt-8 text-[#00334F]">Generation Failed</h2>
                                  <p className="text-gray-600 mt-2">We couldn't generate the brief. Please try again.</p>
                                  <button onClick={generateBrief} className="mt-6 px-6 py-2 rounded-lg font-semibold bg-[#F97316] text-white">Retry</button>
