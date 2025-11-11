@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 
@@ -9,6 +8,7 @@ import { Footer } from './components/layout/Footer';
 // Page Components
 import { HomePage } from './pages/HomePage';
 import { AiWebApplicationsPage } from './pages/AiWebApplicationsPage';
+import { DashboardPage } from './pages/DashboardPage';
 
 // Feature Components
 import { AiBriefWizard } from './features/ai-brief-wizard/AiBriefWizard';
@@ -38,6 +38,7 @@ const App = () => {
                     <Route path="/" element={<HomePage onStartWizard={startWizard} />} />
                     <Route path="/services" element={<AiWebApplicationsPage onStartWizard={startWizard} />} />
                     <Route path="/services/web-applications" element={<AiWebApplicationsPage onStartWizard={startWizard} />} />
+                    <Route path="/dashboard" element={<DashboardPage onStartWizard={startWizard} />} />
                     {/* Fallback route to home */}
                     <Route path="*" element={<HomePage onStartWizard={startWizard} />} />
                 </Routes>

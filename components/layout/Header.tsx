@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS } from '../../data';
+import { useAuth } from '../../hooks/useAuth';
 import { MenuIcon, XIcon, ChevronDownIcon, LogoIcon } from '../../assets/icons';
+
+const UserMenu = ({ user, logout }: { user: any; logout: () => void; }) => (
+    <div className="relative">
+        <button className="flex items-center gap-2">
+             <img src={user.avatarUrl} alt={user.fullName} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" />
+        </button>
+        {/* Dropdown can be added here */}
+    </div>
+);
 
 export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [servicesOpen, setServicesOpen] = useState(false);
     const location = useLocation();
+    const { user, loading } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -58,9 +69,10 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                             }
                             return <NavLink key={link.label} to={link.href} end={link.href==='/'} className={navLinkClasses}>{link.label}</NavLink>
                         })}
+                        {user && <NavLink to="/dashboard" className={navLinkClasses}>Dashboard</NavLink>}
                     </div>
                     <div className="hidden md:block">
-                        <button onClick={onStartWizard} className="px-5 py-2.5 rounded-lg font-medium text-sm bg-[#F97316] text-white transition-transform transform hover:scale-105">Start Your AI Brief</button>
+                        {loading ? <div className="w-24 h-10 bg-gray-200 rounded-lg animate-pulse"></div> : user ? <UserMenu user={user} logout={() => {}} /> : <button onClick={onStartWizard} className="px-5 py-2.5 rounded-lg font-medium text-sm bg-[#F97316] text-white transition-transform transform hover:scale-105">Start Your AI Brief</button>}
                     </div>
                     <div className="md:hidden">
                         <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
@@ -87,6 +99,7 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                 }
                                 return <NavLink key={link.label} to={link.href} end={link.href==='/'} className="text-[#0F172A] hover:text-[#F97316] transition-colors block">{link.label}</NavLink>
                             })}
+                             {user && <NavLink to="/dashboard" className="text-[#0F172A] hover:text-[#F97316] transition-colors block">Dashboard</NavLink>}
                             <button onClick={() => { onStartWizard(); setIsOpen(false); }} className="w-full px-5 py-2.5 rounded-lg font-medium text-sm bg-[#F97316] text-white">Start Your AI Brief</button>
                         </div>
                     </div>

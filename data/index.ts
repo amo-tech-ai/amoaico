@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { NavLink as NavLinkType } from '../types';
+// FIX: Import MobileIcon from assets/icons and remove local definition.
 import { 
     CodeIcon, Share2Icon, MessageCircleIcon, PencilRulerIcon, DatabaseIcon, ZapIcon, 
     CheckCircleIcon, FlaskConicalIcon, RocketIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, 
     UserCheckIcon, BarChartIcon, WhatsAppIcon, BotIcon, CrmIcon, ShoppingCartIcon, GlobeIcon, 
-    BrainCircuitIcon
+    BrainCircuitIcon,
+    MobileIcon
 } from '../assets/icons';
 
 export const NAV_LINKS: NavLinkType[] = [
@@ -19,26 +21,6 @@ export const NAV_LINKS: NavLinkType[] = [
     { href: "/contact", label: "Contact" },
 ];
 
-// FIX: Define a component for the inline SVG to be used, and avoid JSX in .ts file.
-const MobileIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    React.createElement('svg', {
-        xmlns: "http://www.w3.org/2000/svg",
-        width: "24",
-        height: "24",
-        viewBox: "0 0 24 24",
-        fill: "none",
-        stroke: "currentColor",
-        strokeWidth: "2",
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        ...props
-    }, 
-        React.createElement('rect', { width: "14", height: "20", x: "5", y: "2", rx: "2", ry: "2" }),
-        React.createElement('path', { d: "M12 18h.01" })
-    )
-);
-
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const HOME_CORE_SERVICES = [
     { icon: React.createElement(CodeIcon), title: "AI Web Development", description: "From prompt to production-ready websites in record time." },
     { icon: React.createElement(MobileIcon), title: "AI App Development", description: "Intelligent, scalable mobile applications that learn and adapt." },
@@ -67,7 +49,6 @@ export const INVESTMENT_LEVELS = [
 ];
 
 // Process Page Data
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const PROCESS_TIMELINE_STEPS = [
     { phase: "01", title: "Discovery", summary: "Define goals", icon: React.createElement(PencilRulerIcon, { className: "w-6 h-6" }) },
     { phase: "02", title: "Design Sprint", summary: "Wireframe & prototype", icon: React.createElement(PencilRulerIcon, { className: "w-6 h-6" }) },
@@ -105,7 +86,6 @@ export const PROCESS_CALCULATOR_OPTIONS = [
 ];
 
 // Projects Page Data
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const PROJECTS_DATA = [
   {
     name: 'FashionOS',
@@ -178,7 +158,6 @@ export const PROJECTS_METRICS = [
 ];
 
 // Services Page Data
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const SERVICES_SUMMARY_FEATURES = [
     { icon: React.createElement(MessageCircleIcon, { className: "w-6 h-6" }), title: 'AI Chat Interfaces', description: 'Conversational copilots in dashboards' },
     { icon: React.createElement(ZapIcon, { className: "w-6 h-6" }), title: 'Predictive Automation', description: 'Data-driven next-best-action triggers' },
@@ -213,7 +192,6 @@ export const WHATSAPP_METRICS = [
     { value: '5-10x', label: 'ROI Potential', subtext: 'From automated sales, support, and customer retention' },
 ];
 
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const WHATSAPP_CORE_SERVICES = [
     { icon: React.createElement(WhatsAppIcon), title: 'WhatsApp Automation Setup', subtitle: 'Conversations that run themselves.', points: ['Auto-replies', 'Lead capture', 'Payment & order updates', 'Multi-language flows'] },
     { icon: React.createElement(BotIcon), title: 'AI Chat Agents & Copilots', subtitle: 'Your 24/7 sales and support team.', points: ['Conversational memory', 'Smart human handoff', 'Personalized tone', 'Analytics dashboard'] },
@@ -223,7 +201,6 @@ export const WHATSAPP_CORE_SERVICES = [
     { icon: React.createElement(GlobeIcon), title: 'Industry Solutions', subtitle: 'Tailored automation for every sector.', points: ['Booking & reservation bots', 'Menu & catalog sharing', 'Feedback & surveys', 'Event registration'] },
 ];
 
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const WHATSAPP_USE_CASES = [
     { icon: React.createElement(UserCheckIcon), title: 'Lead Generation Flow', steps: ['Ad → WhatsApp chat → AI qualifies lead → CRM sync → Auto follow-up → Payment link → Confirmation'] },
     { icon: React.createElement(ShoppingCartIcon), title: 'E-commerce Flow', steps: ['Customer chats → Browse catalog → Adds to cart → Pays in-chat → Receives updates'] },
@@ -255,7 +232,6 @@ export const WHATSAPP_FAQ = [
 ];
 
 // Tech Stack Page Data
-// FIX: Replaced JSX with React.createElement to fix parsing errors in .ts file.
 export const TECH_STACK_WHY_FEATURES = [
     { icon: React.createElement(TrendingUpIcon, { className: "w-6 h-6" }), title: "Enterprise-grade scalability & reliability" },
     { icon: React.createElement(BrainCircuitIcon, { className: "w-6 h-6" }), title: "Context-aware agents & dynamic UI" },

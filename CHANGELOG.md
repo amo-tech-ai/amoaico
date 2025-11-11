@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-08-20
+
+### Added
+-   **User Dashboard Page:** Created a new `/dashboard` route and page (`DashboardPage.tsx`) for authenticated users to view their generated project briefs.
+-   **Mock Authentication:** Implemented a new `useAuth.ts` hook to simulate a logged-in user, enabling the development of user-specific features.
+-   **Mock Data Service:** Added `services/briefService.ts` to provide mock data for the dashboard, simulating a real API call and separating data logic from the UI.
+-   **Conditional UI in Header:** The main header now dynamically displays a "Dashboard" link and a user avatar when a user is logged in, and hides the primary "Start Your AI Brief" button.
+
 ## [0.1.0] - 2024-08-19
 
 ### Added
