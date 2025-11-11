@@ -4,8 +4,7 @@ const { fontFamily } = require('tailwindcss/defaultTheme');
 module.exports = {
   content: [
     "./index.html",
-    "./App.tsx",
-    "./index.tsx",
+    "./*.tsx", // Scans root-level TSX files like App.tsx and index.tsx
     "./{assets,components,data,features,hooks,pages,services,types}/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {

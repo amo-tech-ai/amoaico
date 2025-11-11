@@ -1,7 +1,6 @@
-
 import React, { useState, useCallback } from 'react';
-import { GoogleGenAI, Type, Tool } from "@google/genai";
-import { Brief } from '../../types';
+import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
+import { BriefData } from '../../types';
 import { XIcon, CheckCircleIcon } from '../../assets/icons';
 
 export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
@@ -18,7 +17,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     // Step 3/4 State
     const [generationStatus, setGenerationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [generationMessage, setGenerationMessage] = useState('');
-    const [brief, setBrief] = useState<Brief | null>(null);
+    const [brief, setBrief] = useState<BriefData | null>(null);
 
 
     const WIZARD_STEPS = [
@@ -94,6 +93,23 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
             }
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
+            const getBriefFunctionDeclaration: FunctionDeclaration = {
+                name: 'get_brief',
+                description: 'Returns a structured project brief based on user input and website analysis.',
+                parameters: {
+                    type: Type.OBJECT,
+                    properties: {
+                        overview: { type: Type.STRING, description: 'A concise company overview based on the website content.' },
+                        key_goals: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of the primary project goals.' },
+                        suggested_deliverables: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of suggested deliverables that align with the goals.' },
+                        brand_tone: { type: Type.STRING, description: 'The perceived brand tone from the website.' },
+                        budget_band: { type: Type.STRING, description: 'The estimated budget band for the project.' },
+                        website_summary_points: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'Key takeaways or summary points from the website.' },
+                    },
+                    required: ['overview', 'key_goals', 'suggested_deliverables', 'brand_tone', 'budget_band', 'website_summary_points'],
+                },
+            };
+            
             const prompt = `You are a senior project strategist at a top-tier development agency. A potential client has provided the following details:
             - Company Name: ${companyName}
             - Website URL: ${websiteUrl}
@@ -101,43 +117,32 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
             - Primary Goals: ${selectedGoals.join(', ')}
             - Estimated Budget: ${BUDGET_MARKS[budget]}
 
-            Analyze the content of the provided website URL. Based on ALL the information, generate a structured project brief as a valid JSON object. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional. Respond ONLY with the JSON object, without any markdown formatting. The JSON schema should be:
-            {
-                "overview": "string",
-                "key_goals": ["string"],
-                "suggested_deliverables": ["string"],
-                "brand_tone": "string",
-                "budget_band": "string",
-                "website_summary_points": ["string"]
-            }`;
-            
-            const googleSearchTool: Tool = {
-                googleSearch: {}
-            };
+            Analyze the content of the provided website URL. Based on ALL the information, generate a structured project brief by calling the 'get_brief' function. The overview should be concise and based on the website's content. The 'suggested_deliverables' should align directly with the user's stated goals. Ensure the tone is factual and professional.`;
             
             const response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash',
                 contents: prompt,
                 config: {
                     temperature: 0.2,
-                    tools: [googleSearchTool],
+                    tools: [{ functionDeclarations: [getBriefFunctionDeclaration] }],
                 },
             });
             
-            let jsonText = response.text.trim();
-            if (jsonText.startsWith('```json')) {
-                jsonText = jsonText.substring(7, jsonText.length - 3).trim();
-            } else if (jsonText.startsWith('```')) {
-                 jsonText = jsonText.substring(3, jsonText.length - 3).trim();
-            }
+            const functionCall = response.functionCalls?.[0];
 
-            const parsedBrief = JSON.parse(jsonText) as Brief;
-            setBrief(parsedBrief);
-            setGenerationStatus('success');
-            
-            setTimeout(() => {
-                setStep(4);
-            }, 1000);
+            if (functionCall && functionCall.name === 'get_brief') {
+                // FIX: Cast to 'unknown' first to satisfy TypeScript's type assertion rules for complex types.
+                // This is safe because the function declaration schema ensures the structure matches BriefData.
+                const parsedBrief = functionCall.args as unknown as BriefData;
+                setBrief(parsedBrief);
+                setGenerationStatus('success');
+                
+                setTimeout(() => {
+                    setStep(4);
+                }, 1000);
+            } else {
+                 throw new Error("AI did not return the expected function call.");
+            }
 
         } catch (error) {
             console.error("Error generating brief:", error);

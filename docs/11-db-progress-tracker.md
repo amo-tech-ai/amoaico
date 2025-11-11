@@ -1,8 +1,8 @@
-# 📊 Sunai: Database & Backend Progress Tracker
+# 📊 Sunai: Database & Backend Progress Tracker (Detailed Engineering Plan)
 
 **Document Status:** Live Analysis - 2024-08-19
 **Author:** Expert Project Analyst
-**Goal:** To provide a detailed tracker for all database, security, and backend API tasks required to transform the Sunai prototype into a secure, data-persistent application using Google Cloud SQL and Supabase.
+**Goal:** To provide a detailed, step-by-step tracker for all database, security, and backend API tasks required to transform the Sunai prototype into a secure, data-persistent application using Google Cloud SQL and Supabase.
 
 ---
 
@@ -10,29 +10,26 @@
 
 | Task Name | Short Description | Status | % Complete | ✅ Confirmed | ⚠️ Missing / Failing | 💡 Next Action |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1. Infrastructure Setup** | Provision the Google Cloud SQL for PostgreSQL instance. | 🔴 **Not Started** | 0% | The `gcloud` command for instance creation is correctly documented in `docs/09-db-schema.md`. | The Cloud SQL instance has not been provisioned. No infrastructure exists. | Execute the `gcloud sql instances create` command from the documentation to create the production database instance. |
-| **2. DB Configuration** | Create the production database (`sunai_agency_prod`) and API user. | 🔴 **Not Started** | 0% | Correct `gcloud` commands for creating the database and user are available in the docs. | The logical database and the application user do not exist on the (yet to be created) instance. | Run `gcloud sql databases create` and `gcloud sql users create` after the instance is provisioned. |
-| **3. Schema Migration** | Apply the initial PostgreSQL schema to the database. | 🔴 **Not Started** | 0% | A complete, production-ready SQL script is defined in `docs/09-db-schema.md`. | All tables (`profiles`, `briefs`, `projects`) are missing. The database is empty. | Connect to the database via the Cloud SQL Auth Proxy and execute the schema script to create all necessary tables and functions. |
-| **4. Security Hardening** | Apply Row-Level Security (RLS) policies to protect user data. | 🔴 **Not Started** | 0% | Correct RLS policies for `profiles` and `briefs` are fully defined in `docs/09-db-schema.md`. | RLS is not enabled on any table. Users would be able to see each other's data if connected. | Execute the `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` and `CREATE POLICY` statements from the documentation. |
-| **5. Supabase Integration**| Connect the Supabase project to the external Google Cloud SQL instance. | 🟥 **Blocked** | 0% | The architecture relies on Supabase for Auth and Functions. | The connection step is a critical missing link. There is no documentation on configuring the Supabase project to use the external DB. | **Critical:** Create a Supabase project and use the "Connect to external database" feature. Securely add the Cloud SQL connection string to Supabase settings. |
-| **6. User Profile Trigger** | Automate profile creation for new users. | 🔴 **Not Started** | 0% | The `profiles` table correctly references `auth.users`. | New users who sign up via Supabase Auth will not have a corresponding entry in `public.profiles`, breaking the user journey. | Create a PostgreSQL trigger on `auth.users` to automatically `INSERT` a new row into `public.profiles` upon user signup. |
-| **7. API Layer: Secure AI Calls** | Implement the `/generate-brief` Edge Function. | 🔴 **Not Started** | 0% | The dataflow and logic for the secure endpoint are clearly defined in the PRD and schema docs. | The function doesn't exist. The app still uses the insecure client-side API key. | Create a Supabase Edge Function, move the Gemini API call logic into it, and add the logic to `INSERT` the brief into the database. |
-| **8. API Layer: Data Access** | Implement frontend services for database interaction. | 🔴 **Not Started** | 0% | The PRD (`docs/10-prd-ai-brief-wizard.md`) specifies the need for a user dashboard and persistent briefs. | The frontend has no way to read or write data from the database. The user dashboard is non-functional. | Create frontend service files (e.g., `services/briefService.ts`) with functions using the Supabase JS client to query and mutate data. |
+| **1. Infrastructure: Cloud SQL** | Provision and configure the production PostgreSQL instance on Google Cloud. | 🔴 **Not Started** | 0% | Commands and schema are fully documented in `docs/09-db-schema.md`. | No cloud infrastructure has been provisioned. | 1. `gcloud auth login` & `gcloud config set project`. <br> 2. Run `gcloud sql instances create`. <br> 3. Run `gcloud sql databases create` & `gcloud sql users create`. |
+| **2. Schema & Security** | Apply the database schema and Row-Level Security (RLS) policies. | 🔴 **Not Started** | 0% | SQL scripts for schema and RLS are production-ready in `docs/09-db-schema.md`. | The database is empty and insecure. RLS is not enabled. | 1. Start the Cloud SQL Auth Proxy. <br> 2. Use `psql` to execute the schema creation script. <br> 3. Execute the RLS policy script to secure user tables. |
+| **3. User Profile Trigger** | Automate profile creation in `public.profiles` when a new user signs up. | 🔴 **Not Started** | 0% | The `profiles` table correctly references `auth.users`, making a trigger possible. | Without this, Supabase Auth signups will fail because no public profile exists for the user. | Create and apply a PostgreSQL trigger on `auth.users` that runs `AFTER INSERT` to create a corresponding record in `public.profiles`. |
+| **4. Supabase Project Setup** | Create and configure the Supabase project to act as the backend layer. | 🔴 **Not Started** | 0% | The architecture correctly calls for Supabase to handle Auth and Edge Functions. | The Supabase project does not exist. The critical link to the external DB is not configured. | 1. Create a new Supabase project. <br> 2. **Crucially,** use the "Connect to external database" feature, providing the Google Cloud SQL connection string. <br> 3. Configure Supabase Auth providers. |
+| **5. Secure API Keys** | Store the Gemini API key securely within Supabase. | 🔴 **Not Started** | 0% | Storing secrets is a standard feature of Supabase Edge Functions. | The key is currently exposed on the client-side, which is a critical security flaw. | Use the Supabase CLI to create a new secret: <br> `supabase secrets set GEMINI_API_KEY your_actual_api_key` |
+| **6. API: Secure Brief Generation** | Create the `/generate-brief` Edge Function to replace the client-side AI call. | 🔴 **Not Started** | 0% | The logic is already prototyped in `AiBriefWizard.tsx`. | The function does not exist. The app remains insecure. | 1. `supabase functions new generate-brief`. <br> 2. Move the Gemini API call logic from the frontend to the new function. <br> 3. Add logic to `INSERT` the result into the `briefs` table. <br> 4. Deploy: `supabase functions deploy`. |
+| **7. API: Data Access** | Implement data services for reading and writing briefs from the database. | 🔴 **Not Started** | 0% | The `supabase-js` client library is the correct tool for this. | The frontend still uses mock data (`services/briefService.ts`). The dashboard is not connected to real data. | Refactor `briefService.ts` to use the `supabase-js` client. Implement `getBriefsForUser` to perform a `SELECT` query on the `briefs` table. |
+| **8. Frontend Integration** | Connect the React app to the new Supabase backend. | 🔴 **Not Started** | 0% | All necessary UI components and pages are already built. | The entire frontend is still operating as a standalone prototype. | 1. Replace the client-side `generateBrief` call with a call to the new Edge Function. <br> 2. Replace the mock `useAuth` hook with the real Supabase Auth provider. <br> 3. Connect the Dashboard to the live `briefService`. |
 
 ---
 
 ### 📋 **End of Report Summary**
 
 *   **What’s working:**
-    *   The **planning is flawless**. The database schema, security policies, and setup commands are documented, correct, and production-ready. This provides a clear and accurate blueprint for implementation.
-
-*   **What’s partial or needs validation:**
-    *   No partial work has been started. The entire backend and data layer are in the planning stage.
+    *   The **planning is flawless**. All required SQL schemas, security policies, and setup commands are documented and correct. This provides a clear and accurate blueprint for implementation.
 
 *   **What’s missing or blocked:**
-    *   **Everything is missing.** The entire database infrastructure and backend API layer are yet to be implemented.
-    *   🟥 **Critical Red Flag (Integration Gap):** The plan to use Supabase with an external Google Cloud SQL database is solid, but the crucial step of **connecting them** is not documented. This is a potential blocker if not addressed early. The team needs to ensure they know how to configure Supabase to use the external connection string.
+    *   **Implementation is at 0%.** The entire database infrastructure and backend API layer are yet to be built.
+    *   **The critical path** is: Provision Cloud SQL -> Create Supabase Project -> **Connect Supabase to Cloud SQL** -> Migrate Schema & RLS -> Build & Deploy Edge Function -> Integrate Frontend.
 
 ### **Overall Backend & Database Readiness Score: 5%**
 
-The project is **5% ready** solely due to the high quality of the planning and documentation. The blueprint is excellent, but no construction has begun. The next critical phase of work is to execute this plan step-by-step, starting with provisioning the cloud infrastructure. The integration gap between Supabase and Cloud SQL must be addressed as the first research/validation task.
+The project is **5% ready** solely due to the high quality of the planning and documentation. The blueprint is excellent, but no construction has begun. The next critical phase of work is to execute this plan step-by-step, starting with provisioning the cloud infrastructure and establishing the connection to Supabase.

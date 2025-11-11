@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+-   **Service Pages:** Created new pages for AI Social Media, E-Commerce, and WhatsApp Automation services, accessible via `/services/social-media`, `/services/ecommerce`, and `/services/whatsapp-automation`. This completes the core service section of the website.
+
 ## [0.2.0] - 2024-08-20
 
 ### Added
