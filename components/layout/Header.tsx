@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { NAV_LINKS } from '../../data';
+import { NAV_LINKS, SERVICE_LINKS } from '../../data';
 import { useAuth } from '../../hooks/useAuth';
 import { MenuIcon, XIcon, ChevronDownIcon, LogoIcon } from '../../assets/icons';
 
@@ -76,10 +76,11 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                         </NavLink>
                                         <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
                                             <NavLink to="/services" end className={serviceDropdownLinkClasses}>All Services</NavLink>
-                                            <NavLink to="/services/web-applications" className={serviceDropdownLinkClasses}>Web Applications</NavLink>
-                                            <NavLink to="/services/social-media" className={serviceDropdownLinkClasses}>AI Social Media</NavLink>
-                                            <NavLink to="/services/ecommerce" className={serviceDropdownLinkClasses}>E-Commerce Solutions</NavLink>
-                                            <NavLink to="/services/whatsapp-automation" className={serviceDropdownLinkClasses}>WhatsApp Automation</NavLink>
+                                            {SERVICE_LINKS.map(serviceLink => (
+                                                <NavLink key={serviceLink.href} to={serviceLink.href} className={serviceDropdownLinkClasses}>
+                                                    {serviceLink.label}
+                                                </NavLink>
+                                            ))}
                                         </div>
                                     </div>
                                 );
@@ -119,10 +120,11 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileServicesOpen ? 'max-h-96' : 'max-h-0'}`}>
                                                 <div className="pl-4 pt-2 pb-1 space-y-1 border-l-2 border-gray-200 ml-2">
                                                     <NavLink to="/services" end className={mobileServiceLinkClasses}>All Services</NavLink>
-                                                    <NavLink to="/services/web-applications" className={mobileServiceLinkClasses}>Web Applications</NavLink>
-                                                    <NavLink to="/services/social-media" className={mobileServiceLinkClasses}>AI Social Media</NavLink>
-                                                    <NavLink to="/services/ecommerce" className={mobileServiceLinkClasses}>E-Commerce Solutions</NavLink>
-                                                    <NavLink to="/services/whatsapp-automation" className={mobileServiceLinkClasses}>WhatsApp Automation</NavLink>
+                                                    {SERVICE_LINKS.map(serviceLink => (
+                                                        <NavLink key={serviceLink.href} to={serviceLink.href} className={mobileServiceLinkClasses}>
+                                                            {serviceLink.label}
+                                                        </NavLink>
+                                                    ))}
                                                 </div>
                                             </div>
                                         </div>

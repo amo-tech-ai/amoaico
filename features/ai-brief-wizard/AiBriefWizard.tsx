@@ -7,29 +7,32 @@ import { useAuth } from '../../hooks/useAuth';
 import { Auth } from '../../components/Auth';
 
 
+type WizardStep = 'auth' | 'welcome' | 'scope' | 'generating' | 'review';
+
 export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     const { user, loading: authLoading } = useAuth();
-    const [currentStep, setCurrentStep] = useState<'auth' | 'form' | 'generating' | 'review' | 'dashboard'>('auth');
+    const [wizardStep, setWizardStep] = useState<WizardStep>('auth');
     
+    // Step 1: Welcome State
     const [companyName, setCompanyName] = useState('');
     const [websiteUrl, setWebsiteUrl] = useState('');
     const [urlError, setUrlError] = useState('');
     
-    // Step 2 State
+    // Step 2: Scope State
     const [projectType, setProjectType] = useState('');
     const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
     const [budget, setBudget] = useState('25000');
     
-    // Generation State
+    // Step 3: Generation State
     const [generationStatus, setGenerationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [generationMessage, setGenerationMessage] = useState('');
+    
+    // Step 4: Review State
     const [brief, setBrief] = useState<Brief | null>(null);
-
-    const [formStep, setFormStep] = useState(1);
 
     useEffect(() => {
         if (!authLoading) {
-            setCurrentStep(user ? 'form' : 'auth');
+            setWizardStep(user ? 'welcome' : 'auth');
         }
     }, [user, authLoading]);
     
@@ -46,12 +49,36 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     };
     
     const validateUrl = (value: string): boolean => {
-        if (!value.trim()) { setUrlError('Website URL is required.'); return false; }
+        const trimmedValue = value.trim();
+        if (!trimmedValue) { 
+            setUrlError('Website URL is required.'); 
+            return false; 
+        }
+        
+        const urlToParse = trimmedValue.startsWith('http') ? trimmedValue : `https://${trimmedValue}`;
+
         try {
-            const url = new URL(value.startsWith('http') ? value : `https://${value}`);
-            if (!url.hostname.includes('.')) { throw new Error('Invalid hostname'); }
-            setUrlError(''); return true;
-        } catch (_) { setUrlError('Please enter a valid URL format.'); return false; }
+            const url = new URL(urlToParse);
+            
+            // Block localhost as it's not a public website for analysis
+            if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+                setUrlError('Local addresses cannot be analyzed. Please use a public URL.');
+                return false;
+            }
+
+            const parts = url.hostname.split('.');
+            // A valid hostname must have at least two parts (e.g., domain.com)
+            // and the top-level domain (last part) must be at least 2 characters long.
+            if (parts.length < 2 || parts[parts.length - 1].length < 2) {
+                throw new Error('Invalid domain name.');
+            }
+            
+            setUrlError(''); 
+            return true;
+        } catch (_) { 
+            setUrlError('Please enter a valid URL (e.g., example.com).'); 
+            return false; 
+        }
     };
     
     const handleGoalToggle = (goal: string) => {
@@ -59,7 +86,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     };
     
     const generateAndSaveBrief = useCallback(async () => {
-        setCurrentStep('generating');
+        setWizardStep('generating');
         setGenerationStatus('loading');
         const loadingMessages = ["Analyzing your website...", "Identifying key objectives...", "Consulting with our AI strategist...", "Generating project summary...", "Finalizing the brief..."];
         
@@ -83,7 +110,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
             if (newBrief && newBrief.overview) {
                 setBrief(newBrief);
                 setGenerationStatus('success');
-                setTimeout(() => setCurrentStep('review'), 1000);
+                setTimeout(() => setWizardStep('review'), 1000);
             } else { 
                 throw new Error("The AI service did not return a valid brief object."); 
             }
@@ -95,8 +122,8 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         }
     }, [companyName, websiteUrl, projectType, selectedGoals, budget]);
 
-    const isStep1Complete = companyName.trim() !== '' && websiteUrl.trim() !== '' && !urlError;
-    const isStep2Complete = projectType !== '' && selectedGoals.length > 0;
+    const isWelcomeStepComplete = companyName.trim() !== '' && websiteUrl.trim() !== '' && !urlError;
+    const isScopeStepComplete = projectType !== '' && selectedGoals.length > 0;
 
     const renderBriefSection = (title: string, content: string | string[]) => (
         <div>
@@ -112,59 +139,57 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     const renderContent = () => {
         if (authLoading) return <div className="flex items-center justify-center h-full"><div className="w-8 h-8 border-2 border-t-[#F97316] rounded-full animate-spin"></div></div>;
 
-        switch (currentStep) {
+        switch (wizardStep) {
             case 'auth': return <Auth />;
-            case 'form':
-                if (formStep === 1) return (
-                    <div>
-                        <h2 className="text-3xl font-bold font-poppins text-center mb-2 text-[#00334F]">Let's Start Your AI Brief</h2>
-                        <p className="text-center text-gray-600 mb-8">Tell us about your company to get started.</p>
-                        <div className="space-y-6">
-                            <div>
-                                <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                                <input type="text" id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="e.g., Sunai" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] transition" autoFocus />
-                            </div>
-                            <div>
-                                <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
-                                <input type="text" id="websiteUrl" value={websiteUrl} onChange={handleUrlChange} onBlur={() => validateUrl(websiteUrl)} placeholder="e.g., https://www.example.com" className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 transition ${urlError ? 'border-red-500' : 'border-gray-300 focus:ring-[#F97316] focus:border-[#F97316]'}`} />
-                                {urlError && <p className="text-red-600 text-sm mt-1">{urlError}</p>}
-                            </div>
+            case 'welcome': return (
+                <div>
+                    <h2 className="text-3xl font-bold font-poppins text-center mb-2 text-[#00334F]">Let's Start Your AI Brief</h2>
+                    <p className="text-center text-gray-600 mb-8">Tell us about your company to get started.</p>
+                    <div className="space-y-6">
+                        <div>
+                            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                            <input type="text" id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="e.g., Sunai" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] transition" autoFocus />
                         </div>
-                        <div className="mt-8 text-right">
-                            <button onClick={() => setFormStep(2)} disabled={!isStep1Complete} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all disabled:bg-gray-300">Next: Define Scope →</button>
+                        <div>
+                            <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                            <input type="text" id="websiteUrl" value={websiteUrl} onChange={handleUrlChange} onBlur={() => validateUrl(websiteUrl)} placeholder="e.g., https://www.example.com" className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 transition ${urlError ? 'border-red-500' : 'border-gray-300 focus:ring-[#F97316] focus:border-[#F97316]'}`} />
+                            {urlError && <p className="text-red-600 text-sm mt-1">{urlError}</p>}
                         </div>
                     </div>
-                );
-                if (formStep === 2) return (
-                    <div>
-                        <h2 className="text-3xl font-bold font-poppins text-center mb-2 text-[#00334F]">Define Your Project Scope</h2>
-                        <p className="text-center text-gray-600 mb-8">Help us understand what you want to achieve.</p>
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">What type of project is this?</label>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {PROJECT_TYPES.map(type => <button key={type} onClick={() => setProjectType(type)} className={`p-3 text-sm font-medium border rounded-lg transition-all text-left ${projectType === type ? 'bg-[#00334F] text-white border-[#00334F] ring-2' : 'hover:bg-gray-50'}`}>{type}</button>)}
-                                </div>
-                            </div>
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">What are your primary goals? (Select up to 3)</label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {GOALS.map(goal => <button key={goal} onClick={() => handleGoalToggle(goal)} disabled={selectedGoals.length >= 3 && !selectedGoals.includes(goal)} className={`p-3 text-sm font-medium border rounded-lg transition-all disabled:opacity-50 ${selectedGoals.includes(goal) ? 'bg-[#00334F] text-white border-[#00334F] ring-2' : 'hover:bg-gray-50'}`}>{goal}</button>)}
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">Estimated Budget: <span className="font-bold text-[#00334F]">{BUDGET_MARKS[budget]}</span></label>
-                                <input type="range" id="budget" min="10000" max="100000" step="15000" value={budget} onChange={(e) => setBudget(e.target.value)} className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer accent-[#F97316]" />
-                                <div className="flex justify-between text-xs text-gray-500 mt-1">{Object.values(BUDGET_MARKS).map(label => <span key={label}>{label}</span>)}</div>
+                    <div className="mt-8 text-right">
+                        <button onClick={() => setWizardStep('scope')} disabled={!isWelcomeStepComplete} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all disabled:bg-gray-300">Next: Define Scope →</button>
+                    </div>
+                </div>
+            );
+            case 'scope': return (
+                <div>
+                    <h2 className="text-3xl font-bold font-poppins text-center mb-2 text-[#00334F]">Define Your Project Scope</h2>
+                    <p className="text-center text-gray-600 mb-8">Help us understand what you want to achieve.</p>
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">What type of project is this?</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                {PROJECT_TYPES.map(type => <button key={type} onClick={() => setProjectType(type)} className={`p-3 text-sm font-medium border rounded-lg transition-all text-left ${projectType === type ? 'bg-[#00334F] text-white border-[#00334F] ring-2' : 'hover:bg-gray-50'}`}>{type}</button>)}
                             </div>
                         </div>
-                        <div className="mt-8 flex justify-between items-center">
-                             <button onClick={() => setFormStep(1)} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back</button>
-                            <button onClick={generateAndSaveBrief} disabled={!isStep2Complete} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all disabled:bg-gray-300">Next: AI Enrichment →</button>
+                         <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">What are your primary goals? (Select up to 3)</label>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                {GOALS.map(goal => <button key={goal} onClick={() => handleGoalToggle(goal)} disabled={selectedGoals.length >= 3 && !selectedGoals.includes(goal)} className={`p-3 text-sm font-medium border rounded-lg transition-all disabled:opacity-50 ${selectedGoals.includes(goal) ? 'bg-[#00334F] text-white border-[#00334F] ring-2' : 'hover:bg-gray-50'}`}>{goal}</button>)}
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">Estimated Budget: <span className="font-bold text-[#00334F]">{BUDGET_MARKS[budget]}</span></label>
+                            <input type="range" id="budget" min="10000" max="100000" step="15000" value={budget} onChange={(e) => setBudget(e.target.value)} className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer accent-[#F97316]" />
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">{Object.values(BUDGET_MARKS).map(label => <span key={label}>{label}</span>)}</div>
                         </div>
                     </div>
-                );
-                return null;
+                    <div className="mt-8 flex justify-between items-center">
+                         <button onClick={() => setWizardStep('welcome')} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back</button>
+                        <button onClick={generateAndSaveBrief} disabled={!isScopeStepComplete} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all disabled:bg-gray-300">Next: AI Enrichment →</button>
+                    </div>
+                </div>
+            );
             case 'generating': return (
                 <div className="flex flex-col items-center justify-center h-full text-center py-12">
                      {generationStatus === 'loading' && (
@@ -206,7 +231,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                         </div>
                     </div>
                      <div className="mt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
-                        <button onClick={() => { setCurrentStep('form'); setFormStep(2); }} className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back to Edit</button>
+                        <button onClick={() => setWizardStep('scope')} className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back to Edit</button>
                         <Link to="/dashboard" onClick={onClose} className="w-full sm:w-auto text-center px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all transform hover:scale-105">
                             Go to Dashboard
                         </Link>

@@ -22,27 +22,33 @@ This section outlines the primary pages accessible from the main header and foot
 
 -   **/process**
     -   **Purpose:** A detailed page explaining the agency's 8-week development methodology.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `ProcessPage.tsx`
+    -   **Status:** ✅ Implemented
 
 -   **/projects**
     -   **Purpose:** A portfolio page showcasing case studies and successful client projects.
-    -   **Status:** 🔴 Not Implemented
-    
+    -   **Component:** `ProjectsPage.tsx`
+    -   **Status:** ✅ Implemented
+
 -   **/tech-stack**
     -   **Purpose:** A page detailing the frameworks, languages, and platforms used for development.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `TechStackPage.tsx`
+    -   **Status:** ✅ Implemented
 
 -   **/resources**
     -   **Purpose:** A blog or knowledge center for articles, guides, and industry insights.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `ResourcesPage.tsx`
+    -   **Status:** ✅ Implemented
 
 -   **/about**
     -   **Purpose:** A page introducing the Sunai team, mission, and company values.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `AboutPage.tsx`
+    -   **Status:** ✅ Implemented
 
 -   **/contact**
     -   **Purpose:** A page with contact information, a contact form, and location details.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `ContactPage.tsx`
+    -   **Status:** ✅ Implemented
 
 ---
 
@@ -57,14 +63,17 @@ These pages provide in-depth information on specific service offerings and are n
 
 -   **/services/social-media**
     -   **Purpose:** Describes AI-powered social media automation services.
+    -   **Component:** `AiSocialMediaPage.tsx`
     -   **Status:** ✅ Implemented
 
 -   **/services/ecommerce**
     -   **Purpose:** Outlines AI solutions tailored for e-commerce platforms.
+    -   **Component:** `EcommercePage.tsx`
     -   **Status:** ✅ Implemented
 
 -   **/services/whatsapp-automation**
     -   **Purpose:** Explains services for creating AI-driven WhatsApp assistants and automations.
+    -   **Component:** `WhatsAppAutomationPage.tsx`
     -   **Status:** ✅ Implemented
 
 ---
@@ -75,11 +84,13 @@ These pages are typically linked from the footer and provide important legal and
 
 -   **/privacy-policy**
     -   **Purpose:** Details the company's data handling and privacy practices.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `PrivacyPolicyPage.tsx`
+    -   **Status:** ✅ Implemented
 
 -   **/terms-of-service**
     -   **Purpose:** Outlines the terms and conditions for using the website and its services.
-    -   **Status:** 🔴 Not Implemented
+    -   **Component:** `TermsOfServicePage.tsx`
+    -   **Status:** ✅ Implemented
 
 ---
 

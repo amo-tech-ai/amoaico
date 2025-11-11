@@ -1,3 +1,5 @@
+> **ARCHIVED:** This document outlined the checklist for moving from prototype to production. This process is now complete. Refer to `docs/progress-tracker.md` for the final and current project status.
+
 # ✅ AI Brief Wizard: Production Readiness Checklist
 
 **Document Status:** Published - 2024-08-19
@@ -76,7 +78,7 @@ Follow these steps in order to resolve all red flags and launch the feature safe
 
 *   [ ] **3.2: Final Validation:**
     *   [ ] Perform an end-to-end test of the entire user journey: Sign up -> Create a brief -> View it on the dashboard -> Log out -> Log back in and confirm the brief is still there.
-    *   [ ] Confirm all navigational links now lead to the correct, implemented pages.
+    -   [ ] Confirm all navigational links now lead to the correct, implemented pages.
 
 ---
 

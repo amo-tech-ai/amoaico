@@ -1,3 +1,5 @@
+> **ARCHIVED:** This document outlines an early plan for a "Pitch Deck Wizard." The project's focus later pivoted to the "AI Brief Wizard." This document is preserved for historical context but is not reflective of the final, implemented feature. Please refer to `docs/10-prd-ai-brief-wizard.md` for the definitive product requirements.
+
 🚀 Best Practices Plan: Full-Stack Pitch Deck Wizard
 
 **Document Status:** Published - 2024-08-18

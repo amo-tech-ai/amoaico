@@ -25,6 +25,13 @@ export const NAV_LINKS: NavLinkType[] = [
     { href: "/contact", label: "Contact" },
 ];
 
+export const SERVICE_LINKS = [
+    { href: '/services/web-applications', label: 'Web Applications' },
+    { href: '/services/social-media', label: 'AI Social Media' },
+    { href: '/services/ecommerce', label: 'E-Commerce Solutions' },
+    { href: '/services/whatsapp-automation', label: 'WhatsApp Automation' },
+];
+
 export const HOME_CORE_SERVICES = [
     { icon: React.createElement(CodeIcon), title: "AI Web Development", description: "From prompt to production-ready websites in record time." },
     { icon: React.createElement(MobileIcon), title: "AI App Development", description: "Intelligent, scalable mobile applications that learn and adapt." },

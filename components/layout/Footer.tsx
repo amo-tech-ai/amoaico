@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SectionContainer } from './SectionContainer';
 import { AnimatedElement } from '../animations/AnimatedElement';
 import { BotIcon, LogoIcon } from '../../assets/icons';
+import { SERVICE_LINKS } from '../../data';
 
 export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     const contactInfo = [
@@ -53,10 +54,11 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                             <div>
                                 <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400">Services</h3>
                                 <ul className="mt-4 space-y-2 text-sm">
-                                    <li><Link to="/services/web-applications" className="text-gray-300 hover:text-white">Web Applications</Link></li>
-                                    <li><Link to="/services/social-media" className="text-gray-300 hover:text-white">AI Social Media</Link></li>
-                                    <li><Link to="/services/ecommerce" className="text-gray-300 hover:text-white">E-Commerce</Link></li>
-                                    <li><Link to="/services/whatsapp-automation" className="text-gray-300 hover:text-white">WhatsApp Automation</Link></li>
+                                    {SERVICE_LINKS.map(link => (
+                                        <li key={link.href}>
+                                            <Link to={link.href} className="text-gray-300 hover:text-white">{link.label}</Link>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                             <div>

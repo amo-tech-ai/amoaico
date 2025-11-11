@@ -21,7 +21,6 @@ export const Auth = () => {
                         }
                     }
                 }}
-                providers={['google']}
                 theme="light"
             />
         </div>

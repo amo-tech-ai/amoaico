@@ -1,3 +1,5 @@
+> **ARCHIVED:** This document was used for planning the database and backend migration. This migration is now complete. Refer to `docs/progress-tracker.md` for the final and current project status.
+
 # 📊 Sunai: Database & Backend Progress Tracker (Detailed Engineering Plan)
 
 **Document Status:** Live Analysis - 2024-08-19
