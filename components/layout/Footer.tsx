@@ -5,6 +5,11 @@ import { AnimatedElement } from '../animations/AnimatedElement';
 import { BotIcon, LogoIcon } from '../../assets/icons';
 
 export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+    const contactInfo = [
+        { label: 'info@sunai.co', href: 'mailto:info@sunai.co' },
+        { label: '+1 416-500-3053', href: 'tel:+14165003053' },
+        { label: 'Chat on WhatsApp', href: 'https://wa.me/14165003053', isWa: true },
+    ];
     return (
         <>
             <SectionContainer className="bg-white border-t border-gray-200">
@@ -32,6 +37,11 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                 <span className="text-xl font-semibold font-poppins">Sunai</span>
                             </Link>
                             <p className="mt-4 text-gray-300 text-sm">Built by Intelligence, Measured by Results.</p>
+                             <div className="mt-6 space-y-2 text-sm">
+                                {contactInfo.map(info => (
+                                     <a key={info.label} href={info.href} target={info.isWa ? '_blank' : undefined} rel={info.isWa ? 'noopener noreferrer' : undefined} className="block text-gray-300 hover:text-white transition-colors">{info.label}</a>
+                                ))}
+                            </div>
                         </div>
                         <div className="lg:col-span-9 grid grid-cols-2 md:grid-cols-4 gap-8">
                             <div>

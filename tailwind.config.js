@@ -14,6 +14,7 @@ module.exports = {
         'sunai-slate': '#0F172A',
         'sunai-orange': '#F97316',
         'sunai-blue': '#00334F',
+        'whatsapp-green': '#25D366',
       },
       fontFamily: {
         sans: ['Inter', ...fontFamily.sans],

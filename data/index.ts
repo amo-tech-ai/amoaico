@@ -5,7 +5,13 @@ import {
     CheckCircleIcon, FlaskConicalIcon, RocketIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, 
     UserCheckIcon, BarChartIcon, WhatsAppIcon, BotIcon, CrmIcon, ShoppingCartIcon, GlobeIcon, 
     BrainCircuitIcon,
-    MobileIcon
+    MobileIcon,
+    ShieldCheckIcon,
+    TargetIcon,
+    HeartIcon,
+    GemIcon,
+    SparklesIcon,
+    TrendingUpIconV2
 } from '../assets/icons';
 
 export const NAV_LINKS: NavLinkType[] = [
@@ -47,104 +53,113 @@ export const INVESTMENT_LEVELS = [
 ];
 
 // Process Page Data
-export const PROCESS_TIMELINE_STEPS = [
-    { phase: "01", title: "Discovery", summary: "Define goals", icon: React.createElement(PencilRulerIcon, { className: "w-6 h-6" }) },
-    { phase: "02", title: "Design Sprint", summary: "Wireframe & prototype", icon: React.createElement(PencilRulerIcon, { className: "w-6 h-6" }) },
-    { phase: "03", title: "Frontend Build", summary: "UI development", icon: React.createElement(CodeIcon, { className: "w-6 h-6" }) },
-    { phase: "04", title: "Backend Build", summary: "API & database", icon: React.createElement(DatabaseIcon, { className: "w-6 h-6" }) },
-    { phase: "05", title: "Integration", summary: "Connect systems", icon: React.createElement(ZapIcon, { className: "w-6 h-6" }) },
-    { phase: "06", title: "Testing", summary: "QA & feedback", icon: React.createElement(FlaskConicalIcon, { className: "w-6 h-6" }) },
-    { phase: "07", title: "Pre-Launch", summary: "Final review", icon: React.createElement(CheckCircleIcon, { className: "w-6 h-6" }) },
-    { phase: "08", title: "Launch", summary: "Deploy & monitor", icon: React.createElement(RocketIcon, { className: "w-6 h-6" }) }
+export const PROCESS_PAGE_TIMELINE = [
+    { phase: "01", title: "Design Sprint", duration: "1 Week", description: "Research, wireframes, and specifications.", icon: React.createElement(PencilRulerIcon, { className: "w-8 h-8" }) },
+    { phase: "02", title: "Build", duration: "4 Weeks", description: "Development, integrations, and testing setup.", icon: React.createElement(ZapIcon, { className: "w-8 h-8" }) },
+    { phase: "03", title: "Test", duration: "1 Week", description: "QA, bug fixes, usability validation.", icon: React.createElement(ShieldCheckIcon, { className: "w-8 h-8" }) },
+    { phase: "04", title: "Launch & Scale", duration: "2 Weeks", description: "Deployment, analytics, and optimization.", icon: React.createElement(RocketIcon, { className: "w-8 h-8" }) }
 ];
 
-export const PROCESS_PHASES = [
-    { title: "Design Sprint", weeks: "Week 1-2", points: ["Goal definition & strategy workshops", "User flow & architecture mapping", "Interactive wireframing", "High-fidelity UI prototyping"] },
-    { title: "Rapid Build", weeks: "Week 3-4", points: ["AI-assisted frontend development", "Headless CMS & API setup", "Backend logic and database schema", "Initial component library creation"] },
-    { title: "Testing & Integration", weeks: "Week 5-6", points: ["Third-party API integrations", "End-to-end testing cycles", "User acceptance testing (UAT)", "Performance & security audits"] },
-    { title: "Launch & Scale", weeks: "Week 7-8", points: ["Vercel/Supabase deployment", "CDN & caching configuration", "Live monitoring and analytics setup", "Post-launch support & handover"] }
+export const PROCESS_PAGE_COMPARISON = [
+    { category: 'Project Duration', sunai: '8 Weeks', traditional: '6+ Months' },
+    { category: 'Feedback Loops', sunai: 'Weekly', traditional: 'Monthly' },
+    { category: 'Time to Market', sunai: '2 Months', traditional: '6-12 Months' },
+    { category: 'Risk Level', sunai: 'Low', traditional: 'High' }
 ];
 
-export const PROCESS_COMPARISON = {
-    sixMonths: ["Lengthy discovery phases", "Slow, manual coding", "Siloed teams, delayed feedback", "Risk of scope creep"],
-    eightWeeks: ["Agile, focused sprints", "AI-accelerated development", "Transparent, weekly check-ins", "Fixed scope, predictable delivery"]
-};
-
-export const PROCESS_METRICS = [
-    { value: "47", label: "Projects Completed" },
-    { value: "8.2", label: "Avg. Weeks to Launch", decimals: 1 },
-    { value: "9.4", label: "Avg. Satisfaction", unit: "/ 10", decimals: 1 },
-    { value: "293", label: "Avg. Client ROI", unit: "%" }
+export const PROCESS_PAGE_METRICS = [
+    { value: "2", unit: "x", label: "Faster than industry average" },
+    { value: "98", unit: "%", label: "On-time delivery" },
+    { value: "24", unit: "", label: "Successful launches", isPlus: true }
 ];
 
-export const PROCESS_CALCULATOR_OPTIONS = [
-    { name: "Website", time: "8 Weeks" },
-    { name: "Automation", time: "6 Weeks" },
-    { name: "App", time: "10 Weeks" },
+export const PROCESS_PAGE_QUALITY_METRICS = [
+    { label: "Code Coverage", value: "95%" },
+    { label: "Security", value: "A+" },
+    { label: "Accessibility", value: "AA" }
+];
+
+export const PROCESS_PAGE_CALCULATOR = [
+    { name: "MVP", time: "4–6 weeks", icon: React.createElement(RocketIcon, { className: "w-8 h-8" }) },
+    { name: "Standard App", time: "6–8 weeks", icon: React.createElement(CodeIcon, { className: "w-8 h-8" }) },
+    { name: "Complex System", time: "8–12 weeks", icon: React.createElement(BrainCircuitIcon, { className: "w-8 h-8" }) },
+    { name: "Enterprise", time: "12+ weeks", icon: React.createElement(Share2Icon, { className: "w-8 h-8" }) }
 ];
 
 // Projects Page Data
-export const PROJECTS_DATA = [
+export const PROJECTS_PAGE_STORIES = [
   {
+    industry: 'E-commerce',
     name: 'FashionOS',
-    subtitle: 'From 3 Days to 3 Minutes',
-    industry: 'Fashion & Events',
-    duration: '8 weeks',
-    challenge: 'Fashion Week Global struggled with a complex 3-day event setup process requiring 190+ staff members with a 1.2% error rate.',
-    solution: 'Built FashionOS, a comprehensive AI-powered event management platform automating 90% of coordination between designers, models, venues, and sponsors.',
+    subtitle: 'AI-Powered Fashion Marketplace',
+    challenge: 'A fashion startup needed a full e-commerce platform with AI-driven product recommendations and inventory management in 8 weeks.',
+    solution: 'We deployed a complete marketplace with AI recommendations, payment processing, and CRM integration using Supabase, Stripe, and custom ML models.',
     metrics: [
-      { value: '97', label: 'Time Reduction', unit: '%', icon: React.createElement(ClockIcon, { className: "w-5 h-5" }) },
-      { value: '406', label: 'Cost Savings', unit: 'K', prefix: '$', icon: React.createElement(DollarSignIcon, { className: "w-5 h-5" }) },
-      { value: '300', label: 'ROI', unit: '%', icon: React.createElement(TrendingUpIcon, { className: "w-5 h-5" }) },
+      { value: '97', unit: '%', label: 'User Satisfaction' },
+      { value: '65', unit: 'K+', label: 'Monthly Users' },
+      { value: '300', unit: '%', label: 'Conversion Increase' },
     ],
-    technologies: ['React', 'Next.js', 'Supabase', 'CrewAI', 'WhatsApp API', 'Stripe'],
+    techStack: ['React', 'Supabase', 'Stripe', 'OpenAI'],
     testimonial: {
-      quote: "AMO AI transformed our entire operation. What used to take us 3 days and 190 people now happens in 3 minutes with complete accuracy.",
-      author: 'David Kim',
-      title: 'Operations Director'
-    },
-    image: 'FashionOS screenshot',
-    roiBadge: '300% ROI'
+      quote: "Sunai transformed our vision into reality. The AI recommendations increased our average order value by 40%.",
+      author: 'Sarah Chen',
+      title: 'Founder'
+    }
   },
   {
+    industry: 'SaaS',
     name: 'AutoMax AI',
-    subtitle: '$4.3M Monthly GMV Marketplace',
-    industry: 'Automotive',
-    duration: '12 weeks',
-    challenge: 'Needed to connect 500 dealers with a unified platform handling 50,000+ vehicle listings while providing intelligent search capabilities.',
-    solution: 'Developed a comprehensive AI marketplace with advanced search algorithms, real-time inventory sync, and ML-powered recommendations.',
-     metrics: [
-      { value: '4.3', label: 'Monthly GMV', unit: 'M', prefix: '$', decimals: 1, icon: React.createElement(DollarSignIcon, { className: "w-5 h-5" }) },
-      { value: '500', label: 'Dealers Connected', unit: '+', icon: React.createElement(Share2Icon, { className: "w-5 h-5" }) },
-      { value: '95', label: 'Search Accuracy', unit: '%', icon: React.createElement(CheckCircleIcon, { className: "w-5 h-5" }) },
+    subtitle: '$4.2M Monthly Revenue With Automation',
+    challenge: 'Manual car lead processing was costing $50K/month and losing potential customers to competitors due to slow response times.',
+    solution: 'Developed multi-agent AI system to qualify leads, schedule test drives, and automate follow-ups via WhatsApp and email.',
+    metrics: [
+      { value: '4.2', unit: 'M', label: 'Monthly Revenue', prefix: '$' },
+      { value: '90', unit: '%', label: 'Automation Rate' },
+      { value: '-85', unit: '%', label: 'Processing Time' },
     ],
-    technologies: ['React', 'Next.js', 'Supabase', 'OpenAI', 'Elasticsearch', 'Stripe Connect'],
+    techStack: ['FastAPI', 'CrewAI', 'WhatsApp API', 'HubSpot'],
     testimonial: {
-      quote: "The AI-powered search and recommendations completely transformed how our customers find vehicles. Conversion rates increased 60%.",
-      author: 'Robert Wilson',
-      title: 'VP of Technology'
-    },
-    image: 'AutoMax AI screenshot',
-    roiBadge: '95% ROI'
+      quote: "This AI assistant freed up our sales team to focus on closing deals. ROI was 7x in the first quarter.",
+      author: 'Michael Rodriguez',
+      title: 'CEO'
+    }
   },
+  {
+    industry: 'Tourism',
+    name: 'I Love Medellin',
+    subtitle: 'Website Translation Platform',
+    challenge: 'A tourism company needed to manage 1,000+ hotel listings with real-time translation to 8 languages.',
+    solution: 'Created AI-powered booking platform with automated multi-language support and dynamic pricing engine.',
+    metrics: [
+      { value: '98', unit: '%', label: 'International Bookings', prefix: '+' },
+      { value: '8', unit: '', label: 'Languages' },
+      { value: '97.5', unit: '%', label: 'Translation Accuracy' },
+    ],
+    techStack: ['Next.js', 'Supabase', 'Google AI', 'Stripe'],
+    testimonial: {
+      quote: "The platform expanded our market reach by 400%. AI translation quality rivals human translators.",
+      author: 'Carlos Martinez',
+      title: 'Director'
+    }
+  }
 ];
 
-export const TECH_STACK_CATEGORIES = [
+export const PROJECTS_TECH_STACK = [
     {
         title: "Frontend & Development",
-        technologies: ["Vite", "React", "Tailwind", "Mantine"],
+        technologies: ["Vite", "React", "Next.js", "TypeScript", "Tailwind CSS"],
     },
     {
         title: "AI & Orchestration",
-        technologies: ["CopilotKit", "CrewAI", "LangGraph", "Tavily"],
+        technologies: ["CrewAI", "LangChain", "Anthropic", "OpenAI", "CopilotKit"],
     },
     {
-        title: "Integration & Automation",
-        technologies: ["Supabase Functions", "n8n", "WhatsApp API"],
+        title: "AI Intelligence & Assist",
+        technologies: ["Cursor", "Perplexity", "ChatGPT", "Claude"],
     },
     {
-        title: "Infrastructure",
-        technologies: ["Supabase", "Stripe", "GitHub", "Cloudinary"],
+        title: "Data & Infrastructure",
+        technologies: ["Supabase", "PostgreSQL", "Firebase", "Stripe"],
     },
 ];
 
@@ -258,4 +273,58 @@ export const TECH_STACK_FAQ = [
     { q: "Can you integrate with our existing data stack?", a: "Yes. We specialize in creating seamless integrations with existing databases, CRMs, and internal tools. Our process includes a thorough discovery phase to map out all necessary data connections." },
     { q: "How do you maintain security & compliance?", a: "Security is paramount. We leverage Supabase's enterprise-grade security features, including row-level security and JWT-based authentication. All code undergoes security audits, and we follow best practices for data handling and compliance." },
     { q: "What’s the timeline for stack deployment?", a: "Our 8-week process includes full stack deployment. A basic infrastructure can be up in the first two weeks, with continuous deployment and integration throughout the project lifecycle." },
+];
+
+// About Page Data
+export const ABOUT_PAGE_HERO_METRICS = [
+    { value: "50", unit: "+", label: "Live AI Apps" },
+    { value: "2-8", unit: "", label: "Week Delivery" },
+    { value: "293", unit: "%", label: "Average ROI" },
+    { value: "100", unit: "%", label: "Production Ready" },
+];
+
+export const ABOUT_PAGE_MISSION_VISION = [
+    { icon: React.createElement(TargetIcon), title: "Mission", description: "To empower businesses with AI solutions that are production-ready, cost-effective, and deliver measurable results in weeks, not months." },
+    { icon: React.createElement(HeartIcon), title: "Vision", description: "To become the world's leading platform for rapid AI application development, making enterprise-grade AI accessible to every business." },
+    { icon: React.createElement(GemIcon), title: "Values", description: "Speed, transparency, and quality. We believe in delivering production-ready solutions fast without compromising on excellence." },
+];
+
+export const ABOUT_PAGE_WHY_CHOOSE_US = [
+    { icon: React.createElement(ZapIcon), title: "Lightning-Fast Delivery", description: "Go from concept to production in 2-4 weeks. No lengthy development cycles.", highlight: "8x faster than traditional dev" },
+    { icon: React.createElement(SparklesIcon), title: "Cutting-Edge AI Expertise", description: "Latest AI models and frameworks integrated seamlessly into your business.", highlight: "GPT-4, Claude, Custom Models" },
+    { icon: React.createElement(TrendingUpIconV2), title: "Proven Track Record", description: "50+ live AI applications serving thousands of users daily.", highlight: "293% average ROI" },
+    { icon: React.createElement(ShieldCheckIcon), title: "Enterprise Security", description: "SOC-compliant applications with enterprise-grade security built-in.", highlight: "Bank-level encryption" },
+];
+
+export const ABOUT_PAGE_WHY_CHOOSE_US_METRICS = [
+    { value: "50", unit: "+", label: "Live AI Applications" },
+    { value: "90", unit: "%", label: "Process Automation" },
+    { value: "3", unit: "", label: "Month ROI" },
+];
+
+export const ABOUT_PAGE_PROCESS_STEPS = [
+    { step: 1, title: "Discovery & Planning", description: "We dive deep into your business goals, AI needs, and technical requirements through detailed workshops and analysis.", deliverables: ["AI Requirements Workshop", "Technical Scope Definition"] },
+    { step: 2, title: "AI Architecture & Design", description: "We architect your AI solution using best practices and create intuitive designs for optimal user experience.", deliverables: ["AI System Design", "UI/UX Wireframes"] },
+    { step: 3, title: "Development", description: "Our team builds your AI application using cutting-edge technologies and AI frameworks, with weekly progress updates.", deliverables: ["AI Model Integration", "Weekly Demos"] },
+    { step: 4, title: "Testing & Optimization", description: "Rigorous testing and AI model optimization ensure your application performs flawlessly in production.", deliverables: ["AI Performance Evaluation", "Load Testing"] },
+    { step: 5, title: "Launch & Support", description: "We deploy your AI vision and provide ongoing support to ensure continuous success.", deliverables: ["Production Deployment", "30-Day Support"] },
+];
+
+export const ABOUT_PAGE_TESTIMONIALS = [
+    { stars: 5, rating: "4.9/5", category: "Client Satisfaction", quote: "AMO AI delivered our WhatsApp automation platform in just 3 weeks. Game-changing results.", author: "Sarah Chen", company: "CEO, TechStart Inc", metric: "85% faster response time" },
+    { stars: 5, rating: "100%", category: "On-Time Delivery", quote: "The 8-week timeline was perfect. We launched on schedule and saw immediate ROI.", author: "Michael Rodriguez", company: "CTO, Enterprise Solutions", metric: "60% cost reduction" },
+    { stars: 5, rating: "293%", category: "Average ROI", quote: "Our AI chatbot reduced support costs by 60% in the first month. Incredible value.", author: "Emily Watson", company: "VP Operations, RetailCo", metric: "60% cost reduction" },
+];
+
+export const ABOUT_PAGE_TRUSTED_METRICS = [
+    { value: "50", unit: "+", label: "Live Apps" },
+    { value: "4.9/5", unit: "", label: "Client Rating" },
+    { value: "100", unit: "%", label: "On-Time" },
+    { value: "293", unit: "%", label: "Avg ROI" },
+];
+
+export const ABOUT_PAGE_BUILD_FUTURE_CARDS = [
+    { icon: React.createElement(MessageCircleIcon), title: "Book a Call", description: "Schedule a free consultation", cta: "Schedule Free Call →" },
+    { icon: React.createElement(PencilRulerIcon), title: "View Process", description: "Learn about our 8-week methodology", cta: "See Process →" },
+    { icon: React.createElement(BotIcon), title: "Submit AI Brief", description: "Get a custom project quote", cta: "Start Your Project →", primary: true },
 ];
