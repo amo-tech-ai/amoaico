@@ -1,10 +1,11 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { SectionContainer } from './layout/SectionContainer';
 
 export const AdminRoute = () => {
     const { user, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
         return (
@@ -21,10 +22,9 @@ export const AdminRoute = () => {
     }
 
     if (user.role !== 'admin') {
-        // If logged in but not an admin, show an access denied message or redirect.
-        // Redirecting is often a better UX.
+        // If logged in but not an admin, redirect to the home page with an error message.
         console.warn("Access denied: User is not an admin.");
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/" state={{ from: location, error: "Access Denied: You do not have permission to view this page." }} replace />;
     }
 
     // If loading is finished and user is an admin, render the nested route.

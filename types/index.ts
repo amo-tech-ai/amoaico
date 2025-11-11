@@ -35,3 +35,16 @@ export interface User {
     avatarUrl?: string;
     role?: string;
 }
+
+// Type for a single project story/case study
+export interface ProjectStory {
+    id: string;
+    name: string;
+    industry: string;
+    subtitle: string;
+    challenge: string;
+    solution: string;
+    metrics: { value: string; unit: string; label: string; prefix?: string; }[];
+    techStack: string[];
+    testimonial: { quote: string; author: string; title: string; };
+}

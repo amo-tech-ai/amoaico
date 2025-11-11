@@ -1,8 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These variables are expected to be set in the environment.
-// In a production environment, these variables must be set on the hosting platform.
-// For local development, you might use a .env file.
+// In this environment, environment variables are injected into `process.env`.
+// We use this instead of Vite's `import.meta.env`.
 const supabaseUrl = process.env.SUPABASE_URL || 'https://void.supabase.co';
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'placeholder-anon-key';
 

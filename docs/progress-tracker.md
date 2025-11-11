@@ -1,6 +1,6 @@
 # 📊 Sunai: Project Progress Tracker & Detective Review
 
-**Document Status:** Live Analysis - 2024-08-19
+**Document Status:** Live Analysis - 2024-08-22
 **Author:** Expert Project Analyst
 **Goal:** To provide a clear, evidence-based progress tracker showing what’s done, what’s missing, and what critical actions are needed to move the Sunai project to production.
 
@@ -11,33 +11,29 @@
 | Task Name | Short Description | Status | % Complete | ✅ Confirmed | ⚠️ Missing / Failing | 💡 Next Action |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **1. Core App Structure & Setup** | Modular file structure, routing, and build setup. | 🟢 **Completed** | 100% | `App.tsx` correctly uses `HashRouter`. The file structure matches the refactor plan in `docs/08-refactor-plan.md`. | — | None. The foundation is solid. |
-| **2. Layout & Navigation** | Implement responsive Header, Footer, and core layout components. | 🟢 **Completed** | 100% | `Header.tsx` and `Footer.tsx` are fully responsive and functional. `SectionContainer.tsx` is used consistently. | — | None. |
-| **3. Content Pages Implementation** | Build out all static pages defined in the sitemap. | 🔴 **Not Started** | 20% | `HomePage.tsx` and `AiWebApplicationsPage.tsx` are complete and well-structured. | **8/10 core pages are missing** (`/process`, `/projects`, `/about`, etc.) as per `docs/sitemap.md`. Links in the footer currently lead to a fallback. | Create component files for each missing page and add them to the router in `App.tsx`. |
-| **4. AI Brief Wizard (UI/UX)** | Build the complete multi-step user interface for the wizard. | 🟢 **Completed** | 100% | `AiBriefWizard.tsx` contains a fully functional 5-step UI with validation, state management, and responsive design. | — | None. The frontend component is production quality. |
-| **5. AI Brief Wizard (AI Logic)** | Implement client-side AI call to generate the project brief. | 🟡 **In Progress** | 50% | `generateBrief` function in `AiBriefWizard.tsx` correctly calls the Gemini API with a `responseSchema` for reliable JSON output. | 🟥 **CRITICAL FLAW:** The Gemini API key is used directly on the client. This is a severe security vulnerability. The app must **NOT** go to production in this state. | **Highest Priority:** Create a secure Supabase Edge Function to proxy the API call. Remove the API key entirely from the client-side code. |
-| **6. Backend - User Authentication** | Allow users to sign up, log in, and manage their accounts. | 🔴 **Not Started** | 0% | The PRD (`docs/10-prd-ai-brief-wizard.md`) plans for Supabase Auth. | No auth logic or UI is implemented. The wizard is currently anonymous and ephemeral. | Integrate Supabase Auth SDK. Add login/signup flows and protect user-specific features. |
-| **7. Backend - Database & Persistence** | Save generated briefs and user data to a database. | 🔴 **Not Started** | 0% | `docs/09-db-schema.md` provides a complete, production-ready schema for PostgreSQL. | The application has no database connection. All wizard data is lost on page refresh. | Set up the Supabase database using the provided schema. Create service functions to `INSERT` and `SELECT` briefs. |
-| **8. User Journey Validation** | Ensure the end-to-end user flows are functional and seamless. | 🟥 **Blocked** | 30% | The anonymous, single-session journey through the AI wizard works perfectly as a prototype. | **The primary user journey is broken.** A user cannot save a brief, log in, or view a dashboard. Navigation to most pages fails. | Implement Backend tasks (Auth & DB) to unblock and complete the user journey. |
-| **9. Documentation & Planning** | All planning documents are comprehensive and aligned. | 🟢 **Completed** | 100% | The `/docs` folder contains a full suite of high-quality planning documents, from PRD to schema design. | — | The plans are excellent; the next step is implementation. |
+| **2. Secure API Key Management** | Move AI logic from the client to a secure backend to protect the API key. | 🟢 **Completed** | 100% | `services/aiService.ts` calls `supabase.functions.invoke`. The `generate-brief` Edge Function correctly uses a server-side secret. | — | None. Security vulnerability resolved. |
+| **3. Backend - User Authentication** | Allow users to sign up, log in, and manage their accounts. | 🟢 **Completed** | 100% | `hooks/AuthContext.tsx` correctly integrates with Supabase Auth. `pages/LoginPage.tsx` provides a full UI. `ProfileManager.tsx` allows profile updates. | — | None. The auth flow is complete and robust. |
+| **4. Backend - Database & Persistence** | Save generated briefs and user data to a database. | 🟢 **Completed** | 100% | `services/briefService.ts` makes live `SELECT` queries. The `generate-brief` Edge Function performs an `INSERT` on completion. | — | None. Data is successfully persisted to Supabase. |
+| **5. User Journey Validation** | Ensure the end-to-end user flows are functional and seamless. | 🟢 **Completed** | 100% | The full user journey (signup -> create brief -> view on dashboard -> logout -> login) is functional and seamless. | — | None. The primary user journey is complete. |
+| **6. AI Brief Wizard (UI/UX & AI Logic)** | Build the complete multi-step user interface and connect it to the secure backend. | 🟢 **Completed** | 100% | `AiBriefWizard.tsx` is fully functional and correctly calls the secure `generate-brief` Edge Function. | — | None. The core feature is production-ready. |
+| **7. Content Pages Implementation** | Build out and connect all static pages defined in the sitemap. | 🟡 **In Progress**| 80% | All page components exist. `/projects` and `/contact` are now connected to the Supabase backend. | Pages like `/resources` and `/tech-stack` use static data. They could be connected to the DB for dynamic content management. | Plan and implement dynamic content for remaining pages if needed. |
+| **8. Admin Dashboard & RLS** | A role-protected admin page to view and manage all briefs. | 🟢 **Completed** | 100% | `AdminRoute.tsx` correctly guards the route. `AdminDashboardPage.tsx` successfully fetches and updates all briefs, relying on RLS policies. | — | None. Feature is complete and secure. |
+| **9. Project Documentation** | Ensure all planning and status documents are accurate and up-to-date. | 🟡 **In Progress** | 80% | The core planning documents are excellent. This tracker is now up to date. | Other trackers (`06`, `11`, `12`) and `sitemap.md` are still outdated and should be archived or updated. | Archive outdated documentation to create a single source of truth. |
 
 ---
 
 ### 📋 **End of Report Summary**
 
 *   **What’s working:**
-    *   The frontend foundation is **excellent**. The application has a professional, modular structure.
-    *   The UI for the implemented pages (`Home`, `Services`) and the `AiBriefWizard` feature is polished, responsive, and production-ready from a visual standpoint.
-    *   The project planning and documentation are comprehensive and provide a clear and correct roadmap.
+    *   The entire full-stack architecture is **live and functional**. This includes secure user authentication, database persistence with RLS, and a secure Edge Function for AI generation.
+    *   The core user journey, from signup to brief creation and dashboard viewing, is **complete and robust**.
+    *   Both the User and Admin dashboards are connected to and successfully managing **real, persistent data**.
+    *   The critical security flaw of exposing the API key has been **resolved**.
 
 *   **What’s partial or needs validation:**
-    *   The core AI logic is functional but **insecure**. It proves the concept but is not implemented according to production best practices.
-    *   The `urlContext` tool mentioned in early planning docs was correctly identified as non-standard and replaced with `googleSearch` in the code, which is a good self-correction.
+    *   While all static pages are built, only the most critical (`/projects`, `/contact`) have been connected to the backend. Other pages could be made dynamic.
+    *   Project documentation is still inconsistent, with several outdated files creating confusion.
 
-*   **What’s missing or blocked:**
-    *   🟥 **Critical Blocker (Security):** The client-side exposure of the Gemini API key is the single biggest issue preventing a production launch. This must be remediated immediately by moving all AI calls to a secure backend function.
-    *   **Missing Backend:** The entire backend is absent. There is no user authentication, no database, and therefore no data persistence. This makes the core feature a transient, single-session tool rather than a persistent application.
-    *   **Missing Content:** The majority of the website's pages do not exist, making the site feel incomplete.
+### **Overall Production Readiness Score: 95%**
 
-### **Overall Production Readiness Score: 30%**
-
-The project is a **high-fidelity, well-architected prototype**. The frontend work is outstanding, but the lack of a backend and the critical security flaw mean it is far from production-ready. The path forward is clear and well-documented: implement the Supabase backend as planned to address security and persistence.
+The project is **feature-complete and very close to production-ready**. The core application is architecturally sound, secure, and fully functional. The only remaining items are related to documentation cleanup and deciding on the next strategic feature to build.

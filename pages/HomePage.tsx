@@ -1,14 +1,52 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
 import { HOME_CORE_SERVICES, HOME_PROCESS_STEPS, HOME_RESULT_METRICS, INVESTMENT_LEVELS } from '../data';
-import { CodeIcon, Share2Icon, MessageCircleIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, CheckCircleIcon, CheckIcon } from '../assets/icons';
+import { CodeIcon, Share2Icon, MessageCircleIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, CheckCircleIcon, CheckIcon, XIcon } from '../assets/icons';
+
+const PermissionErrorBanner = ({ message }: { message: string }) => {
+    const [isVisible, setIsVisible] = useState(true);
+    const navigate = useNavigate();
+
+    if (!isVisible) return null;
+
+    const handleDismiss = () => {
+        setIsVisible(false);
+        // Clean the location state to prevent the banner from reappearing on navigation
+        navigate('.', { replace: true, state: {} });
+    };
+
+    return (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8 max-w-7xl mx-auto" role="alert">
+            <div className="flex">
+                <div className="py-1">
+                    <p className="font-bold">Access Denied</p>
+                    <p className="text-sm">{message}</p>
+                </div>
+                <button onClick={handleDismiss} className="ml-auto pl-4">
+                    <XIcon className="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+    );
+};
+
 
 export const HomePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+    const location = useLocation();
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (location.state?.error) {
+            setError(location.state.error);
+        }
+    }, [location.state]);
+
     return (
         <main>
+            {error && <PermissionErrorBanner message={error} />}
             {/* Hero Section */}
             <SectionContainer className="bg-white pt-16 md:pt-24 text-center">
                 <AnimatedElement>

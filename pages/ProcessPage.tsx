@@ -11,7 +11,7 @@ import {
 } from '../data';
 import { CheckIcon } from '../assets/icons';
 
-export const ProcessPage = () => {
+export const ProcessPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     const [selectedTimeline, setSelectedTimeline] = useState(1);
 
     return (
@@ -129,7 +129,7 @@ export const ProcessPage = () => {
                         <h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#00334F]">Ready to Launch in 8 Weeks?</h2>
                         <p className="mt-4 text-lg text-[#0F172A]/80 max-w-2xl mx-auto">Let's turn your idea into a production-ready AI application. Start by generating your project brief with our AI assistant.</p>
                         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                            <button className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">Start Your Project</button>
+                            <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">Start Your Project</button>
                             <button className="px-8 py-3 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100 transition-all">Book Consultation</button>
                         </div>
                     </AnimatedElement>

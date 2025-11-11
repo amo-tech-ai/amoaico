@@ -21,7 +21,7 @@ const StarRating = ({ rating }: { rating: number }) => (
     </div>
 );
 
-export const AboutPage = () => {
+export const AboutPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     return (
         <main className="bg-[#0F172A] text-white">
             {/* Hero Section */}
@@ -40,7 +40,7 @@ export const AboutPage = () => {
                     </p>
                 </AnimatedElement>
                 <AnimatedElement delay={200} className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <button className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105 w-full sm:w-auto">Get Started Today</button>
+                    <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105 w-full sm:w-auto">Get Started Today</button>
                     <Link to="/projects" className="px-8 py-3 rounded-lg font-semibold text-white border border-gray-700 bg-white/5 hover:bg-white/10 transition-all w-full sm:w-auto">See Our Work</Link>
                 </AnimatedElement>
                 <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
@@ -142,7 +142,7 @@ export const AboutPage = () => {
                         <p className="mt-3 text-gray-300">Let's discuss your AI vision and create a custom roadmap to bring it to life.</p>
                         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                             <button className="px-6 py-3 rounded-lg font-semibold bg-white text-[#0F172A] hover:bg-gray-200 transition-colors">Schedule a Call</button>
-                            <button className="px-6 py-3 rounded-lg font-semibold bg-[#F97316] text-white hover:opacity-90">Submit AI Brief</button>
+                            <button onClick={onStartWizard} className="px-6 py-3 rounded-lg font-semibold bg-[#F97316] text-white hover:opacity-90">Submit AI Brief</button>
                         </div>
                         <div className="mt-8 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-sm text-gray-400">
                            <span className="flex items-center gap-2"><CheckIcon className="w-4 h-4 text-green-500" /> Fixed Timeline</span>
@@ -206,12 +206,14 @@ export const AboutPage = () => {
                 <div className="mt-16 grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                     {ABOUT_PAGE_BUILD_FUTURE_CARDS.map((card, i) => (
                         <AnimatedElement key={card.title} delay={100*i}>
-                            <div className={`p-8 rounded-2xl border h-full text-center ${card.primary ? 'bg-[#F97316] text-white border-transparent' : 'bg-slate-800/50 border-gray-800'}`}>
-                                <div className={`w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-4 ${card.primary ? 'bg-white/20 text-white' : 'bg-[#F97316]/10 text-[#F97316]'}`}>{card.icon}</div>
-                                <h3 className="text-xl font-semibold font-poppins">{card.title}</h3>
-                                <p className={`mt-2 ${card.primary ? 'text-orange-100' : 'text-gray-400'}`}>{card.description}</p>
-                                <button className={`mt-6 w-full px-5 py-2.5 rounded-lg font-medium text-sm transition-colors ${card.primary ? 'bg-white text-[#F97316]' : 'bg-slate-700/50 hover:bg-slate-700 text-white'}`}>{card.cta}</button>
-                            </div>
+                             <Link to={card.primary ? '' : card.cta.includes('Process') ? '/process' : '/contact'} onClick={card.primary ? onStartWizard : undefined} className="block h-full">
+                                <div className={`p-8 rounded-2xl border h-full text-center transition-all duration-300 ${card.primary ? 'bg-[#F97316] text-white border-transparent hover:scale-105' : 'bg-slate-800/50 border-gray-800 hover:border-gray-700 hover:-translate-y-1'}`}>
+                                    <div className={`w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-4 ${card.primary ? 'bg-white/20 text-white' : 'bg-[#F97316]/10 text-[#F97316]'}`}>{card.icon}</div>
+                                    <h3 className="text-xl font-semibold font-poppins">{card.title}</h3>
+                                    <p className={`mt-2 ${card.primary ? 'text-orange-100' : 'text-gray-400'}`}>{card.description}</p>
+                                    <div className={`mt-6 w-full px-5 py-2.5 rounded-lg font-medium text-sm transition-colors ${card.primary ? 'bg-white text-[#F97316]' : 'bg-slate-700/50 group-hover:bg-slate-700 text-white'}`}>{card.cta}</div>
+                                </div>
+                            </Link>
                         </AnimatedElement>
                     ))}
                 </div>
@@ -229,7 +231,7 @@ export const AboutPage = () => {
                            <span className="flex items-center gap-2"><CheckIcon className="w-4 h-4" /> 30-day support</span>
                         </div>
                         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                            <button className="px-8 py-3 rounded-lg font-semibold bg-white text-[#F97316] shadow-lg hover:opacity-90 transition-all transform hover:scale-105">Start Your Project Today</button>
+                            <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-white text-[#F97316] shadow-lg hover:opacity-90 transition-all transform hover:scale-105">Start Your Project Today</button>
                             <Link to="/projects" className="px-8 py-3 rounded-lg font-semibold text-white border-2 border-white/50 hover:bg-white/10 transition-all">View Success Stories</Link>
                         </div>
                     </AnimatedElement>

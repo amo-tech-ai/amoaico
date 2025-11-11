@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
-import { PROJECTS_PAGE_STORIES, PROJECTS_TECH_STACK } from '../data';
-import { ExternalLinkIcon } from '../assets/icons';
+import { getProjectStories } from '../services/projectService';
+import { PROJECTS_TECH_STACK } from '../data';
+import { ExternalLinkIcon, XIcon } from '../assets/icons';
+import { ProjectStory } from '../types';
 
-const ProjectStoryCard = ({ story }: { story: typeof PROJECTS_PAGE_STORIES[0] }) => {
+const ProjectStoryCard = ({ story }: { story: ProjectStory }) => {
     return (
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Left Column: Project Details */}
@@ -27,11 +29,11 @@ const ProjectStoryCard = ({ story }: { story: typeof PROJECTS_PAGE_STORIES[0] })
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 text-center">
-                    {story.metrics.map(metric => (
+                    {story.metrics.map((metric: any) => (
                         <div key={metric.label} className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                             <p className="text-2xl font-bold font-poppins text-[#00334F]">
                                 {metric.prefix || ''}
-                                <Counter endValue={parseFloat(metric.value)} decimals={metric.value.includes('.') ? 1 : 0} />
+                                <Counter endValue={parseFloat(metric.value)} decimals={metric.value.toString().includes('.') ? 1 : 0} />
                                 {metric.unit}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">{metric.label}</p>
@@ -42,7 +44,7 @@ const ProjectStoryCard = ({ story }: { story: typeof PROJECTS_PAGE_STORIES[0] })
                 <div>
                     <p className="text-sm font-semibold text-gray-500 mb-2">Tech Stack:</p>
                     <div className="flex flex-wrap gap-2">
-                        {story.techStack.map(tech => (
+                        {story.techStack.map((tech: string) => (
                             <span key={tech} className="bg-gray-200 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-md">{tech}</span>
                         ))}
                     </div>
@@ -72,7 +74,25 @@ const ProjectStoryCard = ({ story }: { story: typeof PROJECTS_PAGE_STORIES[0] })
     );
 };
 
-export const ProjectsPage = () => {
+export const ProjectsPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+    const [stories, setStories] = useState<ProjectStory[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const data = await getProjectStories();
+                setStories(data);
+            } catch (err) {
+                setError("Failed to load project stories. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProjects();
+    }, []);
+
     return (
         <main className="bg-[#FFF9F5]">
             {/* Hero Section */}
@@ -89,7 +109,7 @@ export const ProjectsPage = () => {
                     </p>
                 </AnimatedElement>
                 <AnimatedElement delay={200} className="mt-8">
-                    <button className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">
+                    <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">
                         Start Your Project
                     </button>
                 </AnimatedElement>
@@ -108,11 +128,17 @@ export const ProjectsPage = () => {
                     </AnimatedElement>
                 </div>
                 <div className="mt-20 space-y-24 max-w-6xl mx-auto">
-                    {PROJECTS_PAGE_STORIES.map((story) => (
-                        <AnimatedElement key={story.name}>
-                            <ProjectStoryCard story={story} />
-                        </AnimatedElement>
-                    ))}
+                    {loading ? (
+                        <div className="text-center"><div className="w-8 h-8 border-2 border-t-orange-500 rounded-full animate-spin mx-auto"></div></div>
+                    ) : error ? (
+                        <div className="text-center text-red-600 bg-red-50 p-8 rounded-lg">{error}</div>
+                    ) : (
+                        stories.map((story) => (
+                            <AnimatedElement key={story.name}>
+                                <ProjectStoryCard story={story} />
+                            </AnimatedElement>
+                        ))
+                    )}
                 </div>
             </SectionContainer>
             
@@ -165,7 +191,7 @@ export const ProjectsPage = () => {
                         </p>
                     </AnimatedElement>
                      <AnimatedElement delay={200} className="mt-8">
-                        <button className="px-8 py-3 rounded-lg font-semibold bg-white text-[#F97316] shadow-lg hover:opacity-90 transition-all transform hover:scale-105">
+                        <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-white text-[#F97316] shadow-lg hover:opacity-90 transition-all transform hover:scale-105">
                             Start Your Project Journey
                         </button>
                     </AnimatedElement>

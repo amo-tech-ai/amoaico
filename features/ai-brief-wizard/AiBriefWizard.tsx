@@ -23,7 +23,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     // Generation State
     const [generationStatus, setGenerationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [generationMessage, setGenerationMessage] = useState('');
-    const [brief, setBrief] = useState<BriefData | null>(null);
+    const [brief, setBrief] = useState<Brief | null>(null);
 
     const [formStep, setFormStep] = useState(1);
 
@@ -71,12 +71,22 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         setGenerationMessage(loadingMessages[0]);
 
         try {
-            const generatedData = await generateBriefFromApi({ companyName, websiteUrl, projectType, selectedGoals, budget: BUDGET_MARKS[budget] });
-            if (generatedData && generatedData.overview) {
-                setBrief(generatedData);
+            // The call now goes to our secure Edge Function, which handles both AI generation and DB persistence.
+            const newBrief = await generateBriefFromApi({ 
+                companyName, 
+                websiteUrl, 
+                projectType, 
+                selectedGoals, 
+                budget: BUDGET_MARKS[budget] 
+            });
+
+            if (newBrief && newBrief.overview) {
+                setBrief(newBrief);
                 setGenerationStatus('success');
                 setTimeout(() => setCurrentStep('review'), 1000);
-            } else { throw new Error("AI service did not return a valid brief object."); }
+            } else { 
+                throw new Error("The AI service did not return a valid brief object."); 
+            }
         } catch (error) {
             console.error("Error generating brief:", error);
             setGenerationStatus('error');

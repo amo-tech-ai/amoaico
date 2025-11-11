@@ -1,104 +1,168 @@
-import { Brief } from '../types';
 import { supabase } from './supabaseClient';
+import { Brief } from '../types';
 
-// Public API: Get all briefs for the currently authenticated user
-export const getBriefsForUser = async (): Promise<Brief[]> => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-        console.log("No user logged in, returning empty list of briefs.");
-        return [];
-    }
-
-    console.log(`Fetching briefs for user ${user.id} from Supabase...`);
+/**
+ * Fetches all briefs for a specific user from the Supabase database.
+ * RLS policies ensure the user can only see their own briefs.
+ * @param userId - The ID of the user whose briefs are to be fetched.
+ * @returns A promise that resolves to an array of the user's briefs.
+ */
+export const getBriefsForUser = async (userId: string): Promise<Brief[]> => {
+    console.log(`Fetching briefs for user ${userId} from Supabase...`);
     const { data, error } = await supabase
         .from('briefs')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.error('Error fetching briefs:', error);
+        console.error(`Error fetching briefs for user ${userId}:`, error);
         throw error;
     }
 
-    if (!data) return [];
-
-    // The data from Supabase has a 'brief_data' JSONB column. This mapping
-    // safely handles it and provides defaults to prevent crashes,
-    // transforming the DB record into the application's 'Brief' type.
-    return data.map((brief): Brief => {
-        const briefData = brief.brief_data || {};
+    // Map the raw data, which has brief_data as a JSONB column, to the flat Brief type.
+    return data.map((item: any) => {
+        const briefData = item.brief_data || {};
         return {
-            id: brief.id,
-            company_name: brief.company_name || 'Untitled Project',
-            project_type: brief.project_type || 'N/A',
-            status: brief.status || 'draft',
-            created_at: brief.created_at,
-            // Safely access properties from the briefData object, providing defaults
-            overview: briefData.overview || 'No overview available.',
-            key_goals: briefData.key_goals || [],
-            suggested_deliverables: briefData.suggested_deliverables || [],
-            brand_tone: briefData.brand_tone || 'N/A',
-            budget_band: briefData.budget_band || 'N/A',
-            website_summary_points: briefData.website_summary_points || [],
+            id: item.id,
+            company_name: item.company_name,
+            project_type: item.project_type,
+            status: item.status,
+            created_at: item.created_at,
+            overview: briefData.overview,
+            key_goals: briefData.key_goals,
+            suggested_deliverables: briefData.suggested_deliverables,
+            brand_tone: briefData.brand_tone,
+            budget_band: briefData.budget_band,
+            website_summary_points: briefData.website_summary_points,
         };
     });
 };
 
-
-// Admin API: Get all briefs from all users
-export const getAllBriefs = async (): Promise<Brief[]> => {
-    console.log("Fetching ALL briefs for admin from Supabase...");
-    // This query will only succeed if the user has the 'admin' role due to RLS policies.
+/**
+ * Fetches a single brief by its ID from Supabase.
+ * RLS policies ensure the user can only fetch a brief they own.
+ * @param briefId - The UUID of the brief to fetch.
+ * @returns A promise that resolves to the brief object, or null if not found.
+ */
+export const getBriefById = async (briefId: string): Promise<Brief | null> => {
+    console.log(`Fetching brief with ID ${briefId} from Supabase...`);
     const { data, error } = await supabase
         .from('briefs')
-        .select('*, profile:profiles(id, full_name, email)')
+        .select('*')
+        .eq('id', briefId)
+        .single();
+
+    if (error) {
+        if (error.code === 'PGRST116') { // "pgrst_not_found"
+            return null;
+        }
+        console.error(`Error fetching brief ${briefId}:`, error);
+        throw error;
+    }
+    
+    if (!data) return null;
+
+    const briefData = data.brief_data || {};
+    const brief: Brief = {
+        id: data.id,
+        company_name: data.company_name,
+        project_type: data.project_type,
+        status: data.status,
+        created_at: data.created_at,
+        overview: briefData.overview || '',
+        key_goals: briefData.key_goals || [],
+        suggested_deliverables: briefData.suggested_deliverables || [],
+        brand_tone: briefData.brand_tone || '',
+        budget_band: briefData.budget_band || '',
+        website_summary_points: briefData.website_summary_points || [],
+    };
+    
+    return brief;
+};
+
+
+/**
+ * Fetches all briefs from the database. For admin use.
+ * @returns A promise that resolves to an array of all briefs with user info.
+ */
+export const getAllBriefs = async (): Promise<Brief[]> => {
+    console.log("Fetching all briefs for admin dashboard...");
+    const { data, error } = await supabase
+        .from('briefs')
+        .select(`
+            id,
+            company_name,
+            project_type,
+            status,
+            created_at,
+            brief_data,
+            user:profiles(id, full_name)
+        `)
         .order('created_at', { ascending: false });
 
     if (error) {
         console.error('Error fetching all briefs:', error);
         throw error;
     }
-    if (!data) return [];
-    
-    return data.map((brief: any): Brief => {
-        const briefData = brief.brief_data || {};
+
+    return data.map((item: any) => {
+        const briefData = item.brief_data || {};
         return {
-            id: brief.id,
-            company_name: brief.company_name || 'Untitled',
-            project_type: brief.project_type || 'N/A',
-            status: brief.status || 'draft',
-            created_at: brief.created_at,
-            overview: briefData.overview || 'No overview.',
-            key_goals: briefData.key_goals || [],
-            suggested_deliverables: briefData.suggested_deliverables || [],
-            brand_tone: briefData.brand_tone || 'N/A',
-            budget_band: briefData.budget_band || 'N/A',
-            website_summary_points: briefData.website_summary_points || [],
-            user: brief.profile ? {
-                id: brief.profile.id,
-                full_name: brief.profile.full_name,
-                email: brief.profile.email,
+            id: item.id,
+            company_name: item.company_name,
+            project_type: item.project_type,
+            status: item.status,
+            created_at: item.created_at,
+            overview: briefData.overview,
+            key_goals: briefData.key_goals,
+            suggested_deliverables: briefData.suggested_deliverables,
+            brand_tone: briefData.brand_tone,
+            budget_band: briefData.budget_band,
+            website_summary_points: briefData.website_summary_points,
+            user: item.user ? {
+                id: item.user.id,
+                full_name: item.user.full_name,
+                email: '', // Email is not in profiles table, but Brief type expects it.
             } : undefined,
         };
     });
 };
 
 
-// Admin API: Update the status of a specific brief
-export const updateBriefStatus = async (briefId: string, status: Brief['status']): Promise<Brief> => {
-    console.log(`Admin updating brief ${briefId} to status ${status}...`);
+/**
+ * Updates the status of a specific brief. For admin use.
+ * @param briefId - The UUID of the brief to update.
+ * @param newStatus - The new status to set.
+ * @returns A promise that resolves to the updated brief object.
+ */
+export const updateBriefStatus = async (briefId: string, newStatus: Brief['status']): Promise<Brief> => {
+    console.log(`Updating status for brief ${briefId} to ${newStatus}`);
     const { data, error } = await supabase
         .from('briefs')
-        .update({ status })
+        .update({ status: newStatus })
         .eq('id', briefId)
         .select()
         .single();
-    
+
     if (error) {
         console.error('Error updating brief status:', error);
         throw error;
     }
-
-    return data;
+    
+    const briefData = data.brief_data || {};
+    const updatedBrief: Brief = {
+        id: data.id,
+        company_name: data.company_name,
+        project_type: data.project_type,
+        status: data.status,
+        created_at: data.created_at,
+        overview: briefData.overview || '',
+        key_goals: briefData.key_goals || [],
+        suggested_deliverables: briefData.suggested_deliverables || [],
+        brand_tone: briefData.brand_tone || '',
+        budget_band: briefData.budget_band || '',
+        website_summary_points: briefData.website_summary_points || [],
+    };
+    return updatedBrief;
 };

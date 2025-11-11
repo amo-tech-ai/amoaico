@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 -   **Service Pages:** Created new pages for AI Social Media, E-Commerce, and WhatsApp Automation services, accessible via `/services/social-media`, `/services/ecommerce`, and `/services/whatsapp-automation`. This completes the core service section of the website.
 
+## [0.3.0] - 2024-08-22
+
+### Added
+-   **Full Backend Integration:** The entire application is now connected to a secure Supabase backend. This includes user authentication, data persistence, and secure AI logic via Edge Functions.
+-   **User Profile Management:** A new `ProfileManager` component on the dashboard allows users to update their full name and upload a custom avatar to Supabase Storage.
+-   **Admin Dashboard:** A new, role-protected `/admin/dashboard` page allows administrators to view, filter, and manage all project briefs submitted by users.
+-   **Dedicated Login Page:** A new `/login` page centralizes the authentication flow, providing a clear entry point for users.
+-   **Dynamic Content Pages:** The `/projects` and `/contact` pages are now connected to the Supabase backend, fetching portfolio data and saving contact form submissions.
+
+### Changed
+-   **Critical Security Fix:** Migrated all client-side AI API calls to a secure Supabase Edge Function (`/generate-brief`), completely removing the API key from the frontend.
+-   **Data Persistence:** Replaced all mock data and `localStorage` usage with live database calls to Supabase, ensuring user data is persistent and secure.
+-   **Authentication Flow:** The `useAuth` hook and `AuthContext` now manage real user sessions and profiles from Supabase Auth.
+
 ## [0.2.0] - 2024-08-20
 
 ### Added
