@@ -1,5 +1,8 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+// Layout Components
+import { DashboardLayout } from './components/layout/DashboardLayout';
 
 // Page Components
 import { HomePage } from './pages/HomePage';
@@ -7,8 +10,6 @@ import { AiWebApplicationsPage } from './pages/AiWebApplicationsPage';
 import { AiSocialMediaPage } from './pages/AiSocialMediaPage';
 import { EcommercePage } from './pages/EcommercePage';
 import { WhatsAppAutomationPage } from './pages/WhatsAppAutomationPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { ProcessPage } from './pages/ProcessPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { TechStackPage } from './pages/TechStackPage';
@@ -18,10 +19,22 @@ import { ContactPage } from './pages/ContactPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { LoginPage } from './pages/LoginPage';
-import { BriefDetailPage } from './pages/BriefDetailPage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
+
+// Dashboard Page Components
+import { OverviewPage } from './pages/dashboard/OverviewPage';
+import { BriefsListPage } from './pages/dashboard/BriefsListPage';
+import { BriefDetailPage } from './pages/dashboard/BriefDetailPage';
+import { ProjectsListPage } from './pages/dashboard/ProjectsListPage';
+import { ClientsListPage } from './pages/dashboard/ClientsListPage';
+import { FinancialsPage } from './pages/dashboard/FinancialsPage';
+import { SettingsPage } from './pages/dashboard/SettingsPage';
+import { IntegrationsPage } from './pages/dashboard/IntegrationsPage';
+
 
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';
+import { BriefRedirect } from './components/BriefRedirect';
 
 interface AppRoutesProps {
     onStartWizard: () => void;
@@ -45,10 +58,24 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
         <Route path="/about" element={<AboutPage onStartWizard={onStartWizard} />} />
         <Route path="/contact" element={<ContactPage />} />
 
-        {/* User Pages */}
+        {/* Auth Page */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardPage onStartWizard={onStartWizard} />} />
-        <Route path="/brief/:briefId" element={<BriefDetailPage />} />
+
+        {/* --- NEW DASHBOARD LAYOUT --- */}
+        <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
+            <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
+            <Route path="/dashboard/overview" element={<OverviewPage />} />
+            <Route path="/dashboard/briefs" element={<BriefsListPage onStartWizard={onStartWizard} />} />
+            <Route path="/dashboard/briefs/:briefId" element={<BriefDetailPage />} />
+            <Route path="/dashboard/projects" element={<ProjectsListPage />} />
+            <Route path="/dashboard/clients" element={<ClientsListPage />} />
+            <Route path="/dashboard/financials" element={<FinancialsPage />} />
+            <Route path="/dashboard/settings" element={<SettingsPage />} />
+            <Route path="/dashboard/settings/integrations" element={<IntegrationsPage />} />
+        </Route>
+
+        {/* --- LEGACY ROUTE REDIRECT --- */}
+        <Route path="/brief/:briefId" element={<BriefRedirect />} />
 
         {/* Admin Pages */}
         <Route path="/admin" element={<AdminRoute />}>

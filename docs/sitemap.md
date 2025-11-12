@@ -16,8 +16,8 @@ This section outlines the primary pages accessible from the main header and foot
     -   **Status:** ✅ Implemented
 
 -   **/services**
-    -   **Purpose:** A top-level page that will eventually serve as a directory for all service offerings. Currently redirects to the AI Web Applications page.
-    -   **Component:** `AiWebApplicationsPage.tsx` (acting as a placeholder)
+    -   **Purpose:** A top-level page that serves as a directory for all service offerings.
+    -   **Component:** `AiWebApplicationsPage.tsx` (and others)
     -   **Status:** ✅ Implemented
 
 -   **/process**
@@ -46,7 +46,7 @@ This section outlines the primary pages accessible from the main header and foot
     -   **Status:** ✅ Implemented
 
 -   **/contact**
-    -   **Purpose:** A page with contact information, a contact form, and location details.
+    -   **Purpose:** A page with contact information and a form for inquiries.
     -   **Component:** `ContactPage.tsx`
     -   **Status:** ✅ Implemented
 
@@ -94,7 +94,33 @@ These pages are typically linked from the footer and provide important legal and
 
 ---
 
-### 4. Interactive Features (Non-Page Components)
+### 4. User & Admin Pages (Authentication Required)
+
+This section lists pages that require a user to be logged in.
+
+-   **/login**
+    -   **Purpose:** The dedicated page for users to sign up or sign in to their accounts.
+    -   **Component:** `LoginPage.tsx`
+    -   **Status:** ✅ Implemented
+
+-   **/dashboard**
+    -   **Purpose:** The personal dashboard for a logged-in user to view and manage their generated project briefs.
+    -   **Component:** `DashboardPage.tsx`
+    -   **Status:** ✅ Implemented
+
+-   **/brief/:briefId**
+    -   **Purpose:** A detailed view of a single project brief, accessible from the user's dashboard.
+    -   **Component:** `BriefDetailPage.tsx`
+    -   **Status:** ✅ Implemented
+
+-   **/admin/dashboard**
+    -   **Purpose:** A protected dashboard for agency administrators to view, filter, and manage all briefs submitted by all users.
+    -   **Component:** `AdminDashboardPage.tsx` (Protected by `AdminRoute.tsx`)
+    -   **Status:** ✅ Implemented
+
+---
+
+### 5. Interactive Features (Non-Page Components)
 
 This section lists major features that are not standalone pages but are critical to the user experience.
 
@@ -105,7 +131,7 @@ This section lists major features that are not standalone pages but are critical
 
 ---
 
-### 5. Routing Logic
+### 6. Routing Logic
 
 -   **Fallback Route (`*`)**
     -   **Behavior:** Any route that does not match the defined paths will redirect the user to the Home page.
