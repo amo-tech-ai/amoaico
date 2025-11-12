@@ -1,10 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Use process.env to access environment variables, as import.meta.env is not available
-// in this application's non-standard Vite setup. This aligns with how other secrets
-// like the Gemini API key are handled.
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://void.supabase.co';
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+// Vite exposes environment variables to the client via `import.meta.env`.
+// The `VITE_` prefix is required for this to work correctly.
+// FIX: Use type assertion on `import.meta` to access environment variables.
+// This resolves TypeScript errors that occur when the `vite/client` type definitions
+// cannot be found by the compiler, which is often an environment-specific issue.
+const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL || 'https://void.supabase.co';
+const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
 
 if (supabaseUrl === 'https://void.supabase.co') {
     console.warn(

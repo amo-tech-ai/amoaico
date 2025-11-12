@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
-const { fontFamily } = require('tailwindcss/defaultTheme');
+import defaultTheme from 'tailwindcss/defaultTheme';
 
-module.exports = {
+export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./**/*.{js,ts,jsx,tsx}",
+    "!./node_modules/**",
   ],
   theme: {
     extend: {
@@ -16,8 +17,8 @@ module.exports = {
         'whatsapp-green': '#25D366',
       },
       fontFamily: {
-        sans: ['Inter', ...fontFamily.sans],
-        poppins: ['Poppins', ...fontFamily.sans],
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
       },
     },
   },

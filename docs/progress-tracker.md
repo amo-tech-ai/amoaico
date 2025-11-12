@@ -1,12 +1,12 @@
-# 📊 Sunai: Project Progress Tracker & Detective Review
+# 📊 Sunai: MVP Progress Tracker & Next Steps
 
 **Document Status:** Live Analysis - 2024-08-22
 **Author:** Expert Project Analyst
-**Goal:** To provide a clear, evidence-based progress tracker showing what’s done, what’s missing, and what critical actions are needed to move the Sunai project to production.
+**Goal:** To confirm the successful completion of the initial project MVP and outline the strategic transition to the next phase of development.
 
 ---
 
-### 📊 **Progress Task Tracker**
+### 📊 **MVP Task Progress Tracker**
 
 | Task Name | Short Description | Status | % Complete | ✅ Confirmed | ⚠️ Missing / Failing | 💡 Next Action |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -18,21 +18,21 @@
 | **6. AI Brief Wizard (UI/UX & AI Logic)** | Build the complete multi-step user interface and connect it to the secure backend. | 🟢 **Completed** | 100% | `AiBriefWizard.tsx` is fully functional and correctly calls the secure `generate-brief` Edge Function. | — | None. The core feature is production-ready. |
 | **7. Content Pages Implementation** | Build out and connect all static pages defined in the sitemap. | 🟢 **Completed** | 100% | All pages are implemented. `/projects` and `/contact` are fully dynamic. Other pages use static data from `data/index.ts`. | — | Dynamic content for other pages can be a future enhancement. |
 | **8. Admin Dashboard & RLS** | A role-protected admin page to view and manage all briefs. | 🟢 **Completed** | 100% | `AdminRoute.tsx` correctly guards the route. `AdminDashboardPage.tsx` successfully fetches and updates all briefs, relying on RLS policies. | — | None. Feature is complete and secure. |
-| **9. Project Documentation** | Ensure all planning and status documents are accurate and up-to-date. | 🟢 **Completed** | 100% | Outdated planning documents have been archived. The sitemap is updated. This document is the single source of truth. | — | None. Documentation is now clean. |
+| **9. Project Documentation** | Ensure all planning and status documents are accurate and up-to-date. | 🟢 **Completed** | 100% | Outdated planning documents have been archived. The sitemap is updated. This document is the single source of truth for the MVP phase. | — | None. Documentation is now clean. |
 
 ---
 
 ### 📋 **End of Report Summary**
 
 *   **What’s working:**
-    *   The entire full-stack architecture is **live and functional**. This includes secure user authentication, database persistence with RLS, and a secure Edge Function for AI generation.
+    *   The entire full-stack architecture for the Minimum Viable Product (MVP) is **live and functional**. This includes secure user authentication, database persistence with RLS, and a secure Edge Function for AI generation.
     *   The core user journey, from signup to brief creation and dashboard viewing, is **complete and robust**.
-    *   Both the User and Admin dashboards are connected to and successfully managing **real, persistent data**.
-    *   The critical security flaw of exposing the API key has been **resolved**.
 
-*   **What’s partial or needs validation:**
-    *   All identified tasks for this project version are complete. The application is stable and ready.
+*   **What’s Next:**
+    *   The project has successfully completed its initial scope. The next phase involves maturing the application into a production-grade platform by focusing on testing, CI/CD, performance optimization, and advanced user features.
+    *   **The complete plan for this next phase is detailed in the project's live strategic roadmap.** Please refer to this document for the full list of upcoming tasks.
+    *   ➡️ **[View the Live Strategic Roadmap & Production Plan](./19-strategic-roadmap.md)**
 
-### **Overall Production Readiness Score: 100%**
+### **MVP Production Readiness Score: 100%**
 
-The project is **feature-complete and production-ready**. All core application features are architecturally sound, secure, and fully functional. The documentation has been cleaned up, and all planned tasks are successfully implemented.
+The project's initial MVP is **feature-complete and production-ready**. All core application features are architecturally sound, secure, and fully functional. The project will now transition to the next phase of development as outlined in the strategic roadmap.

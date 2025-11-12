@@ -67,7 +67,21 @@ Deno.serve(async (req: Request) => {
     if (textResponse.startsWith("```json") && textResponse.endsWith("```")) {
         textResponse = textResponse.slice(7, -3).trim();
     }
-    const briefData = JSON.parse(textResponse);
+    
+    // FIX: Add robust error handling for JSON parsing. AI responses are not guaranteed to be valid JSON,
+    // so a try-catch block prevents the function from crashing on an invalid response.
+    let briefData;
+    try {
+        briefData = JSON.parse(textResponse);
+    } catch (parseError) {
+        console.error("Failed to parse Gemini response as JSON:", textResponse, parseError);
+        throw new Error("The AI service returned an invalid response. Please try generating the brief again.");
+    }
+
+    if (!briefData || typeof briefData !== 'object') {
+        throw new Error("The AI service returned an empty or invalid brief object.");
+    }
+
     briefData.budget_band = budget; // Ensure the user's budget selection is included.
 
     // Step 4: Persist the generated brief to the database.
