@@ -1,5 +1,6 @@
-// FIX: Pin Supabase functions type reference to a specific version to resolve Deno type errors.
-/// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
+// FIX: Declare Deno to resolve TypeScript errors in a non-Deno environment.
+// The Deno global is available in the Supabase Edge Function runtime.
+declare const Deno: any;
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { GoogleGenAI } from "npm:@google/genai@0.14.0";

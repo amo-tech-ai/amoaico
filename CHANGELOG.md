@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Future feature development will be tracked here.
+### Changed
+- Expanded the strategic roadmap from a 15-point plan to a comprehensive 20-point plan, adding a new phase for 'Enterprise-Grade Operations & UX'.
 
 ## [0.4.0] - 2024-08-23
 

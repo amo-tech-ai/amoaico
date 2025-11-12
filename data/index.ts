@@ -32,6 +32,12 @@ export const SERVICE_LINKS = [
     { href: '/services/whatsapp-automation', label: 'WhatsApp Automation' },
 ];
 
+export const CONTACT_INFO = [
+    { label: 'info@sunai.co', href: 'mailto:info@sunai.co', isWa: false },
+    { label: '+1 416-500-3053', href: 'tel:+14165003053', isWa: false },
+    { label: 'Chat on WhatsApp', href: 'https://wa.me/14165003053', isWa: true },
+];
+
 export const HOME_CORE_SERVICES = [
     { icon: React.createElement(CodeIcon), title: "AI Web Development", description: "From prompt to production-ready websites in record time." },
     { icon: React.createElement(MobileIcon), title: "AI App Development", description: "Intelligent, scalable mobile applications that learn and adapt." },
