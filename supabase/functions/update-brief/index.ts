@@ -14,34 +14,70 @@ serve(async (req: Request) => {
 
   try {
     const body = await parseJSON(req);
-    requireFields({ body, fields: ['briefId', 'updatedData'] });
-    const { briefId, updatedData } = body;
+    requireFields({ body, fields: ['briefId', 'updates'] });
+    const { briefId, updates } = body;
 
     const supabaseClient = createSupabaseClient(req);
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
       throw new HttpError('Unauthorized: User not authenticated.', 401);
     }
-
-    // First, fetch the existing brief_data to merge with updates.
-    // RLS ensures the user can only fetch their own brief.
-    const { data: existingBrief, error: fetchError } = await supabaseClient
-      .from('briefs')
-      .select('brief_data')
-      .eq('id', briefId)
-      .single();
-
-    if (fetchError) {
-        throw new HttpError('Brief not found or access denied.', 404);
-    }
     
-    // Merge the existing data with the incoming updates.
-    const newBriefData = { ...(existingBrief.brief_data || {}), ...updatedData };
+    // Separate top-level fields from fields that belong in the brief_data JSONB column.
+    const TOP_LEVEL_KEYS = ['company_name', 'project_type', 'status'];
+    const topLevelUpdates: any = {};
+    const briefDataUpdates: any = {};
 
+    for (const key in updates) {
+        // Ensure we only process own properties of the updates object
+        if (Object.prototype.hasOwnProperty.call(updates, key)) {
+            if (TOP_LEVEL_KEYS.includes(key)) {
+                topLevelUpdates[key] = updates[key];
+            } else {
+                // Collect all other valid fields for the brief_data JSONB
+                briefDataUpdates[key] = updates[key];
+            }
+        }
+    }
+
+    // Construct the final update payload
+    const finalUpdatePayload: any = { ...topLevelUpdates };
+
+    // If there are updates to the nested JSON data, fetch the existing data, merge it,
+    // and add it to our final payload.
+    if (Object.keys(briefDataUpdates).length > 0) {
+        const { data: existingBrief, error: fetchError } = await supabaseClient
+          .from('briefs')
+          .select('brief_data')
+          .eq('id', briefId)
+          .single();
+
+        if (fetchError) {
+            throw new HttpError('Brief not found or access denied.', 404);
+        }
+        
+        const newBriefData = { ...(existingBrief.brief_data || {}), ...briefDataUpdates };
+        finalUpdatePayload.brief_data = newBriefData;
+    }
+
+    if (Object.keys(finalUpdatePayload).length === 0) {
+        // If no valid fields were sent to update, we don't need to hit the DB.
+        // Fetch and return the current record instead.
+        const { data: currentRecord, error: currentFetchError } = await supabaseClient.from('briefs').select().eq('id', briefId).single();
+        if (currentFetchError) throw currentFetchError;
+        return new Response(JSON.stringify(currentRecord), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+        });
+    }
+
+    // Add the updated_at timestamp to every update
+    finalUpdatePayload.updated_at = new Date().toISOString();
+    
     // Update the record in the database.
     const { data: updatedRecord, error: updateError } = await supabaseClient
       .from('briefs')
-      .update({ brief_data: newBriefData, updated_at: new Date().toISOString() })
+      .update(finalUpdatePayload)
       .eq('id', briefId)
       .select()
       .single();

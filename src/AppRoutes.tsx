@@ -31,6 +31,8 @@ import { ClientsListPage } from './pages/dashboard/ClientsListPage';
 import { FinancialsPage } from './pages/dashboard/FinancialsPage';
 import { SettingsPage } from './pages/dashboard/SettingsPage';
 import { IntegrationsPage } from './pages/dashboard/IntegrationsPage';
+import { SupportPage } from './pages/dashboard/SupportPage';
+
 
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';
@@ -69,7 +71,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
         {/* --- DASHBOARD PAGES (Dashboard Layout) --- */}
         <Route path="/dashboard" element={<DashboardLayout onStartWizard={onStartWizard} />}>
             <Route index element={<Navigate to="overview" replace />} />
-            <Route path="overview" element={<OverviewPage />} />
+            <Route path="overview" element={<OverviewPage onStartWizard={onStartWizard} />} />
             <Route path="briefs" element={<BriefsListPage onStartWizard={onStartWizard} />} />
             <Route path="briefs/:briefId" element={<BriefDetailPage />} />
             <Route path="projects" element={<ProjectsListPage />} />
@@ -77,6 +79,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
             <Route path="financials" element={<FinancialsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="settings/integrations" element={<IntegrationsPage />} />
+            <Route path="support" element={<SupportPage />} />
         </Route>
 
         {/* --- ADMIN ROUTE WRAPPER --- */}

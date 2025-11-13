@@ -198,14 +198,14 @@ export const updateBriefStatus = async (briefId: string, newStatus: Brief['statu
 /**
  * Updates a specific brief with new data by invoking a secure Edge Function.
  * @param briefId - The UUID of the brief to update.
- * @param updatedData - An object containing the brief fields to update.
+ * @param updates - An object containing the brief fields to update.
  * @returns A promise that resolves to the fully updated brief object.
  */
-export const updateBrief = async (briefId: string, updatedData: Partial<BriefData>): Promise<Brief> => {
+export const updateBrief = async (briefId: string, updates: Partial<Brief>): Promise<Brief> => {
     console.log(`Updating brief ${briefId} via Edge Function...`);
 
     const { data, error } = await supabase.functions.invoke('update-brief', {
-        body: { briefId, updatedData },
+        body: { briefId, updates },
     });
 
     if (error) {

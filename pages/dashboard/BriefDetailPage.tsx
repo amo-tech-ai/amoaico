@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Brief, BriefData } from '../../types';
+import { useParams, Link, useBlocker } from 'react-router-dom';
+import { Brief } from '../../types';
 import { getBriefById, updateBrief } from '../../services/briefService';
 import { useAuth } from '../../hooks/useAuth';
+import { useDebounce } from '../../hooks/useDebounce';
 import { SectionContainer } from '../../components/layout/SectionContainer';
 import { AnimatedElement } from '../../components/animations/AnimatedElement';
 import { ClockIcon, XIcon, ArrowLeftIcon, CheckCircleIcon } from '../../assets/icons';
@@ -40,30 +41,54 @@ const EditableList = ({ label, items, name, onChange }: { label: string, items: 
         <textarea
             id={name}
             name={name}
-            value={items.join('\n')}
+            value={(items || []).join('\n')}
             onChange={onChange}
-            rows={items.length > 3 ? items.length + 1 : 4}
+            rows={(items || []).length > 3 ? items.length + 1 : 4}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition"
             placeholder="Enter each item on a new line"
         />
     </div>
 );
 
+type AutosaveStatus = 'idle' | 'dirty' | 'saving' | 'success' | 'error';
+
+const AutosaveStatusIndicator = ({ status }: { status: AutosaveStatus }) => {
+    switch (status) {
+        case 'dirty':
+            return <span className="text-xs text-gray-500 font-medium">Unsaved changes</span>;
+        case 'saving':
+            return <div className="flex items-center gap-2 text-xs text-gray-500 font-medium"><div className="w-3 h-3 border-2 border-t-sunai-orange rounded-full animate-spin"></div>Saving...</div>;
+        case 'success':
+            return <div className="flex items-center gap-2 text-xs text-green-600 font-medium animate-fade-in"><CheckCircleIcon className="w-4 h-4" />All changes saved</div>;
+        case 'error':
+            return <span className="text-xs text-red-600 font-medium">Error saving</span>;
+        default:
+            return null;
+    }
+};
+
 export const BriefDetailPage = () => {
     const { briefId } = useParams<{ briefId: string }>();
     const { user, loading: authLoading } = useAuth();
     
-    // State for the canonical brief data from the server
     const [brief, setBrief] = useState<Brief | null>(null);
-    
-    // State for the form data being edited by the user
-    const [editableData, setEditableData] = useState<Partial<BriefData>>({});
+    const [editableData, setEditableData] = useState<Partial<Brief>>({});
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isDirty, setIsDirty] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [autosaveStatus, setAutosaveStatus] = useState<AutosaveStatus>('idle');
+
+    const debouncedData = useDebounce(editableData, 2000); // Debounce changes by 2 seconds
+
+    useBlocker(() => {
+        if (isDirty) {
+            return !window.confirm(
+                'You have unsaved changes that are not yet saved. Are you sure you want to leave?'
+            );
+        }
+        return false;
+    });
     
     useEffect(() => {
         if (!briefId) {
@@ -72,27 +97,14 @@ export const BriefDetailPage = () => {
             return;
         }
 
-        if (authLoading) return;
-
-        if (!user) {
-            setLoading(false);
-            return;
-        }
+        if (authLoading || !user) return;
 
         const fetchBrief = async () => {
             try {
                 const data = await getBriefById(briefId);
                 if (data) {
                     setBrief(data);
-                    // Initialize the editable form state
-                    setEditableData({
-                        overview: data.overview,
-                        key_goals: data.key_goals,
-                        suggested_deliverables: data.suggested_deliverables,
-                        brand_tone: data.brand_tone,
-                        budget_band: data.budget_band,
-                        website_summary_points: data.website_summary_points,
-                    });
+                    setEditableData(data);
                 } else {
                     setError("Brief not found or you do not have permission to view it.");
                 }
@@ -106,49 +118,42 @@ export const BriefDetailPage = () => {
         fetchBrief();
     }, [briefId, user, authLoading]);
 
+    // Effect to trigger autosave when debounced data changes
+    useEffect(() => {
+        const handleAutosave = async () => {
+            if (!briefId || !isDirty) return;
+            setAutosaveStatus('saving');
+            setError(null);
+            try {
+                const updatedBrief = await updateBrief(briefId, debouncedData);
+                setBrief(updatedBrief);
+                setEditableData(updatedBrief);
+                setIsDirty(false);
+                setAutosaveStatus('success');
+                setTimeout(() => setAutosaveStatus('idle'), 3000);
+            } catch (err) {
+                console.error(err);
+                setError("Failed to save changes. Please try again.");
+                setAutosaveStatus('error');
+            }
+        };
+
+        handleAutosave();
+    }, [debouncedData, briefId, isDirty]);
+
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setIsDirty(true);
+        setAutosaveStatus('dirty');
         setEditableData(prev => ({ ...prev, [name]: value }));
     };
     
     const handleListChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setIsDirty(true);
-        // Split by newline and filter out empty lines
+        setAutosaveStatus('dirty');
         setEditableData(prev => ({ ...prev, [name]: value.split('\n').filter(item => item.trim() !== '') }));
-    };
-
-    const handleSaveChanges = async () => {
-        if (!briefId || !isDirty) return;
-        setIsSaving(true);
-        setError(null);
-        try {
-            const updatedBrief = await updateBrief(briefId, editableData);
-            setBrief(updatedBrief); // Update the canonical state
-            setIsDirty(false);
-            setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 2000); // Hide success message after 2s
-        } catch (err) {
-            console.error(err);
-            setError("Failed to save changes. Please try again.");
-        } finally {
-            setIsSaving(false);
-        }
-    };
-    
-    const handleCancelChanges = () => {
-        if (brief) {
-            setEditableData({
-                overview: brief.overview,
-                key_goals: brief.key_goals,
-                suggested_deliverables: brief.suggested_deliverables,
-                brand_tone: brief.brand_tone,
-                budget_band: brief.budget_band,
-                website_summary_points: brief.website_summary_points,
-            });
-            setIsDirty(false);
-        }
     };
 
     const statusStyles: { [key: string]: string } = {
@@ -167,7 +172,7 @@ export const BriefDetailPage = () => {
         );
     }
     
-    if (error && !isSaving) { // Don't show main error if a save-specific error occurs
+    if (error && autosaveStatus !== 'error') {
          return (
             <SectionContainer className="text-center py-16 border-2 border-dashed border-red-300 rounded-2xl bg-red-50/50 max-w-2xl mx-auto">
                 <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
@@ -203,6 +208,7 @@ export const BriefDetailPage = () => {
                             </p>
                         </div>
                         <div className="flex items-center gap-4 flex-shrink-0">
+                             <AutosaveStatusIndicator status={autosaveStatus} />
                              <span className={`text-sm font-medium px-3 py-1 rounded-full ${statusStyles[brief.status] || statusStyles.draft}`}>
                                 {brief.status.replace('-', ' ')}
                             </span>
@@ -219,33 +225,19 @@ export const BriefDetailPage = () => {
                 <AnimatedElement>
                     <div className="bg-white p-8 sm:p-12 rounded-2xl border border-gray-200 shadow-lg max-w-4xl mx-auto">
                         <div className="space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <EditableField label="Company Name" name="company_name" value={editableData.company_name || ''} onChange={handleInputChange} />
+                                <EditableField label="Project Type" name="project_type" value={editableData.project_type || ''} onChange={handleInputChange} />
+                            </div>
                             <EditableField label="Company Overview" name="overview" value={editableData.overview || ''} onChange={handleInputChange} type="textarea" />
-                            <EditableList label="Key Website Takeaways" name="website_summary_points" items={editableData.website_summary_points || []} onChange={handleListChange} />
-                            <EditableList label="Primary Project Goals" name="key_goals" items={editableData.key_goals || []} onChange={handleListChange} />
-                            <EditableList label="Suggested Deliverables" name="suggested_deliverables" items={editableData.suggested_deliverables || []} onChange={handleListChange} />
+                            <EditableList label="Key Website Takeaways" name="website_summary_points" items={(editableData.website_summary_points || [])} onChange={handleListChange} />
+                            <EditableList label="Primary Project Goals" name="key_goals" items={(editableData.key_goals || [])} onChange={handleListChange} />
+                            <EditableList label="Suggested Deliverables" name="suggested_deliverables" items={(editableData.suggested_deliverables || [])} onChange={handleListChange} />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
                                 <EditableField label="Brand Tone" name="brand_tone" value={editableData.brand_tone || ''} onChange={handleInputChange} />
                                 <EditableField label="Budget" name="budget_band" value={editableData.budget_band || ''} onChange={handleInputChange} />
                             </div>
-
-                            {error && <p className="text-red-600 text-sm">{error}</p>}
-                            
-                            {(isDirty || isSaving || showSuccess) && (
-                                <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                                    {showSuccess && (
-                                        <div className="flex items-center gap-2 text-green-600 text-sm font-semibold animate-fade-in">
-                                            <CheckCircleIcon className="w-5 h-5" />
-                                            <span>Changes saved!</span>
-                                        </div>
-                                    )}
-                                    <button onClick={handleCancelChanges} disabled={isSaving} className="px-6 py-2 rounded-lg font-semibold text-gray-700 border border-gray-300 hover:bg-gray-100 disabled:opacity-50">
-                                        Cancel
-                                    </button>
-                                    <button onClick={handleSaveChanges} disabled={isSaving || !isDirty} className="px-6 py-2 rounded-lg font-semibold bg-sunai-orange text-white hover:opacity-90 disabled:bg-orange-300 disabled:cursor-not-allowed">
-                                        {isSaving ? 'Saving...' : 'Save Changes'}
-                                    </button>
-                                </div>
-                            )}
+                            {autosaveStatus === 'error' && <p className="text-red-600 text-sm font-semibold">{error}</p>}
                         </div>
                     </div>
                 </AnimatedElement>
