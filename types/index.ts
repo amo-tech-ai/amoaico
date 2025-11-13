@@ -29,6 +29,8 @@ export interface Brief extends BriefData {
     }
 }
 
+export type Project = Brief;
+
 export interface User {
     id: string;
     fullName: string;
@@ -47,4 +49,26 @@ export interface ProjectStory {
     metrics: { value: string; unit: string; label: string; prefix?: string; }[];
     techStack: string[];
     testimonial: { quote: string; author: string; title: string; };
+}
+
+// --- NEW TYPES FOR DASHBOARD PAGES ---
+
+export interface Client {
+    company_name: string;
+    project_count: number;
+}
+
+export interface FinancialSummary {
+    totalRevenue: number;
+    netProfit: number;
+    outstandingInvoices: number;
+    expenses: number;
+}
+
+export interface Invoice {
+    id: string;
+    clientName: string;
+    amount: number;
+    status: 'paid' | 'pending' | 'overdue';
+    dueDate: string;
 }

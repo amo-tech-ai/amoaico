@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import { Brief, BriefData } from '../types';
+import { Brief, BriefData, Project } from '../types';
 
 /**
  * Fetches all briefs for a specific user from the Supabase database.
@@ -38,6 +38,44 @@ export const getBriefsForUser = async (userId: string): Promise<Brief[]> => {
         };
     });
 };
+
+/**
+ * Fetches all "approved" briefs for a user to be displayed as projects.
+ * @param userId - The ID of the user whose projects are to be fetched.
+ * @returns A promise that resolves to an array of projects.
+ */
+export const getProjectsForUser = async (userId: string): Promise<Project[]> => {
+    console.log(`Fetching projects (approved briefs) for user ${userId}...`);
+    const { data, error } = await supabase
+        .from('briefs')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error(`Error fetching projects for user ${userId}:`, error);
+        throw error;
+    }
+
+    return data.map((item: any) => {
+        const briefData = item.brief_data || {};
+        return {
+            id: item.id,
+            company_name: item.company_name,
+            project_type: item.project_type,
+            status: item.status,
+            created_at: item.created_at,
+            overview: briefData.overview,
+            key_goals: briefData.key_goals,
+            suggested_deliverables: briefData.suggested_deliverables,
+            brand_tone: briefData.brand_tone,
+            budget_band: briefData.budget_band,
+            website_summary_points: briefData.website_summary_points,
+        };
+    });
+};
+
 
 /**
  * Fetches a single brief by its ID from Supabase.

@@ -122,20 +122,24 @@ export const ArrowUpRightIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M7 17V7h10"/><path d="M7 7l10 10"/></svg>
 );
 
-export const LogoIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-        <g clipPath="url(#clip0_logo)">
-            <path fillRule="evenodd" clipRule="evenodd" d="M1080 97.087H0V177.087H1080V97.087ZM1080 257.087H0V337.087H1080V257.087ZM1080 417.087H0V497.087H1080V417.087ZM1080 577.087H0V657.087H1080V577.087ZM1080 737.087H0V817.087H1080V737.087ZM1080 897.087H0V977.087H1080V897.087Z" fill="#FACC15"/>
-            <path d="M518.989 313.913L389.989 763.913H454.989L488.989 655.913H679.989L713.989 763.913H778.989L649.989 313.913H518.989ZM584.489 403.913L641.989 583.913H526.989L584.489 403.913Z" fill="white"/>
-            <path d="M787.989 313.913H717.989V763.913H787.989V313.913Z" fill="white"/>
-        </g>
-        <defs>
-            <clipPath id="clip0_logo">
-                <circle cx="540" cy="540" r="540"/>
-            </clipPath>
-        </defs>
-    </svg>
-);
+{/* FIX: Update LogoIcon to accept a `clipId` prop to avoid duplicate SVG clip-path IDs. */}
+export const LogoIcon = (props: React.SVGProps<SVGSVGElement> & { clipId?: string }) => {
+    const { clipId = 'clip0_logo', ...rest } = props;
+    return (
+        <svg viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg" {...rest}>
+            <g clipPath={`url(#${clipId})`}>
+                <path fillRule="evenodd" clipRule="evenodd" d="M1080 97.087H0V177.087H1080V97.087ZM1080 257.087H0V337.087H1080V257.087ZM1080 417.087H0V497.087H1080V417.087ZM1080 577.087H0V657.087H1080V577.087ZM1080 737.087H0V817.087H1080V737.087ZM1080 897.087H0V977.087H1080V897.087Z" fill="#FACC15"/>
+                <path d="M518.989 313.913L389.989 763.913H454.989L488.989 655.913H679.989L713.989 763.913H778.989L649.989 313.913H518.989ZM584.489 403.913L641.989 583.913H526.989L584.489 403.913Z" fill="white"/>
+                <path d="M787.989 313.913H717.989V763.913H787.989V313.913Z" fill="white"/>
+            </g>
+            <defs>
+                <clipPath id={clipId}>
+                    <circle cx="540" cy="540" r="540"/>
+                </clipPath>
+            </defs>
+        </svg>
+    );
+};
 
 // --- About Page Icons ---
 export const TargetIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -175,4 +179,27 @@ export const LifeBuoyIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 export const LogOutIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+);
+export const QuestionMarkCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+);
+export const HelpCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+);
+export const MailIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+);
+export const FolderKanbanIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/></svg>
+);
+
+// --- NEW ICONS for Clients & Integrations ---
+export const BuildingIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+);
+export const StripeIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M11.92,10.26a2.33,2.33,0,0,1,1.49-.41,1.24,1.24,0,0,1,1.25,1.25,1.76,1.76,0,0,1-.13.68L12.3,16.89a2.32,2.32,0,0,1-1.48.41,1.24,1.24,0,0,1-1.25-1.25,1.66,1.66,0,0,1,.13-.67Z"/><path d="M21.6,4.4H15.15a2.1,2.1,0,0,0-1.89.84l-4.59,8-1.55-2A2.1,2.1,0,0,0,5.2,10.4H2.4a.4.4,0,0,0-.4.4V11a.4.4,0,0,0,.4.4H5.2a.6.6,0,0,1,.54.24l1.54,2a2.1,2.1,0,0,0,1.89.84h6.45a2.1,2.1,0,0,0,1.89-.84l4.59-8,1.55,2a2.1,2.1,0,0,0,1.89.84H21.6a.4.4,0,0,0,.4-.4V8.6a.4.4,0,0,0-.4-.4H18.8a.6.6,0,0,1-.54-.24l-1.54-2a2.1,2.1,0,0,0-1.89-.84Z"/></svg>
+);
+export const SlackIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M5.04,15.12a2.24,2.24,0,1,0,2.24,2.24h0A2.24,2.24,0,0,0,5.04,15.12Zm0-4.48a2.24,2.24,0,1,0,0,4.48h4.48V13.36a2.24,2.24,0,0,0-2.24-2.24H5.04ZM8.88,8.88a2.24,2.24,0,0,0,0-4.48h0a2.24,2.24,0,0,0,0,4.48ZM13.36,8.88V6.64A2.24,2.24,0,0,0,11.12,4.4H8.88V8.88Zm-2.24,5.04a2.24,2.24,0,1,0-4.48,0v4.48H8.88a2.24,2.24,0,0,0,2.24-2.24V13.92Zm8.88-2.24a2.24,2.24,0,1,0-4.48,0v0a2.24,2.24,0,0,0,4.48,0Zm0,4.48V13.36h-2.24a2.24,2.24,0,0,0,0,4.48h2.24ZM15.12,8.88a2.24,2.24,0,1,0,0-4.48h0a2.24,2.24,0,0,0,0,4.48Zm4.48-2.24V11.12h2.24a2.24,2.24,0,0,0,0-4.48Z"/></svg>
 );
