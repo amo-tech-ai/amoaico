@@ -1,5 +1,5 @@
 // supabase/functions/_shared/geminiClient.ts
-// FIX: Updated Deno types reference to use a stable, versioned URL to resolve TypeScript errors.
+// FIX: Updated Deno types reference to use a direct URL for better resolution.
 /// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
 
 import { GoogleGenAI } from 'npm:@google/genai@0.14.0';

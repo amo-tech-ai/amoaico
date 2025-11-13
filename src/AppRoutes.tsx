@@ -67,22 +67,22 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
         <Route path="/login" element={<LoginPage />} />
 
         {/* --- DASHBOARD PAGES (Dashboard Layout) --- */}
-        <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
-            <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
-            <Route path="/dashboard/overview" element={<OverviewPage />} />
-            <Route path="/dashboard/briefs" element={<BriefsListPage onStartWizard={onStartWizard} />} />
-            <Route path="/dashboard/briefs/:briefId" element={<BriefDetailPage />} />
-            <Route path="/dashboard/projects" element={<ProjectsListPage />} />
-            <Route path="/dashboard/clients" element={<ClientsListPage />} />
-            <Route path="/dashboard/financials" element={<FinancialsPage />} />
-            <Route path="/dashboard/settings" element={<SettingsPage />} />
-            <Route path="/dashboard/settings/integrations" element={<IntegrationsPage />} />
+        <Route path="/dashboard" element={<DashboardLayout onStartWizard={onStartWizard} />}>
+            <Route index element={<Navigate to="overview" replace />} />
+            <Route path="overview" element={<OverviewPage />} />
+            <Route path="briefs" element={<BriefsListPage onStartWizard={onStartWizard} />} />
+            <Route path="briefs/:briefId" element={<BriefDetailPage />} />
+            <Route path="projects" element={<ProjectsListPage />} />
+            <Route path="clients" element={<ClientsListPage />} />
+            <Route path="financials" element={<FinancialsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="settings/integrations" element={<IntegrationsPage />} />
         </Route>
 
         {/* --- ADMIN ROUTE WRAPPER --- */}
         <Route element={<AdminRoute />}>
-            <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
-                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="/admin/dashboard" element={<DashboardLayout onStartWizard={onStartWizard} />}>
+                 <Route index element={<AdminDashboardPage />} />
             </Route>
         </Route>
 
