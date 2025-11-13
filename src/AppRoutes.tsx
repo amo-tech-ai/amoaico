@@ -52,7 +52,6 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
     <Suspense fallback={<PageLoader />}>
         <Routes>
             {/* --- PUBLIC-FACING PAGES (with Header/Footer) --- */}
-            {/* FIX: Removed onStartWizard prop from child routes. It will be passed via Outlet context. */}
             <Route element={<PublicLayout onStartWizard={onStartWizard} />}>
                 <Route path="/" element={<HomePage />} />
                 {/* Service Pages */}
@@ -79,9 +78,7 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
             {/* --- DASHBOARD PAGES (Dashboard Layout) --- */}
             <Route path="/dashboard" element={<DashboardLayout onStartWizard={onStartWizard} />}>
                 <Route index element={<Navigate to="overview" replace />} />
-                {/* FIX: Removed onStartWizard prop. This will be provided by Outlet context from DashboardLayout. */}
                 <Route path="overview" element={<OverviewPage />} />
-                {/* FIX: Removed onStartWizard prop. This will be provided by Outlet context from DashboardLayout. */}
                 <Route path="briefs" element={<BriefsListPage />} />
                 <Route path="briefs/:briefId" element={<BriefDetailPage />} />
                 <Route path="projects" element={<ProjectsListPage />} />
@@ -93,7 +90,6 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
             </Route>
 
             {/* --- ADMIN ROUTE WRAPPER --- */}
-            {/* FIX: Removed the nested DashboardLayout to prevent a "double layout" bug. The AdminDashboardPage is now a standalone page within the AdminRoute. */}
             <Route path="/admin/dashboard" element={<AdminRoute />}>
                 <Route index element={<AdminDashboardPage />} />
             </Route>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -11,7 +12,6 @@ import {
     WHATSAPP_TECHNOLOGIES,
     WHATSAPP_FAQ
 } from '../data';
-// FIX: Add CheckIcon to imports to resolve usage error.
 import { WhatsAppIcon, ArrowDownRightIcon, ArrowUpRightIcon, ChevronDownIcon, XIcon, CheckIcon } from '../assets/icons';
 
 const FaqItem = ({ q, a }: { q: string, a: string }) => {
@@ -33,8 +33,12 @@ const FaqItem = ({ q, a }: { q: string, a: string }) => {
     );
 };
 
-// FIX: Update component to accept `onStartWizard` prop to fix type error in AppRoutes.
-export const WhatsAppAutomationPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const WhatsAppAutomationPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     return (
         <main className="bg-white">
             {/* Hero Section */}
@@ -52,7 +56,6 @@ export const WhatsAppAutomationPage = ({ onStartWizard }: { onStartWizard: () =>
                             </p>
                         </AnimatedElement>
                         <AnimatedElement delay={200} className="mt-8">
-                            {/* FIX: Changed button text and action for consistency with other service pages. */}
                             <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">
                                 Start Your AI Brief →
                             </button>

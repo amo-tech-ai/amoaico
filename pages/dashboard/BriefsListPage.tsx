@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // FIX: Ensured all react-router imports are from 'react-router-dom'.
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getBriefsForUser } from '../../services/briefService';
 import { Brief } from '../../types';
@@ -45,8 +45,14 @@ const BriefCard = ({ brief, index }: { brief: Brief; index: number }) => {
     );
 };
 
+// FIX: Define context type for useOutletContext.
+interface DashboardContext {
+  onStartWizard: () => void;
+}
 
-export const BriefsListPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+export const BriefsListPage = () => {
+    // FIX: Get onStartWizard from Outlet context instead of props to fix missing prop error.
+    const { onStartWizard } = useOutletContext<DashboardContext>();
     const { user, loading: authLoading } = useAuth();
     const [briefs, setBriefs] = useState<Brief[]>([]);
     const [loading, setLoading] = useState(true);
