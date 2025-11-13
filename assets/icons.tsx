@@ -125,7 +125,6 @@ export const ArrowUpRightIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export const LogoIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
         <g clipPath="url(#clip0_logo)">
-            <rect width="1080" height="1080" fill="white"/>
             <path fillRule="evenodd" clipRule="evenodd" d="M1080 97.087H0V177.087H1080V97.087ZM1080 257.087H0V337.087H1080V257.087ZM1080 417.087H0V497.087H1080V417.087ZM1080 577.087H0V657.087H1080V577.087ZM1080 737.087H0V817.087H1080V737.087ZM1080 897.087H0V977.087H1080V897.087Z" fill="#FACC15"/>
             <path d="M518.989 313.913L389.989 763.913H454.989L488.989 655.913H679.989L713.989 763.913H778.989L649.989 313.913H518.989ZM584.489 403.913L641.989 583.913H526.989L584.489 403.913Z" fill="white"/>
             <path d="M787.989 313.913H717.989V763.913H787.989V313.913Z" fill="white"/>
