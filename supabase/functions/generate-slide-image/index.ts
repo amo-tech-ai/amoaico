@@ -2,8 +2,8 @@
 // This is a placeholder for the generate-slide-image Edge Function.
 // Implementation is pending as per docs/21-edge-functions-prompts.md.
 
-// FIX: Update Deno types reference to a stable, versioned URL to resolve "Cannot find name 'Deno'" error.
-/// <reference types="npm:@supabase/functions-js/src/edge-runtime.d.ts" />
+// FIX: Updated Deno types reference to use a stable, versioned URL to resolve TypeScript errors.
+/// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
 
 import { corsHeaders } from '../_shared/cors.ts';
 
