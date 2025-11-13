@@ -1,6 +1,5 @@
 // supabase/functions/_shared/supabaseClient.ts
-// FIX: Add Deno type reference to resolve error on 'Deno.env'.
-/// <reference types="https://deno.land/x/deno/cli/types.d.ts" />
+// FIX: Removed invalid Deno type reference. The Deno runtime environment provides the necessary types.
 
 import { createClient } from '@supabase/supabase-js';
 
