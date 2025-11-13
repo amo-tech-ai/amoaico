@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
 import { DashboardLayout } from './components/layout/DashboardLayout';
+import { PublicLayout } from './components/layout/PublicLayout';
 
 // Page Components
 import { HomePage } from './pages/HomePage';
@@ -31,7 +32,6 @@ import { FinancialsPage } from './pages/dashboard/FinancialsPage';
 import { SettingsPage } from './pages/dashboard/SettingsPage';
 import { IntegrationsPage } from './pages/dashboard/IntegrationsPage';
 
-
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';
 import { BriefRedirect } from './components/BriefRedirect';
@@ -42,26 +42,31 @@ interface AppRoutesProps {
 
 export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
     <Routes>
-        <Route path="/" element={<HomePage onStartWizard={onStartWizard} />} />
-        {/* Service Pages */}
-        <Route path="/services" element={<AiWebApplicationsPage onStartWizard={onStartWizard} />} />
-        <Route path="/services/web-applications" element={<AiWebApplicationsPage onStartWizard={onStartWizard} />} />
-        <Route path="/services/social-media" element={<AiSocialMediaPage onStartWizard={onStartWizard} />} />
-        <Route path="/services/ecommerce" element={<EcommercePage onStartWizard={onStartWizard} />} />
-        <Route path="/services/whatsapp-automation" element={<WhatsAppAutomationPage onStartWizard={onStartWizard} />} />
-        
-        {/* Core Pages */}
-        <Route path="/process" element={<ProcessPage onStartWizard={onStartWizard} />} />
-        <Route path="/projects" element={<ProjectsPage onStartWizard={onStartWizard} />} />
-        <Route path="/tech-stack" element={<TechStackPage />} />
-        <Route path="/resources" element={<ResourcesPage />} />
-        <Route path="/about" element={<AboutPage onStartWizard={onStartWizard} />} />
-        <Route path="/contact" element={<ContactPage />} />
+        {/* --- PUBLIC-FACING PAGES (with Header/Footer) --- */}
+        <Route element={<PublicLayout onStartWizard={onStartWizard} />}>
+            <Route path="/" element={<HomePage onStartWizard={onStartWizard} />} />
+            {/* Service Pages */}
+            <Route path="/services" element={<AiWebApplicationsPage onStartWizard={onStartWizard} />} />
+            <Route path="/services/web-applications" element={<AiWebApplicationsPage onStartWizard={onStartWizard} />} />
+            <Route path="/services/social-media" element={<AiSocialMediaPage onStartWizard={onStartWizard} />} />
+            <Route path="/services/ecommerce" element={<EcommercePage onStartWizard={onStartWizard} />} />
+            <Route path="/services/whatsapp-automation" element={<WhatsAppAutomationPage onStartWizard={onStartWizard} />} />
+            {/* Core Pages */}
+            <Route path="/process" element={<ProcessPage onStartWizard={onStartWizard} />} />
+            <Route path="/projects" element={<ProjectsPage onStartWizard={onStartWizard} />} />
+            <Route path="/tech-stack" element={<TechStackPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/about" element={<AboutPage onStartWizard={onStartWizard} />} />
+            <Route path="/contact" element={<ContactPage />} />
+            {/* Legal Pages */}
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+        </Route>
 
-        {/* Auth Page */}
+        {/* --- AUTH PAGE (Standalone, No Layout) --- */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* --- NEW DASHBOARD LAYOUT --- */}
+        {/* --- DASHBOARD PAGES (Dashboard Layout) --- */}
         <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
             <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
             <Route path="/dashboard/overview" element={<OverviewPage />} />
@@ -74,19 +79,15 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
             <Route path="/dashboard/settings/integrations" element={<IntegrationsPage />} />
         </Route>
 
-        {/* --- LEGACY ROUTE REDIRECT --- */}
-        <Route path="/brief/:briefId" element={<BriefRedirect />} />
-
-        {/* Admin Pages */}
-        <Route path="/admin" element={<AdminRoute />}>
-            <Route path="dashboard" element={<AdminDashboardPage />} />
+        {/* --- ADMIN ROUTE WRAPPER --- */}
+        <Route element={<AdminRoute />}>
+            <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            </Route>
         </Route>
 
-        {/* Legal Pages */}
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-
-        {/* Fallback route to home */}
-        <Route path="*" element={<HomePage onStartWizard={onStartWizard} />} />
+        {/* --- UTILITY & FALLBACK ROUTES --- */}
+        <Route path="/brief/:briefId" element={<BriefRedirect />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
 );

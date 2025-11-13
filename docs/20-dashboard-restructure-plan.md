@@ -10,12 +10,12 @@
 
 | ID | Task | Short Description | Status | % Complete | Priority |
 | :-- | :--- | :--- | :--- | :--- | :--- |
-| **1** | **Create New Layout Components** | Build `DashboardLayout`, `Sidebar`, and `DashboardHeader`. | 🔴 Not Started | 0% | 🟥 Critical |
-| **2** | **Create Placeholder Pages** | Scaffold all new, empty pages for the dashboard sitemap. | 🔴 Not Started | 0% | 🟥 Critical |
-| **3** | **Update App Routing** | Implement the new nested routing structure in `AppRoutes.tsx`. | 🔴 Not Started | 0% | 🟥 Critical |
-| **4** | **Migrate Existing Pages** | Move `DashboardPage` and `BriefDetailPage` into the new layout. | 🔴 Not Started | 0% | 🟧 High |
-| **5** | **Implement Redirects** | Create the `BriefRedirect` component to ensure backward compatibility for old URLs. | 🔴 Not Started | 0% | 🟧 High |
-| **6** | **Final Validation & Testing** | Perform end-to-end testing of the new layout, routing, and all features. | 🔴 Not Started | 0% | 🟥 Critical |
+| **1** | **Create New Layout Components** | Build `DashboardLayout`, `Sidebar`, and `DashboardHeader`. | 🟢 **Completed** | 100% | 🟥 Critical |
+| **2** | **Create Placeholder Pages** | Scaffold all new, empty pages for the dashboard sitemap. | 🟢 **Completed** | 100% | 🟥 Critical |
+| **3** | **Update App Routing** | Implement the new nested routing structure in `AppRoutes.tsx`. | 🟢 **Completed** | 100% | 🟥 Critical |
+| **4** | **Migrate Existing Pages** | Move `DashboardPage` and `BriefDetailPage` into the new layout. | 🟢 **Completed** | 100% | 🟧 High |
+| **5** | **Implement Redirects** | Create the `BriefRedirect` component to ensure backward compatibility for old URLs. | 🟢 **Completed** | 100% | 🟧 High |
+| **6** | **Final Validation & Testing** | Perform end-to-end testing of the new layout, routing, and all features. | 🟢 **Completed** | 100% | 🟥 Critical |
 
 ---
 
