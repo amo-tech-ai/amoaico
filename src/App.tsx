@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 // Feature Components
 import { AiBriefWizard } from './features/ai-brief-wizard/AiBriefWizard';
@@ -15,11 +15,11 @@ const App = () => {
     const closeWizard = useCallback(() => setIsWizardOpen(false), []);
 
     return (
-        <HashRouter>
+        <BrowserRouter>
             <ScrollToTop />
             <AppRoutes onStartWizard={startWizard} />
             {isWizardOpen && <AiBriefWizard onClose={closeWizard} />}
-        </HashRouter>
+        </BrowserRouter>
     );
 };
 

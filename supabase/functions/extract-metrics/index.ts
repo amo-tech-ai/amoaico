@@ -2,7 +2,8 @@
 // This is a placeholder for the extract-metrics Edge Function.
 // Implementation is pending as per docs/21-edge-functions-prompts.md.
 
-// FIX: Updated Deno types reference to use a direct URL for better resolution.
+// FIX: Updated Deno types reference to use a more reliable CDN (esm.sh)
+// to resolve Deno runtime and Supabase functions type definition errors.
 /// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
 
 import { corsHeaders } from '../_shared/cors.ts';

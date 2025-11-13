@@ -1,8 +1,9 @@
 // supabase/functions/_shared/geminiClient.ts
-// FIX: Updated Deno types reference to use a direct URL for better resolution.
+// FIX: Updated Deno types reference to use a more reliable CDN (esm.sh)
+// to resolve Deno runtime and Supabase functions type definition errors.
 /// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
 
-import { GoogleGenAI } from 'npm:@google/genai@0.14.0';
+import { GoogleGenAI } from '@google/genai';
 
 /**
  * Creates and returns a GoogleGenAI client instance.
