@@ -1,11 +1,10 @@
 import React, { useState, useCallback, lazy, Suspense } from 'react';
-// FIX: Changed import from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues. Browser-specific routers are in 'react-router-dom', but this change is speculative to address widespread import errors.
-import { BrowserRouter as HashRouter } from 'react-router-dom';
+// FIX: Corrected react-router-dom import. Changed `BrowserRouter as HashRouter` to `HashRouter` to resolve module resolution issues.
+import { HashRouter } from 'react-router-dom';
 
 // Custom Components
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppRoutes } from './AppRoutes';
-import { PublicLayout } from './components/layout/PublicLayout';
 
 // Lazily load the AiBriefWizard component. This creates a separate code chunk
 // that is only downloaded when the user initiates the wizard flow.

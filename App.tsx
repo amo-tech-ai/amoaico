@@ -1,5 +1,6 @@
 import React, { useState, useCallback, lazy, Suspense } from 'react';
-import { BrowserRouter as HashRouter } from 'react-router-dom';
+// FIX: Corrected react-router-dom import. Changed `BrowserRouter as HashRouter` to `HashRouter` to resolve module resolution issues.
+import { HashRouter } from 'react-router-dom';
 
 // Custom Components
 import { ScrollToTop } from './src/components/ScrollToTop';

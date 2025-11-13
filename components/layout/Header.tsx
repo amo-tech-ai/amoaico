@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS, SERVICE_LINKS } from '../../data';
 import { useAuth } from '../../hooks/useAuth';

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-// FIX: Changed import of `useLocation` from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
+// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { useLocation } from 'react-router-dom';
 
 export const ScrollToTop = () => {

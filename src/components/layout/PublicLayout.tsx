@@ -1,5 +1,5 @@
 import React from 'react';
-// FIX: Changed import of `Outlet` from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
+// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';

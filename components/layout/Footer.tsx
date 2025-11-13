@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Link } from 'react-router-dom';
 import { SectionContainer } from './SectionContainer';
 import { AnimatedElement } from '../animations/AnimatedElement';

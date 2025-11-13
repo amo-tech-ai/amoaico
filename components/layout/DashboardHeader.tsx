@@ -1,5 +1,5 @@
 import React from 'react';
-// FIX: Changed import of `Link` from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
+// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { SearchIcon, BellIcon, ChevronDownIcon, PlusCircleIcon } from '../../assets/icons';

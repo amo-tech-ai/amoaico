@@ -1,5 +1,5 @@
 import React from 'react';
-// FIX: Changed import of `Navigate` from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
+// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Auth } from '../components/Auth';
