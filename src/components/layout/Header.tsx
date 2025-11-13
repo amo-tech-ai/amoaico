@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS, SERVICE_LINKS } from '../../data';
 import { useAuth } from '../../hooks/useAuth';

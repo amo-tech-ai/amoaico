@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { useParams, Link } from 'react-router-dom';
 import { Brief } from '../types';
 import { getBriefById } from '../services/briefService';

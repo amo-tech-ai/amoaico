@@ -1,17 +1,19 @@
-import React, { useState, useCallback } from 'react';
-import { HashRouter } from 'react-router-dom';
-
-// Layout Components
-import { Header } from './components/layout/Header';
-import { Footer } from './components/layout/Footer';
-
-// Feature Components
-import { AiBriefWizard } from './features/ai-brief-wizard/AiBriefWizard';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
+import { BrowserRouter as HashRouter } from 'react-router-dom';
 
 // Custom Components
-import { ScrollToTop } from './components/ScrollToTop';
-import { AppRoutes } from './AppRoutes';
-import { LogoIcon } from './assets/icons';
+import { ScrollToTop } from './src/components/ScrollToTop';
+import { AppRoutes } from './src/AppRoutes';
+
+const AiBriefWizard = lazy(() => import('./src/features/ai-brief-wizard/AiBriefWizard').then(module => ({ default: module.AiBriefWizard })));
+
+const WizardLoader = () => (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative flex items-center justify-center" style={{ minHeight: '550px' }}>
+            <div className="w-12 h-12 border-4 border-t-sunai-orange border-gray-200 rounded-full animate-spin"></div>
+        </div>
+    </div>
+);
 
 const App = () => {
     const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -22,25 +24,17 @@ const App = () => {
     return (
         <HashRouter>
             <ScrollToTop />
-            <div className="bg-[#FFF9F5] relative overflow-hidden">
-                {/* Decorative background logos */}
-                <div aria-hidden="true" className="absolute inset-0 opacity-50">
-                    {/* FIX: Add unique clipId to prevent duplicate SVG IDs */}
-                    <LogoIcon clipId="bg-logo-top" className="absolute -top-[25%] left-1/2 -translate-x-1/2 w-[1500px] h-auto max-w-none" />
-                    {/* FIX: Add unique clipId to prevent duplicate SVG IDs */}
-                    <LogoIcon clipId="bg-logo-bottom" className="absolute -bottom-[25%] left-1/2 -translate-x-1/2 w-[1500px] h-auto max-w-none" />
-                </div>
-
-                {/* Main content, layered on top of the background */}
-                <div className="relative">
-                    <Header onStartWizard={startWizard} />
-                    <AppRoutes onStartWizard={startWizard} />
-                    <Footer onStartWizard={startWizard} />
-                </div>
-                
-                {/* Wizard modal is outside the relative content div to ensure its fixed positioning works correctly */}
-                {isWizardOpen && <AiBriefWizard onClose={closeWizard} />}
-            </div>
+            {/* 
+              AppRoutes now controls which layout (PublicLayout, DashboardLayout, or none) is rendered
+              for any given route, preventing the "double layout" bug.
+            */}
+            <AppRoutes onStartWizard={startWizard} />
+            
+            {isWizardOpen && (
+                <Suspense fallback={<WizardLoader />}>
+                    <AiBriefWizard onClose={closeWizard} />
+                </Suspense>
+            )}
         </HashRouter>
     );
 };

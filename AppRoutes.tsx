@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components

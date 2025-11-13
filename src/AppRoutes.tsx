@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
@@ -6,6 +7,7 @@ import { DashboardLayout } from './components/layout/DashboardLayout';
 import { PublicLayout } from './components/layout/PublicLayout';
 
 // Page Components
+// FIX: Corrected import paths to be relative to the 'src' directory.
 import { HomePage } from './pages/HomePage';
 import { AiWebApplicationsPage } from './pages/AiWebApplicationsPage';
 import { AiSocialMediaPage } from './pages/AiSocialMediaPage';

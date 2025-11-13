@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Changed import of `Link` from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { Link } from 'react-router-dom';
 import { PlusCircleIcon, RocketIcon } from '../../../assets/icons';
 

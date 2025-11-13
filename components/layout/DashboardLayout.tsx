@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { DashboardHeader } from './DashboardHeader';

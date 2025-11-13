@@ -2,7 +2,6 @@ import React from 'react';
 import { XIcon, CheckCircleIcon } from '../../../assets/icons';
 
 interface GeneratingStepProps {
-    // FIX: Add 'idle' to the status type to match the parent component's state type.
     status: 'loading' | 'success' | 'error' | 'idle';
     message: string;
     onRetry: () => void;

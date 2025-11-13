@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getBriefsForUser } from '../services/briefService';

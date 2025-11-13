@@ -52,7 +52,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
                             <QuestionMarkCircleIcon className="w-4 h-4 text-gray-400 cursor-help" />
                         </Tooltip>
                     </div>
-                    <input type="text" id="websiteUrl" value={websiteUrl} onChange={handleUrlChange} onBlur={() => validateUrl(websiteUrl)} placeholder="e.g., https://www.example.com" className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 transition ${urlError ? 'border-red-500' : 'border-gray-300 focus:ring-[#F97316] focus:border-[#F97316]'}`} />
+                    <input type="text" id="websiteUrl" value={websiteUrl} onChange={handleUrlChange} onBlur={() => validateUrl(websiteUrl)} placeholder="e.g., https://www.example.com" className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 transition ${urlError ? 'border-red-500' : 'border-red-500'}`} />
                     {urlError && <div className="flex items-center gap-1.5 text-red-600 text-sm mt-1.5"><XIcon className="w-4 h-4 flex-shrink-0" /><span>{urlError}</span></div>}
                 </div>
             </div>

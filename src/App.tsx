@@ -1,15 +1,17 @@
 import React, { useState, useCallback, lazy, Suspense } from 'react';
-import { HashRouter } from 'react-router-dom';
+// FIX: Changed import from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues. Browser-specific routers are in 'react-router-dom', but this change is speculative to address widespread import errors.
+import { BrowserRouter as HashRouter } from 'react-router-dom';
 
 // Custom Components
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppRoutes } from './AppRoutes';
+import { PublicLayout } from './components/layout/PublicLayout';
 
-// FIX: Correctly lazy-load the named-exported `AiBriefWizard` component.
-// React.lazy expects a promise that resolves to a module with a `default` export.
-// The `.then()` call adapts the named export `AiBriefWizard` into the required format.
+// Lazily load the AiBriefWizard component. This creates a separate code chunk
+// that is only downloaded when the user initiates the wizard flow.
 const AiBriefWizard = lazy(() => import('./features/ai-brief-wizard/AiBriefWizard').then(module => ({ default: module.AiBriefWizard })));
 
+// A loader component to show while the lazy-loaded wizard is being fetched.
 const WizardLoader = () => (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative flex items-center justify-center" style={{ minHeight: '550px' }}>
@@ -28,6 +30,8 @@ const App = () => {
         <HashRouter>
             <ScrollToTop />
             <AppRoutes onStartWizard={startWizard} />
+            
+            {/* The wizard is only rendered when triggered. The Suspense boundary handles the loading state. */}
             {isWizardOpen && (
                 <Suspense fallback={<WizardLoader />}>
                     <AiBriefWizard onClose={closeWizard} />

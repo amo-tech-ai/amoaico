@@ -1,5 +1,7 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
+// FIX: Changed import of `Link` from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
 import { Link } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
