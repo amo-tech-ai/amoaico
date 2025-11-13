@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import { Brief } from '../types';
+import { Brief, BriefData } from '../types';
 
 /**
  * Fetches all briefs for a specific user from the Supabase database.
@@ -165,4 +165,41 @@ export const updateBriefStatus = async (briefId: string, newStatus: Brief['statu
         website_summary_points: briefData.website_summary_points || [],
     };
     return updatedBrief;
+};
+
+/**
+ * Updates a specific brief with new data by invoking a secure Edge Function.
+ * @param briefId - The UUID of the brief to update.
+ * @param updatedData - An object containing the brief fields to update.
+ * @returns A promise that resolves to the fully updated brief object.
+ */
+export const updateBrief = async (briefId: string, updatedData: Partial<BriefData>): Promise<Brief> => {
+    console.log(`Updating brief ${briefId} via Edge Function...`);
+
+    const { data, error } = await supabase.functions.invoke('update-brief', {
+        body: { briefId, updatedData },
+    });
+
+    if (error) {
+        console.error("Error invoking update-brief function:", error);
+        throw new Error(`Failed to update brief: ${error.message}`);
+    }
+
+    // The function returns the full updated record, which needs to be mapped to the Brief type
+    const briefData = data.brief_data || {};
+    const returnedBrief: Brief = {
+        id: data.id,
+        company_name: data.company_name,
+        project_type: data.project_type,
+        status: data.status,
+        created_at: data.created_at,
+        overview: briefData.overview || '',
+        key_goals: briefData.key_goals || [],
+        suggested_deliverables: briefData.suggested_deliverables || [],
+        brand_tone: briefData.brand_tone || '',
+        budget_band: briefData.budget_band || '',
+        website_summary_points: briefData.website_summary_points || [],
+    };
+    
+    return returnedBrief;
 };

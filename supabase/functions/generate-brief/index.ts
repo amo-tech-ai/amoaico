@@ -1,11 +1,12 @@
 // FIX: Updated Deno types reference to use a more reliable CDN (esm.sh)
 // to resolve Deno runtime and Supabase functions type definition errors.
-/// <reference types="https://esm.sh/@supabase/functions-js@2.4.1/src/edge-runtime.d.ts" />
+/// <reference types="https://esm.sh/@supabase/functions-js@2" />
 
 import { corsHeaders } from '../_shared/cors.ts';
 import { createSupabaseClient } from '../_shared/supabaseClient.ts';
 import { createGeminiClient } from '../_shared/geminiClient.ts';
 import { parseJSON, requireFields, HttpError } from '../_shared/validation.ts';
+import { FunctionDeclaration, Type } from '@google/genai';
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -25,42 +26,64 @@ Deno.serve(async (req: Request) => {
 
     const ai = createGeminiClient();
 
-    const prompt = `You are a senior project strategist. A client named "${companyName}" has provided their website URL, project type "${projectType}", goals "${selectedGoals.join(', ')}", and budget "${budget}". Analyze their website at "${websiteUrl}" and generate a structured project brief. The output MUST be a valid JSON object. Do not output anything other than the raw JSON object itself, without any markdown fences.
-    
-    The JSON schema should contain:
-    - overview: string
-    - key_goals: string[]
-    - suggested_deliverables: string[]
-    - brand_tone: string
-    - website_summary_points: string[]
-    `;
+    // Define the schema for the function call to ensure structured JSON output
+    const generateBriefFunctionDeclaration: FunctionDeclaration = {
+      name: 'generateProjectBrief',
+      parameters: {
+        type: Type.OBJECT,
+        description: 'A structured project brief generated from user inputs and website analysis.',
+        properties: {
+          overview: { type: Type.STRING, description: 'A concise overview of the company based on their website.' },
+          key_goals: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+            description: 'A list of key project goals derived from user input and website analysis.'
+          },
+          suggested_deliverables: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+            description: 'A list of suggested deliverables for the project.'
+          },
+          brand_tone: { type: Type.STRING, description: 'The perceived brand tone from the website content.' },
+          website_summary_points: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+            description: 'A list of key takeaways or summary points from the website.'
+          },
+          budget_band: { type: Type.STRING, description: 'The provided budget for the project.' },
+        },
+        required: ['overview', 'key_goals', 'suggested_deliverables', 'brand_tone', 'website_summary_points', 'budget_band']
+      }
+    };
+
+    // Update the prompt to instruct the AI to use the search tool and then call the function
+    const prompt = `You are a senior project strategist. A client named "${companyName}" has provided their website URL, project type "${projectType}", goals "${selectedGoals.join(', ')}", and budget "${budget}". Analyze their website at "${websiteUrl}" using the search tool. Based on your analysis and the provided information, call the "generateProjectBrief" function with the fully populated arguments to create a structured project brief.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
-            tools: [{ googleSearch: {} }],
+            tools: [
+              { googleSearch: {} },
+              { functionDeclarations: [generateBriefFunctionDeclaration] }
+            ],
         }
     });
 
-    let textResponse = response.text.trim();
-    if (textResponse.startsWith("```json") && textResponse.endsWith("```")) {
-        textResponse = textResponse.slice(7, -3).trim();
+    const functionCall = response.functionCalls?.[0];
+
+    // Validate that the AI returned the expected function call
+    if (!functionCall || functionCall.name !== 'generateProjectBrief') {
+      console.error("Gemini did not call the expected function. Response:", JSON.stringify(response, null, 2));
+      throw new HttpError("The AI service failed to generate a structured brief. Please try again.", 502);
     }
-    
-    let briefData;
-    try {
-        briefData = JSON.parse(textResponse);
-    } catch (parseError) {
-        console.error("Failed to parse Gemini response as JSON:", textResponse, parseError);
-        throw new HttpError("The AI service returned an invalid response. Please try generating the brief again.", 502);
-    }
+
+    // The arguments of the function call are our structured JSON object
+    const briefData = functionCall.args;
 
     if (!briefData || typeof briefData !== 'object') {
         throw new HttpError("The AI service returned an empty or invalid brief object.", 502);
     }
-
-    briefData.budget_band = budget;
 
     const { data: newBrief, error: dbError } = await supabaseClient
       .from('briefs')
