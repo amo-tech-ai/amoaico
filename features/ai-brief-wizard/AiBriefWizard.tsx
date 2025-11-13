@@ -176,174 +176,81 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
                          <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">What are your primary goals? (Select up to 3)</label>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {--- START OF FILE pages/HomePage.tsx ---
-
-import React, { useState, useEffect } from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
-import { useLocation, useNavigate } from 'react-router-dom';
-import { SectionContainer } from '../components/layout/SectionContainer';
-import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { Counter } from '../components/animations/Counter';
-import { HOME_CORE_SERVICES, HOME_PROCESS_STEPS, HOME_RESULT_METRICS, INVESTMENT_LEVELS } from '../data';
-import { CodeIcon, Share2Icon, MessageCircleIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, CheckCircleIcon, CheckIcon, XIcon } from '../assets/icons';
-
-const PermissionErrorBanner = ({ message }: { message: string }) => {
-    const [isVisible, setIsVisible] = useState(true);
-    const navigate = useNavigate();
-
-    if (!isVisible) return null;
-
-    const handleDismiss = () => {
-        setIsVisible(false);
-        // Clean the location state to prevent the banner from reappearing on navigation
-        navigate('.', { replace: true, state: {} });
+                                {GOALS.map(goal => <button key={goal} onClick={() => handleGoalToggle(goal)} disabled={selectedGoals.length >= 3 && !selectedGoals.includes(goal)} className={`p-3 text-sm font-medium border rounded-lg transition-all disabled:opacity-50 ${selectedGoals.includes(goal) ? 'bg-[#00334F] text-white border-[#00334F] ring-2' : 'hover:bg-gray-50'}`}>{goal}</button>)}
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">Estimated Budget: <span className="font-bold text-[#00334F]">{BUDGET_MARKS[budget]}</span></label>
+                            <input type="range" id="budget" min="10000" max="100000" step="15000" value={budget} onChange={(e) => setBudget(e.target.value)} className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer accent-[#F97316]" />
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                {Object.values(BUDGET_MARKS).map(label => <span key={label}>{label}</span>)}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-8 flex justify-between items-center">
+                        <button onClick={() => setWizardStep('welcome')} className="px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back</button>
+                        <button onClick={generateAndSaveBrief} disabled={!isScopeStepComplete} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all disabled:bg-gray-300">Next: AI Enrichment →</button>
+                    </div>
+                </div>
+            );
+            case 'generating': return (
+                <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                    {(generationStatus === 'loading' || generationStatus === 'idle') && (
+                        <>
+                            <div className="relative w-20 h-20"><div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div><div className="absolute inset-0 border-4 border-t-[#F97316] rounded-full animate-spin"></div></div>
+                            <h2 className="text-2xl font-bold font-poppins mt-8 text-[#00334F]">Generating Your Brief...</h2>
+                            <p className="text-gray-600 mt-2">{generationMessage || 'Preparing...'}</p>
+                        </>
+                    )}
+                    {generationStatus === 'success' && (
+                        <>
+                            <CheckCircleIcon className="w-20 h-20 text-green-500" />
+                            <h2 className="text-2xl font-bold font-poppins mt-8 text-[#00334F]">Success!</h2>
+                            <p className="text-gray-600 mt-2">Your AI-powered brief is ready.</p>
+                        </>
+                    )}
+                    {generationStatus === 'error' && (
+                        <>
+                            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center"><XIcon className="w-10 h-10 text-red-500" /></div>
+                            <h2 className="text-2xl font-bold font-poppins mt-8 text-[#00334F]">Generation Failed</h2>
+                            <p className="text-gray-600 mt-2">We couldn't generate the brief. Please try again.</p>
+                            <button onClick={generateAndSaveBrief} className="mt-6 px-6 py-2 rounded-lg font-semibold bg-[#F97316] text-white">Retry</button>
+                        </>
+                    )}
+               </div>
+            );
+            case 'review': return (brief &&
+                <div>
+                    <h2 className="text-3xl font-bold font-poppins text-center mb-2 text-[#00334F]">Review Your AI-Generated Brief</h2>
+                    <p className="text-center text-gray-600 mb-8">Here's what our AI put together. It's now saved to your dashboard.</p>
+                    <div className="space-y-6 max-h-[350px] overflow-y-auto pr-4">
+                        {renderBriefSection("Company Overview", brief.overview)}
+                        {renderBriefSection("Key Website Takeaways", brief.website_summary_points)}
+                        {renderBriefSection("Primary Project Goals", brief.key_goals)}
+                        {renderBriefSection("Suggested Deliverables", brief.suggested_deliverables)}
+                        <div className="grid grid-cols-2 gap-4">
+                            {renderBriefSection("Brand Tone", brief.brand_tone)}
+                            {renderBriefSection("Budget", brief.budget_band)}
+                        </div>
+                    </div>
+                    <div className="mt-8 flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
+                        <button onClick={() => setWizardStep('scope')} className="w-full sm:w-auto px-6 py-2 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100">Back to Edit</button>
+                        <Link to="/dashboard" onClick={onClose} className="w-full sm:w-auto text-center px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white transition-all transform hover:scale-105">
+                            Go to Dashboard
+                        </Link>
+                    </div>
+                </div>
+            );
+            default: return null;
+        }
     };
 
     return (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8 max-w-7xl mx-auto" role="alert">
-            <div className="flex">
-                <div className="py-1">
-                    <p className="font-bold">Access Denied</p>
-                    <p className="text-sm">{message}</p>
-                </div>
-                <button onClick={handleDismiss} className="ml-auto pl-4">
-                    <XIcon className="w-5 h-5" />
-                </button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative transform transition-all duration-300 ease-out" style={{ minHeight: '550px' }}>
+                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors z-10"><XIcon className="w-6 h-6" /></button>
+                {renderContent()}
             </div>
         </div>
-    );
-};
-
-
-export const HomePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
-    const location = useLocation();
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (location.state?.error) {
-            setError(location.state.error);
-        }
-    }, [location.state]);
-
-    return (
-        <main>
-            {error && <PermissionErrorBanner message={error} />}
-            {/* Hero Section */}
-            <SectionContainer className="bg-white pt-16 md:pt-24 text-center">
-                <AnimatedElement>
-                    <h1 className="text-4xl md:text-6xl font-bold font-poppins text-[#0F172A] tracking-tighter leading-tight max-w-4xl mx-auto">
-                        Turn Ideas Into <span className="text-[#F97316]">AI-Powered</span> Applications in Weeks
-                    </h1>
-                </AnimatedElement>
-                <AnimatedElement delay={100}>
-                    <p className="max-w-2xl mx-auto mt-6 text-lg text-[#0F172A]/80">
-                        Faster Launch. Smarter Automation. Measurable Growth. We build intelligent web and mobile apps that deliver results.
-                    </p>
-                </AnimatedElement>
-                <AnimatedElement delay={200} className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <button onClick={onStartWizard} className="px-8 py-3 rounded-lg font-semibold bg-[#F97316] text-white shadow-lg shadow-[#F97316]/30 hover:opacity-90 transition-all transform hover:scale-105">Start Your AI Brief →</button>
-                    <button className="px-8 py-3 rounded-lg font-semibold text-[#0F172A] border border-gray-300 hover:bg-gray-100 transition-all">See Live Projects</button>
-                </AnimatedElement>
-            </SectionContainer>
-            
-            {/* Core Services Section */}
-            <SectionContainer className="bg-white pt-0">
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {HOME_CORE_SERVICES.map((service, index) => (
-                        <AnimatedElement key={service.title} delay={100 * index}>
-                            <div className="bg-white p-6 rounded-xl border border-gray-100 h-full group transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
-                                <div className="w-12 h-12 flex items-center justify-center text-[#F97316]">{React.cloneElement(service.icon, { width: 32, height: 32 })}</div>
-                                <h4 className="mt-4 text-lg font-semibold font-poppins text-[#00334F]">{service.title}</h4>
-                                <p className="mt-1 text-[#0F172A]/80">{service.description}</p>
-                            </div>
-                        </AnimatedElement>
-                    ))}
-                </div>
-            </SectionContainer>
-            
-            {/* Tech Stack Section */}
-            <SectionContainer className="bg-white">
-                <div className="text-center">
-                    <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">We Build With The Best</h2></AnimatedElement>
-                    <AnimatedElement delay={100}>
-                        <div className="mt-12 flex flex-wrap justify-center items-center gap-x-12 gap-y-6 max-w-4xl mx-auto">
-                            {["CopilotKit", "LangChain", "Supabase", "OpenAI", "Vercel"].map(logo => (
-                                <span key={logo} className="text-gray-500 text-lg font-semibold hover:text-gray-800 transition-colors">{logo}</span>
-                            ))}
-                        </div>
-                    </AnimatedElement>
-                </div>
-            </SectionContainer>
-
-            {/* Process Section */}
-            <SectionContainer className="bg-slate-50">
-                <div className="text-center max-w-3xl mx-auto">
-                    <AnimatedElement><h2 className="text-3xl md:text-5xl font-bold font-poppins tracking-tighter text-[#0F172A]">From Brief to Production in 8 Weeks</h2></AnimatedElement>
-                </div>
-                <div className="mt-16 relative">
-                     <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-0.5 bg-gray-200"></div>
-                    <div className="grid md:grid-cols-4 gap-8 relative">
-                        {HOME_PROCESS_STEPS.map((step, index) => (
-                            <AnimatedElement key={step.title} delay={150 * index}>
-                                <div className="text-center p-4">
-                                    <div className="w-12 h-12 mx-auto rounded-full bg-[#F97316] text-white flex items-center justify-center text-xl font-bold mb-4">{index + 1}</div>
-                                    <h3 className="font-semibold text-[#0F172A] font-poppins">{step.title}</h3>
-                                    <p className="mt-1 text-gray-600 text-sm">{step.description}</p>
-                                </div>
-                            </AnimatedElement>
-                        ))}
-                    </div>
-                </div>
-            </SectionContainer>
-
-            {/* Results Section */}
-            <SectionContainer className="bg-white">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <AnimatedElement>
-                            <h2 className="text-3xl md:text-5xl font-bold font-poppins tracking-tighter text-[#00334F]">Results That Speak for Themselves</h2>
-                        </AnimatedElement>
-                        <AnimatedElement delay={100}>
-                            <p className="mt-4 text-lg text-[#0F172A]/80">Our AI-driven approach doesn't just build apps faster—it builds them smarter, delivering tangible improvements to your key business metrics.</p>
-                        </AnimatedElement>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8">
-                        {HOME_RESULT_METRICS.map((metric, index) => (
-                            <AnimatedElement key={metric.label} delay={150 * index} className="bg-white p-6 rounded-xl border border-gray-100 text-center shadow-lg">
-                                <p className="text-4xl md:text-5xl font-bold font-poppins text-[#00334F]">
-                                    <Counter endValue={parseFloat(metric.value.replace(/[<+]/g, ''))} decimals={metric.label === "Satisfaction" ? 1 : 0} />
-                                    {metric.unit}
-                                </p>
-                                <p className="mt-2 text-[#0F172A]/80">{metric.label}</p>
-                            </AnimatedElement>
-                        ))}
-                    </div>
-                </div>
-            </SectionContainer>
-
-            {/* Investment Levels */}
-            <SectionContainer className="bg-slate-50">
-                 <div className="text-center max-w-3xl mx-auto">
-                    <AnimatedElement><h2 className="text-3xl md:text-5xl font-bold font-poppins tracking-tighter text-[#00334F]">Investment Levels</h2></AnimatedElement>
-                 </div>
-                 <div className="grid lg:grid-cols-3 gap-8 mt-16 max-w-5xl mx-auto items-center">
-                    {INVESTMENT_LEVELS.map((level, i) => (
-                        <AnimatedElement key={level.name} delay={100 * i} className={`p-8 rounded-2xl border ${level.recommended ? 'bg-[#00334F] text-white border-transparent shadow-2xl shadow-[#00334F]/20' : 'bg-white border-gray-200 shadow-lg'}`}>
-                            {level.recommended && <div className="text-center mb-4"><span className="text-xs font-bold uppercase tracking-wider bg-[#F97316] text-white px-3 py-1 rounded-full">Recommended</span></div>}
-                            <h3 className="text-2xl font-bold font-poppins text-center">{level.name}</h3>
-                            <p className={`text-4xl font-bold font-poppins text-center my-4 ${level.recommended ? 'text-white' : 'text-[#00334F]'}`}>{level.price}</p>
-                            <ul className="space-y-3 text-sm">
-                                {level.features.map(feature => (
-                                    <li key={feature} className="flex items-center gap-3">
-                                        <CheckIcon className={`${level.recommended ? 'text-[#F97316]' : 'text-green-500'}`} />
-                                        <span>{feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </AnimatedElement>
-                    ))}
-                 </div>
-            </SectionContainer>
-        </main>
     );
 };
