@@ -19,6 +19,7 @@ This phase addresses the findings from a full system audit. These tasks resolve 
 | Task | Why it Matters (The Analogy) | The Goal (In Simple Terms) | Real-World Impact | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Resolve Critical Audit Findings** | Like a building inspector finding and fixing a faulty foundation before any more floors are added. | Implement the fixes for all high-priority issues identified in the full system audit, including security gaps, data bugs, and broken UI. | The application is made more secure and reliable. A development backdoor is closed, real-time data becomes consistent, and broken layouts are fixed. | 🟢 **Completed** |
+| **Fix Build Errors (Import Paths)** | Like ensuring all the pipes and wires in a building connect to the right places before you turn on the power. | Correct all broken relative import paths in the codebase to ensure the application can be successfully built and run without module resolution errors. | The development server can start, and the application can be deployed to production without critical build failures. | 🟢 **Completed** |
 | **Full Audit Documentation** | The inspector's detailed report, which serves as a record and a guide for what was fixed. | Create a comprehensive document (`docs/26-audit-and-fix-plan.md`) that details all findings from the system audit and the plan to address them. | Provides a clear technical checklist for all hardening tasks, ensuring transparency and a single source of truth for all required fixes. | 🟢 **Completed** |
 
 ---
