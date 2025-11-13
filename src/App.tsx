@@ -5,6 +5,7 @@ import { HashRouter } from 'react-router-dom';
 // Custom Components
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppRoutes } from './AppRoutes';
+import { ToastContainer } from './components/ToastContainer';
 
 // Lazily load the AiBriefWizard component. This creates a separate code chunk
 // that is only downloaded when the user initiates the wizard flow.
@@ -36,6 +37,8 @@ const App = () => {
                     <AiBriefWizard onClose={closeWizard} />
                 </Suspense>
             )}
+
+            <ToastContainer />
         </HashRouter>
     );
 };

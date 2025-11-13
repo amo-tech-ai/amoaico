@@ -1,5 +1,4 @@
 import React from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Link } from 'react-router-dom';
 import { Brief } from '../../../types';
 import { FileTextIcon } from '../../../assets/icons';

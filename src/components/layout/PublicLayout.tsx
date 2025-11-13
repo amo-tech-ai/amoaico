@@ -13,7 +13,8 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ onStartWizard }) => 
         <div className="bg-[#FFF9F5] flex flex-col min-h-screen">
             <Header onStartWizard={onStartWizard} />
             <main className="flex-grow">
-                <Outlet />
+                {/* FIX: Pass onStartWizard via Outlet context to avoid prop drilling. */}
+                <Outlet context={{ onStartWizard }} />
             </main>
             <Footer onStartWizard={onStartWizard} />
         </div>

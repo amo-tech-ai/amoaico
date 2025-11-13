@@ -19,14 +19,8 @@ serve(async (req: Request) => {
     const { query } = body;
 
     const supabaseClient = createSupabaseClient(req);
-    // FIX: Replaced `supabaseClient.auth.getUser()` with the v1-compatible `supabaseClient.auth.api.getUser(jwt)`.
-    // This resolves the error where `getUser` does not exist on the `auth` object in older client versions.
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new HttpError('Unauthorized: Missing Authorization header.', 401);
-    }
-    const jwt = authHeader.replace('Bearer ', '');
-    const { user, error: userError } = await supabaseClient.auth.api.getUser(jwt);
+    // FIX: Replaced `supabaseClient.auth.api.getUser(jwt)` with `supabaseClient.auth.getUser()`. The `api` property does not exist on the auth client. `getUser()` is the correct method for `supabase-js` v2 to get the user from the JWT in the `Authorization` header.
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
 
     if (userError) throw new HttpError(userError.message, 401);
     if (!user) {

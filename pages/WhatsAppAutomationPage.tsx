@@ -33,7 +33,7 @@ const FaqItem = ({ q, a }: { q: string, a: string }) => {
     );
 };
 
-export const WhatsAppAutomationPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+export const WhatsAppAutomationPage = () => {
     return (
         <main className="bg-white">
             {/* Hero Section */}

@@ -33,7 +33,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ onStartWizard 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <DashboardHeader onStartWizard={onStartWizard} />
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-sunai-cream">
-                    <Outlet />
+                    {/* FIX: Pass onStartWizard via Outlet context to avoid prop drilling. */}
+                    <Outlet context={{ onStartWizard }} />
                 </main>
             </div>
         </div>

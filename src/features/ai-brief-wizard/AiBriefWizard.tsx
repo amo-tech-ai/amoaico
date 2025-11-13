@@ -19,6 +19,7 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     const { user, loading: authLoading } = useAuth();
     const [wizardStep, setWizardStep] = useState<WizardStep>('auth');
     const [animationDirection, setAnimationDirection] = useState<'right' | 'left'>('right');
+    const [currentStepTitle, setCurrentStepTitle] = useState('');
     
     // State for all steps
     const [companyName, setCompanyName] = useState('');
@@ -41,6 +42,16 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
         setAnimationDirection(direction);
         setWizardStep(step);
     };
+
+    useEffect(() => {
+        switch (wizardStep) {
+            case 'auth': setCurrentStepTitle('Sign In to Continue'); break;
+            case 'welcome': setCurrentStepTitle("Let's Start Your AI Brief"); break;
+            case 'scope': setCurrentStepTitle('Define Your Project Scope'); break;
+            case 'generating': setCurrentStepTitle('Generating Your Brief'); break;
+            case 'review': setCurrentStepTitle('Review Your AI-Generated Brief'); break;
+        }
+    }, [wizardStep]);
     
     const validateUrl = (value: string): boolean => {
         const trimmedValue = value.trim();
@@ -161,6 +172,9 @@ export const AiBriefWizard = ({ onClose }: { onClose: () => void }) => {
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
             <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative transform transition-all duration-300 ease-out animate-slide-up overflow-hidden" style={{ minHeight: '550px' }}>
+                <div className="sr-only" aria-live="polite" aria-atomic="true">
+                    {`Step: ${currentStepTitle}`}
+                </div>
                 <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors z-10"><XIcon className="w-6 h-6" /></button>
                 {renderContent()}
             </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Brief } from '../../types';
 import { getBriefsForUser, getAllBriefs } from '../../services/briefService';
@@ -18,7 +17,12 @@ const StatCardSkeleton = () => (
     </div>
 );
 
-export const OverviewPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface DashboardContext {
+  onStartWizard: () => void;
+}
+
+export const OverviewPage = () => {
+    const { onStartWizard } = useOutletContext<DashboardContext>();
     const { user } = useAuth();
     const [briefs, setBriefs] = useState<Brief[]>([]);
     const [loading, setLoading] = useState(true);

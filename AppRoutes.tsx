@@ -66,7 +66,8 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
         <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
             <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
             <Route path="/dashboard/overview" element={<OverviewPage />} />
-            <Route path="/dashboard/briefs" element={<BriefsListPage onStartWizard={onStartWizard} />} />
+            {/* FIX: Removed onStartWizard prop. This will be provided by Outlet context from DashboardLayout. */}
+            <Route path="/dashboard/briefs" element={<BriefsListPage />} />
             <Route path="/dashboard/briefs/:briefId" element={<BriefDetailPage />} />
             <Route path="/dashboard/projects" element={<ProjectsListPage />} />
             <Route path="/dashboard/clients" element={<ClientsListPage />} />

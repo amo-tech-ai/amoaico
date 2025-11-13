@@ -18,14 +18,8 @@ serve(async (req: Request) => {
     
     const supabaseClient = createSupabaseClient(req);
     
-    // FIX: Replaced `supabaseClient.auth.getUser()` with the v1-compatible `supabaseClient.auth.api.getUser(jwt)`.
-    // This resolves the error where `getUser` does not exist on the `auth` object in older client versions.
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new HttpError('Unauthorized: Missing Authorization header.', 401);
-    }
-    const jwt = authHeader.replace('Bearer ', '');
-    const { user, error: userError } = await supabaseClient.auth.api.getUser(jwt);
+    // FIX: Replaced `supabaseClient.auth.api.getUser(jwt)` with `supabaseClient.auth.getUser()`. The `api` property does not exist on the auth client. `getUser()` is the correct method for `supabase-js` v2 to get the user from the JWT in the `Authorization` header.
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
 
     if (userError) throw new HttpError(userError.message, 401);
     if (!user) {
@@ -34,65 +28,62 @@ serve(async (req: Request) => {
 
     const ai = createGeminiClient();
 
-    // Define the schema for the function call to ensure structured JSON output
+    // --- ARCHITECTURAL REFACTOR: TWO-STEP AI CHAIN ---
+    // This new architecture separates research from structured generation for greater reliability.
+
+    // STEP 1: Research and Grounding
+    // Use Google Search to analyze the website and get a factual summary.
+    console.log(`Step 1: Researching website: ${websiteUrl}`);
+    const researchPrompt = `Analyze the website "${websiteUrl}" and provide a concise summary of the company's mission, key services/products, target audience, and overall brand tone. Focus on factual information presented on the site.`;
+    const researchResponse = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: researchPrompt,
+        config: { tools: [{ googleSearch: {} }] },
+    });
+    const groundedContext = researchResponse.text;
+    console.log("Step 1 complete. Grounded context:", groundedContext);
+
+
+    // STEP 2: Structured Generation
+    // Use the grounded context and user input to generate the structured brief.
+    console.log("Step 2: Generating structured brief...");
     const generateBriefFunctionDeclaration: FunctionDeclaration = {
       name: 'generateProjectBrief',
       parameters: {
         type: Type.OBJECT,
         description: 'A structured project brief generated from user inputs and website analysis.',
         properties: {
-          overview: { type: Type.STRING, description: 'A concise overview of the company based on their website.' },
-          key_goals: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-            description: 'A list of key project goals derived from user input and website analysis.'
-          },
-          suggested_deliverables: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-            description: 'A list of suggested deliverables for the project.'
-          },
-          brand_tone: { type: Type.STRING, description: 'The perceived brand tone from the website content.' },
-          website_summary_points: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
-            description: 'A list of key takeaways or summary points from the website.'
-          },
+          overview: { type: Type.STRING, description: 'A concise overview of the company based on the provided summary.' },
+          key_goals: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of key project goals derived from user input.' },
+          suggested_deliverables: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of suggested deliverables for the project.' },
+          brand_tone: { type: Type.STRING, description: 'The perceived brand tone from the website content summary.' },
+          website_summary_points: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of key takeaways or summary points from the website summary.' },
           budget_band: { type: Type.STRING, description: 'The provided budget for the project.' },
         },
         required: ['overview', 'key_goals', 'suggested_deliverables', 'brand_tone', 'website_summary_points', 'budget_band']
       }
     };
+    
+    const generationPrompt = `You are a senior project strategist. Based on the following company summary: "${groundedContext}", and the client's inputs: project type "${projectType}", goals "${selectedGoals.join(', ')}", and budget "${budget}", call the "generateProjectBrief" function to create a structured project brief.`;
 
-    // Update the prompt to instruct the AI to use the search tool and then call the function
-    const prompt = `You are a senior project strategist. A client named "${companyName}" has provided their website URL, project type "${projectType}", goals "${selectedGoals.join(', ')}", and budget "${budget}". Analyze their website at "${websiteUrl}" using the search tool. Based on your analysis and the provided information, call the "generateProjectBrief" function with the fully populated arguments to create a structured project brief.`;
-
-    const response = await ai.models.generateContent({
+    const generationResponse = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: prompt,
+        contents: generationPrompt,
         config: {
-            tools: [
-              { googleSearch: {} },
-              { functionDeclarations: [generateBriefFunctionDeclaration] }
-            ],
+            tools: [{ functionDeclarations: [generateBriefFunctionDeclaration] }],
         }
     });
+    
+    const functionCall = generationResponse.functionCalls?.[0];
 
-    const functionCall = response.functionCalls?.[0];
-
-    // Validate that the AI returned the expected function call
     if (!functionCall || functionCall.name !== 'generateProjectBrief') {
-      console.error("Gemini did not call the expected function. Response:", JSON.stringify(response, null, 2));
+      console.error("Gemini did not call the expected function. Response:", JSON.stringify(generationResponse, null, 2));
       throw new HttpError("The AI service failed to generate a structured brief. Please try again.", 502);
     }
-
-    // The arguments of the function call are our structured JSON object
+    console.log("Step 2 complete. Function call received.");
     const briefData = functionCall.args;
 
-    if (!briefData || typeof briefData !== 'object') {
-        throw new HttpError("The AI service returned an empty or invalid brief object.", 502);
-    }
-
+    // --- DATABASE PERSISTENCE ---
     const { data: newBrief, error: dbError } = await supabaseClient
       .from('briefs')
       .insert({
@@ -106,6 +97,7 @@ serve(async (req: Request) => {
       .single();
 
     if (dbError) throw dbError;
+    console.log("Step 3: Brief saved to database.");
 
     return new Response(JSON.stringify(newBrief), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
