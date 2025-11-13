@@ -11,7 +11,7 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     const { user } = useAuth();
 
     return (
-        <>
+        <div>
             <SectionContainer className="bg-white border-t border-gray-200">
                 <div className="text-center max-w-2xl mx-auto">
                     <AnimatedElement>
@@ -68,7 +68,6 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                     <li><Link to="/projects" className="text-gray-300 hover:text-white">Case Studies</Link></li>
                                     <li><Link to="/tech-stack" className="text-gray-300 hover:text-white">Tech Stack</Link></li>
                                     <li><button onClick={onStartWizard} className="text-gray-300 hover:text-white text-left">AI Brief</button></li>
-                                    {user && <li><Link to="/dashboard" className="text-gray-300 hover:text-white">Dashboard</Link></li>}
                                 </ul>
                             </div>
                             <div>
@@ -85,6 +84,6 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                     </div>
                 </div>
             </footer>
-        </>
+        </div>
     );
 };

@@ -18,7 +18,16 @@ serve(async (req: Request) => {
     const { briefId, updates } = body;
 
     const supabaseClient = createSupabaseClient(req);
-    const { data: { user } } = await supabaseClient.auth.getUser();
+    // FIX: Replaced `supabaseClient.auth.getUser()` with the v1-compatible `supabaseClient.auth.api.getUser(jwt)`.
+    // This resolves the error where `getUser` does not exist on the `auth` object in older client versions.
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new HttpError('Unauthorized: Missing Authorization header.', 401);
+    }
+    const jwt = authHeader.replace('Bearer ', '');
+    const { user, error: userError } = await supabaseClient.auth.api.getUser(jwt);
+
+    if (userError) throw new HttpError(userError.message, 401);
     if (!user) {
       throw new HttpError('Unauthorized: User not authenticated.', 401);
     }

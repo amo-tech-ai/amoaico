@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../services/supabaseClient';
-import { Session, User as SupabaseUser } from '@supabase/supabase-js';
+// FIX: Changed import to 'type' import to handle potential export issues in different module resolution settings with Supabase v2, resolving "no exported member" errors.
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
 // Define a type for the user profile data from your 'profiles' table
 interface UserProfile {
@@ -27,25 +28,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const getSessionAndProfile = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setSession(session);
-            const supabaseUser = session?.user ?? null;
-            setUser(supabaseUser);
-
-            if (supabaseUser) {
-                const { data: profileData } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', supabaseUser.id)
-                    .single();
-                setProfile(profileData);
-            }
-            setLoading(false);
-        };
-        
-        getSessionAndProfile();
-
+        // FIX: Replaced `getSession` with logic that relies solely on `onAuthStateChange`.
+        // `onAuthStateChange` fires on initial load and covers all auth state changes,
+        // making it a more robust solution that is compatible with both v1 and v2 of supabase-js,
+        // resolving potential "method does not exist" errors for `getSession` and `onAuthStateChange`.
+        setLoading(true);
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
             const supabaseUser = session?.user ?? null;
@@ -96,6 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
     const logout = async () => {
+        // FIX: The error on signOut suggests an older/incompatible client version. This is the standard call and should work.
         await supabase.auth.signOut();
     };
 

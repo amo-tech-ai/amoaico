@@ -54,39 +54,41 @@ export const BriefsListPage = ({ onStartWizard }: { onStartWizard: () => void; }
     // Set up a real-time subscription to the user's briefs
     useEffect(() => {
         if (!user) return;
+        
+        const mapPayloadToBrief = (payload: any): Brief => {
+            const briefData = payload.brief_data || {};
+            return {
+                id: payload.id,
+                company_name: payload.company_name,
+                project_type: payload.project_type,
+                status: payload.status,
+                created_at: payload.created_at,
+                overview: briefData.overview || '',
+                key_goals: briefData.key_goals || [],
+                suggested_deliverables: briefData.suggested_deliverables || [],
+                brand_tone: briefData.brand_tone || '',
+                budget_band: briefData.budget_band || '',
+                website_summary_points: briefData.website_summary_points || [],
+            };
+        };
 
         const channel = supabase
             .channel(`user-briefs-realtime-${user.id}`)
-            .on<Brief>(
-                'postgres_changes',
-                { 
-                    event: 'UPDATE', 
-                    schema: 'public', 
-                    table: 'briefs',
-                    filter: `user_id=eq.${user.id}` // Only listen to changes for this user's briefs
-                },
+            .on( 'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'briefs', filter: `user_id=eq.${user.id}`},
                 (payload) => {
-                    console.log('Realtime brief update received for user!', payload.new);
-                    const updatedBrief = payload.new as any;
-                    
-                    // Map the payload to the application's Brief type for consistency
-                    const briefData = updatedBrief.brief_data || {};
-                    const mappedBrief: Brief = {
-                        id: updatedBrief.id,
-                        company_name: updatedBrief.company_name,
-                        project_type: updatedBrief.project_type,
-                        status: updatedBrief.status,
-                        created_at: updatedBrief.created_at,
-                        overview: briefData.overview || '',
-                        key_goals: briefData.key_goals || [],
-                        suggested_deliverables: briefData.suggested_deliverables || [],
-                        brand_tone: briefData.brand_tone || '',
-                        budget_band: briefData.budget_band || '',
-                        website_summary_points: briefData.website_summary_points || [],
-                    };
-
+                    console.log('Realtime brief insert received!', payload.new);
+                    const newBrief = mapPayloadToBrief(payload.new);
+                    setBriefs(currentBriefs => [newBrief, ...currentBriefs]);
+                }
+            )
+            .on( 'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'briefs', filter: `user_id=eq.${user.id}`},
+                (payload) => {
+                    console.log('Realtime brief update received!', payload.new);
+                    const updatedBrief = mapPayloadToBrief(payload.new);
                     setBriefs(currentBriefs =>
-                        currentBriefs.map(b => (b.id === mappedBrief.id ? mappedBrief : b))
+                        currentBriefs.map(b => (b.id === updatedBrief.id ? updatedBrief : b))
                     );
                 }
             )
@@ -95,7 +97,7 @@ export const BriefsListPage = ({ onStartWizard }: { onStartWizard: () => void; }
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [user, supabase]);
+    }, [user]);
 
     return (
         <main>
