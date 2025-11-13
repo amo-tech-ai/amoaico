@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -33,8 +35,13 @@ const FaqItem = ({ q, a }: { q: string, a: string }) => {
     );
 };
 
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
 // FIX: Update component to accept `onStartWizard` prop to fix type error in AppRoutes.
-export const WhatsAppAutomationPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+export const WhatsAppAutomationPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     return (
         <main className="bg-white">
             {/* Hero Section */}

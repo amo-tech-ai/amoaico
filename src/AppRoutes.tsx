@@ -1,10 +1,9 @@
 import React, { lazy, Suspense } from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
-import { DashboardLayout } from './components/layout/DashboardLayout';
 import { PublicLayout } from './components/layout/PublicLayout';
+import { DashboardLayout } from './components/layout/DashboardLayout';
 
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';
@@ -90,8 +89,8 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
             </Route>
 
             {/* --- ADMIN ROUTE WRAPPER --- */}
-            <Route path="/admin/dashboard" element={<AdminRoute />}>
-                <Route index element={<AdminDashboardPage />} />
+            <Route element={<AdminRoute />}>
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             </Route>
 
             {/* --- UTILITY & FALLBACK ROUTES --- */}

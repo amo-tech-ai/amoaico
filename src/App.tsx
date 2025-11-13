@@ -1,5 +1,4 @@
 import React, { useState, useCallback, lazy, Suspense } from 'react';
-// FIX: Corrected react-router-dom import. Changed `BrowserRouter as HashRouter` to `HashRouter` to resolve module resolution issues.
 import { HashRouter } from 'react-router-dom';
 
 // Custom Components

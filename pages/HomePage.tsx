@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// FIX: Changed imports from 'react-router-dom' to 'react-router' to potentially resolve module resolution issues.
-import { useLocation, useNavigate } from 'react-router-dom';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout, and correct react-router-dom imports.
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -34,8 +34,12 @@ const PermissionErrorBanner = ({ message }: { message: string }) => {
     );
 };
 
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
 
-export const HomePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+export const HomePage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     const location = useLocation();
     const [error, setError] = useState<string | null>(null);
 

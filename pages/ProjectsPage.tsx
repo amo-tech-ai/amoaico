@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -74,7 +76,12 @@ const ProjectStoryCard = ({ story }: { story: ProjectStory }) => {
     );
 };
 
-export const ProjectsPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const ProjectsPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     const [stories, setStories] = useState<ProjectStory[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -1,4 +1,6 @@
 import React from 'react';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { ShoppingCartIcon, TrendingUpIcon } from '../assets/icons';
@@ -10,7 +12,12 @@ const ECOMMERCE_FEATURES = [
     { title: "Fraud Detection", description: "Minimize chargebacks and protect your revenue with AI-powered security." },
 ];
 
-export const EcommercePage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const EcommercePage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     return (
         <main>
             <SectionContainer className="bg-white text-center">

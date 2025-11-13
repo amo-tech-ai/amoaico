@@ -1,10 +1,17 @@
 import React from 'react';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { USE_CASES_PLATFORMS } from '../data';
 import { Share2Icon } from '../assets/icons';
 
-export const AiSocialMediaPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const AiSocialMediaPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     return (
         <main>
             <SectionContainer className="bg-white text-center">

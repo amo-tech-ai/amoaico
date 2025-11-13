@@ -8,7 +8,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useToast } from '../hooks/useToast';
 import { FileTextIcon, XIcon, SearchIcon } from '../assets/icons';
 
-const AdminDashboardPage = () => {
+export const AdminDashboardPage = () => {
     const [briefs, setBriefs] = useState<Brief[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -214,5 +214,3 @@ const AdminDashboardPage = () => {
         </main>
     );
 };
-
-export { AdminDashboardPage };

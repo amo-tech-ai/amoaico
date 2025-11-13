@@ -1,6 +1,6 @@
 import React from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
-import { Link } from 'react-router-dom';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { Link, useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -22,7 +22,12 @@ const StarRating = ({ rating }: { rating: number }) => (
     </div>
 );
 
-export const AboutPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const AboutPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     return (
         <main className="bg-[#0F172A] text-white">
             {/* Hero Section */}

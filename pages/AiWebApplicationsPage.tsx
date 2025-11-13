@@ -1,9 +1,10 @@
 
 
 
+
 import React, { useState, useEffect, useRef } from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
-import { Link } from 'react-router-dom';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { Link, useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -12,7 +13,12 @@ import {
     UsersIcon, BrainCircuitIcon, CheckCircleIcon, CheckIcon, ArrowRightIcon, ChevronDownIcon 
 } from '../assets/icons';
 
-export const AiWebApplicationsPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const AiWebApplicationsPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     
     const WEB_APP_FEATURES = [
         { icon: <MessageCircleIcon className="w-8 h-8"/>, title: 'Natural-Language Interfaces', description: 'Intuitive, conversational UI for any workflow.' },

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
+import { useOutletContext } from 'react-router-dom';
 import { SectionContainer } from '../components/layout/SectionContainer';
 import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { Counter } from '../components/animations/Counter';
@@ -11,7 +13,12 @@ import {
 } from '../data';
 import { CheckIcon } from '../assets/icons';
 
-export const ProcessPage = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+interface PublicLayoutContext {
+  onStartWizard: () => void;
+}
+
+export const ProcessPage = () => {
+    const { onStartWizard } = useOutletContext<PublicLayoutContext>();
     const [selectedTimeline, setSelectedTimeline] = useState(1);
 
     return (

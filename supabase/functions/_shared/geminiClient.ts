@@ -11,22 +11,19 @@ import { GoogleGenAI } from '@google/genai';
 
 /**
  * Creates and returns a GoogleGenAI client instance.
- * It securely retrieves the API key from Supabase environment secrets,
- * checking for both the recommended and a common legacy name for robustness.
+ * It securely retrieves the API key from Supabase environment secrets.
  * @returns A GoogleGenAI client instance.
  */
 export const createGeminiClient = () => {
-    // Check for the recommended, specific secret name first.
-    let apiKey = Deno.env.get('GEMINI_API_KEY');
-    
-    // As a fallback, check for the legacy/common name to improve robustness.
-    if (!apiKey) {
-      apiKey = Deno.env.get('API_KEY');
-    }
+    // Use the nullish coalescing operator (??) to check for the primary
+    // environment variable and fall back to the secondary one.
+    const apiKey = Deno.env.get("GEMINI_API_KEY") ?? Deno.env.get("API_KEY");
 
-    // If neither is found, throw a clear error.
     if (!apiKey) {
-      throw new Error("Could not find GEMINI_API_KEY or API_KEY in Supabase secrets. Please ensure one is set.");
+      // Throw a single, clear error message if neither key is found.
+      throw new Error(
+        "Gemini API key not set. Expected GEMINI_API_KEY or API_KEY in server environment."
+      );
     }
     
     return new GoogleGenAI({ apiKey: apiKey });

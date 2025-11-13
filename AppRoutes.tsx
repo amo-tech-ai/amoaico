@@ -1,94 +1,101 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 // FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
 import { DashboardLayout } from './components/layout/DashboardLayout';
-
-// Page Components
-import { HomePage } from './pages/HomePage';
-import { AiWebApplicationsPage } from './pages/AiWebApplicationsPage';
-import { AiSocialMediaPage } from './pages/AiSocialMediaPage';
-import { EcommercePage } from './pages/EcommercePage';
-import { WhatsAppAutomationPage } from './pages/WhatsAppAutomationPage';
-import { ProcessPage } from './pages/ProcessPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { TechStackPage } from './pages/TechStackPage';
-import { ResourcesPage } from './pages/ResourcesPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { TermsOfServicePage } from './pages/TermsOfServicePage';
-import { LoginPage } from './pages/LoginPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
-
-// Dashboard Page Components
-import { OverviewPage } from './pages/dashboard/OverviewPage';
-import { BriefsListPage } from './pages/dashboard/BriefsListPage';
-import { BriefDetailPage } from './pages/dashboard/BriefDetailPage';
-import { ProjectsListPage } from './pages/dashboard/ProjectsListPage';
-import { ClientsListPage } from './pages/dashboard/ClientsListPage';
-import { FinancialsPage } from './pages/dashboard/FinancialsPage';
-import { SettingsPage } from './pages/dashboard/SettingsPage';
-import { IntegrationsPage } from './pages/dashboard/IntegrationsPage';
-
+import { PublicLayout } from './src/components/layout/PublicLayout';
 
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';
 import { BriefRedirect } from './components/BriefRedirect';
 
+// --- Page Components (Lazy Loaded) ---
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const AiWebApplicationsPage = lazy(() => import('./pages/AiWebApplicationsPage').then(m => ({ default: m.AiWebApplicationsPage })));
+const AiSocialMediaPage = lazy(() => import('./pages/AiSocialMediaPage').then(m => ({ default: m.AiSocialMediaPage })));
+const EcommercePage = lazy(() => import('./pages/EcommercePage').then(m => ({ default: m.EcommercePage })));
+const WhatsAppAutomationPage = lazy(() => import('./pages/WhatsAppAutomationPage').then(m => ({ default: m.WhatsAppAutomationPage })));
+const ProcessPage = lazy(() => import('./pages/ProcessPage').then(m => ({ default: m.ProcessPage })));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
+const TechStackPage = lazy(() => import('./pages/TechStackPage').then(m => ({ default: m.TechStackPage })));
+const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then(m => ({ default: m.ResourcesPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+
+// Dashboard Page Components (Lazy Loaded)
+const OverviewPage = lazy(() => import('./pages/dashboard/OverviewPage').then(m => ({ default: m.OverviewPage })));
+const BriefsListPage = lazy(() => import('./pages/dashboard/BriefsListPage').then(m => ({ default: m.BriefsListPage })));
+const BriefDetailPage = lazy(() => import('./pages/dashboard/BriefDetailPage').then(m => ({ default: m.BriefDetailPage })));
+const ProjectsListPage = lazy(() => import('./pages/dashboard/ProjectsListPage').then(m => ({ default: m.ProjectsListPage })));
+const ClientsListPage = lazy(() => import('./pages/dashboard/ClientsListPage').then(m => ({ default: m.ClientsListPage })));
+const FinancialsPage = lazy(() => import('./pages/dashboard/FinancialsPage').then(m => ({ default: m.FinancialsPage })));
+const SettingsPage = lazy(() => import('./pages/dashboard/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const IntegrationsPage = lazy(() => import('./pages/dashboard/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
+
+
 interface AppRoutesProps {
     onStartWizard: () => void;
 }
 
+const PageLoader = () => (
+    <div className="flex items-center justify-center h-screen w-screen bg-sunai-cream">
+        <div className="w-12 h-12 border-4 border-t-sunai-orange border-gray-200 rounded-full animate-spin"></div>
+    </div>
+);
+
 export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
-    <Routes>
-        <Route path="/" element={<HomePage onStartWizard={onStartWizard} />} />
-        {/* Service Pages */}
-        <Route path="/services" element={<AiWebApplicationsPage onStartWizard={onStartWizard} />} />
-        <Route path="/services/web-applications" element={<AiWebApplicationsPage onStartWizard={onStartWizard} />} />
-        <Route path="/services/social-media" element={<AiSocialMediaPage onStartWizard={onStartWizard} />} />
-        <Route path="/services/ecommerce" element={<EcommercePage onStartWizard={onStartWizard} />} />
-        <Route path="/services/whatsapp-automation" element={<WhatsAppAutomationPage onStartWizard={onStartWizard} />} />
-        
-        {/* Core Pages */}
-        <Route path="/process" element={<ProcessPage onStartWizard={onStartWizard} />} />
-        <Route path="/projects" element={<ProjectsPage onStartWizard={onStartWizard} />} />
-        <Route path="/tech-stack" element={<TechStackPage />} />
-        <Route path="/resources" element={<ResourcesPage />} />
-        <Route path="/about" element={<AboutPage onStartWizard={onStartWizard} />} />
-        <Route path="/contact" element={<ContactPage />} />
+    <Suspense fallback={<PageLoader />}>
+        <Routes>
+            {/* --- PUBLIC-FACING PAGES (with Header/Footer) --- */}
+            <Route element={<PublicLayout onStartWizard={onStartWizard} />}>
+                <Route path="/" element={<HomePage />} />
+                {/* Service Pages */}
+                <Route path="/services" element={<AiWebApplicationsPage />} />
+                <Route path="/services/web-applications" element={<AiWebApplicationsPage />} />
+                <Route path="/services/social-media" element={<AiSocialMediaPage />} />
+                <Route path="/services/ecommerce" element={<EcommercePage />} />
+                <Route path="/services/whatsapp-automation" element={<WhatsAppAutomationPage />} />
+                {/* Core Pages */}
+                <Route path="/process" element={<ProcessPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/tech-stack" element={<TechStackPage />} />
+                <Route path="/resources" element={<ResourcesPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                {/* Legal Pages */}
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+            </Route>
 
-        {/* Auth Page */}
-        <Route path="/login" element={<LoginPage />} />
+            {/* --- AUTH PAGE (Standalone, No Layout) --- */}
+            <Route path="/login" element={<LoginPage />} />
 
-        {/* --- NEW DASHBOARD LAYOUT --- */}
-        <Route element={<DashboardLayout onStartWizard={onStartWizard} />}>
-            <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
-            <Route path="/dashboard/overview" element={<OverviewPage />} />
-            {/* FIX: Removed onStartWizard prop. This will be provided by Outlet context from DashboardLayout. */}
-            <Route path="/dashboard/briefs" element={<BriefsListPage />} />
-            <Route path="/dashboard/briefs/:briefId" element={<BriefDetailPage />} />
-            <Route path="/dashboard/projects" element={<ProjectsListPage />} />
-            <Route path="/dashboard/clients" element={<ClientsListPage />} />
-            <Route path="/dashboard/financials" element={<FinancialsPage />} />
-            <Route path="/dashboard/settings" element={<SettingsPage />} />
-            <Route path="/dashboard/settings/integrations" element={<IntegrationsPage />} />
-        </Route>
+            {/* --- DASHBOARD PAGES (Dashboard Layout) --- */}
+            <Route path="/dashboard" element={<DashboardLayout onStartWizard={onStartWizard} />}>
+                <Route index element={<Navigate to="overview" replace />} />
+                <Route path="overview" element={<OverviewPage />} />
+                <Route path="briefs" element={<BriefsListPage />} />
+                <Route path="briefs/:briefId" element={<BriefDetailPage />} />
+                <Route path="projects" element={<ProjectsListPage />} />
+                <Route path="clients" element={<ClientsListPage />} />
+                <Route path="financials" element={<FinancialsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="settings/integrations" element={<IntegrationsPage />} />
+            </Route>
 
-        {/* --- LEGACY ROUTE REDIRECT --- */}
-        <Route path="/brief/:briefId" element={<BriefRedirect />} />
+            {/* --- ADMIN ROUTE WRAPPER --- */}
+            <Route element={<AdminRoute />}>
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            </Route>
 
-        {/* Admin Pages */}
-        <Route path="/admin" element={<AdminRoute />}>
-            <Route path="dashboard" element={<AdminDashboardPage />} />
-        </Route>
-
-        {/* Legal Pages */}
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-
-        {/* Fallback route to home */}
-        <Route path="*" element={<HomePage onStartWizard={onStartWizard} />} />
-    </Routes>
+            {/* --- UTILITY & FALLBACK ROUTES --- */}
+            <Route path="/brief/:briefId" element={<BriefRedirect />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+    </Suspense>
 );
