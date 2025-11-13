@@ -1,12 +1,14 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SectionContainer } from './SectionContainer';
 import { AnimatedElement } from '../animations/AnimatedElement';
 import { BotIcon, LogoIcon } from '../../assets/icons';
 import { SERVICE_LINKS, CONTACT_INFO } from '../../data';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
+    const { user } = useAuth();
+
     return (
         <>
             <SectionContainer className="bg-white border-t border-gray-200">
@@ -45,6 +47,7 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                 <h3 className="font-semibold text-sm uppercase tracking-wider text-gray-400">Company</h3>
                                 <ul className="mt-4 space-y-2 text-sm">
                                     {['about', 'process', 'projects', 'contact'].map(p => <li key={p}><Link to={`/${p}`} className="text-gray-300 hover:text-white">{p.charAt(0).toUpperCase() + p.slice(1)}</Link></li>)}
+                                    {user && <li><Link to="/dashboard" className="text-gray-300 hover:text-white">Dashboard</Link></li>}
                                 </ul>
                             </div>
                             <div>
@@ -64,6 +67,7 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                                     <li><Link to="/projects" className="text-gray-300 hover:text-white">Case Studies</Link></li>
                                     <li><Link to="/tech-stack" className="text-gray-300 hover:text-white">Tech Stack</Link></li>
                                     <li><button onClick={onStartWizard} className="text-gray-300 hover:text-white text-left">AI Brief</button></li>
+                                    {user && <li><Link to="/dashboard" className="text-gray-300 hover:text-white">Dashboard</Link></li>}
                                 </ul>
                             </div>
                             <div>
