@@ -1,12 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
 import { HashRouter } from 'react-router-dom';
-
-// Feature Components
-import { AiBriefWizard } from './features/ai-brief-wizard/AiBriefWizard';
 
 // Custom Components
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppRoutes } from './AppRoutes';
+
+// FIX: Correctly lazy-load the named-exported `AiBriefWizard` component.
+// React.lazy expects a promise that resolves to a module with a `default` export.
+// The `.then()` call adapts the named export `AiBriefWizard` into the required format.
+const AiBriefWizard = lazy(() => import('./features/ai-brief-wizard/AiBriefWizard').then(module => ({ default: module.AiBriefWizard })));
+
+const WizardLoader = () => (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full relative flex items-center justify-center" style={{ minHeight: '550px' }}>
+            <div className="w-12 h-12 border-4 border-t-sunai-orange border-gray-200 rounded-full animate-spin"></div>
+        </div>
+    </div>
+);
 
 const App = () => {
     const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -18,7 +28,11 @@ const App = () => {
         <HashRouter>
             <ScrollToTop />
             <AppRoutes onStartWizard={startWizard} />
-            {isWizardOpen && <AiBriefWizard onClose={closeWizard} />}
+            {isWizardOpen && (
+                <Suspense fallback={<WizardLoader />}>
+                    <AiBriefWizard onClose={closeWizard} />
+                </Suspense>
+            )}
         </HashRouter>
     );
 };

@@ -80,10 +80,9 @@ export const AppRoutes: React.FC<AppRoutesProps> = ({ onStartWizard }) => (
         </Route>
 
         {/* --- ADMIN ROUTE WRAPPER --- */}
-        <Route element={<AdminRoute />}>
-            <Route path="/admin/dashboard" element={<DashboardLayout onStartWizard={onStartWizard} />}>
-                 <Route index element={<AdminDashboardPage />} />
-            </Route>
+        {/* FIX: Removed the nested DashboardLayout to prevent a "double layout" bug. The AdminDashboardPage is now a standalone page within the AdminRoute. */}
+        <Route path="/admin/dashboard" element={<AdminRoute />}>
+            <Route index element={<AdminDashboardPage />} />
         </Route>
 
         {/* --- UTILITY & FALLBACK ROUTES --- */}

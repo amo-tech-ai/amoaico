@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Transitioned project focus to the next phase of development as outlined in the new Strategic Roadmap, prioritizing production hardening and advanced UX features.
-
 ### Changed
-- Expanded the strategic roadmap from a 15-point plan to a comprehensive 20-point plan, adding a new phase for 'Enterprise-Grade Operations & UX'.
+- Overhauled `docs/progress-tracker.md` to be a comprehensive, beginner-friendly strategic roadmap with real-world analogies and impact statements for all development tasks.
+- Archived the now-redundant `docs/19-strategic-roadmap.md` as its contents have been merged into the main progress tracker.
 
 ## [0.4.0] - 2024-08-23
 

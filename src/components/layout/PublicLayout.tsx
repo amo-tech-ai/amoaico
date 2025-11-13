@@ -20,9 +20,9 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ onStartWizard }) => 
             {/* Main content, layered on top of the background */}
             <div className="relative">
                 <Header onStartWizard={onStartWizard} />
-                <main>
+                <div>
                     <Outlet />
-                </main>
+                </div>
                 <Footer onStartWizard={onStartWizard} />
             </div>
         </div>

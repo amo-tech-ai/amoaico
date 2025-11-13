@@ -1,5 +1,11 @@
 // supabase/functions/_shared/geminiClient.ts
-// FIX: Removed invalid Deno type reference. The Deno runtime environment provides the necessary types.
+// FIX: Add a type declaration for the Deno global to resolve TypeScript errors
+// in environments where Deno types are not automatically available.
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+};
 
 import { GoogleGenAI } from '@google/genai';
 
