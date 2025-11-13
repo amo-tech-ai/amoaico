@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../services/supabaseClient';
-import { User } from '../types';
+import { CheckCircleIcon } from '../assets/icons';
 
 export const ProfileManager = () => {
     const { user } = useAuth();
-    const [loading, setLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [fullName, setFullName] = useState('');
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
@@ -19,7 +20,7 @@ export const ProfileManager = () => {
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) return;
-        setLoading(true);
+        setIsSaving(true);
         try {
             const { error } = await supabase.from('profiles').upsert({
                 id: user.id,
@@ -27,12 +28,12 @@ export const ProfileManager = () => {
                 updated_at: new Date().toISOString(),
             });
             if (error) throw error;
-            alert('Profile updated successfully!');
-            // You might want to refresh the auth context here or let it update automatically
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 2500);
         } catch (error: any) {
             alert(`Error updating profile: ${error.message}`);
         } finally {
-            setLoading(false);
+            setIsSaving(false);
         }
     };
 
@@ -40,7 +41,7 @@ export const ProfileManager = () => {
         if (!user || !event.target.files || event.target.files.length === 0) {
             return;
         }
-        setLoading(true);
+        setIsSaving(true);
         try {
             const file = event.target.files[0];
             const fileExt = file.name.split('.').pop();
@@ -53,11 +54,10 @@ export const ProfileManager = () => {
 
             if (uploadError) throw uploadError;
 
-            // Get public URL
+            // Get public URL and add a timestamp to bust the cache
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-            const newAvatarUrl = data.publicUrl;
+            const newAvatarUrl = `${data.publicUrl}?t=${new Date().getTime()}`;
             
-            // Update profile with new avatar URL
             const { error: updateError } = await supabase.from('profiles').upsert({
                 id: user.id,
                 avatar_url: newAvatarUrl,
@@ -66,12 +66,13 @@ export const ProfileManager = () => {
             if (updateError) throw updateError;
             
             setAvatarUrl(newAvatarUrl);
-            alert('Avatar updated!');
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 2500);
 
         } catch (error: any) {
             alert(`Error uploading avatar: ${error.message}`);
         } finally {
-            setLoading(false);
+            setIsSaving(false);
         }
     };
 
@@ -88,8 +89,8 @@ export const ProfileManager = () => {
                         className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                     />
                     <div>
-                         <label htmlFor="avatar-upload" className="text-sm font-medium text-white bg-[#00334F] hover:bg-opacity-90 px-3 py-1.5 rounded-md cursor-pointer">
-                            {loading ? 'Uploading...' : 'Upload'}
+                         <label htmlFor="avatar-upload" className={`text-sm font-medium text-white bg-[#00334F] hover:bg-opacity-90 px-3 py-1.5 rounded-md cursor-pointer ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                            {isSaving ? 'Uploading...' : 'Upload'}
                         </label>
                         <input
                             id="avatar-upload"
@@ -97,7 +98,7 @@ export const ProfileManager = () => {
                             className="hidden"
                             onChange={handleAvatarUpload}
                             accept="image/png, image/jpeg, image/webp"
-                            disabled={loading}
+                            disabled={isSaving}
                         />
                     </div>
                 </div>
@@ -112,10 +113,16 @@ export const ProfileManager = () => {
                     />
                 </div>
                 <div>
-                    <button type="submit" disabled={loading} className="w-full px-4 py-2 text-sm font-semibold text-white bg-[#F97316] rounded-lg hover:opacity-90 disabled:bg-gray-400">
-                        {loading ? 'Saving...' : 'Save Changes'}
+                    <button type="submit" disabled={isSaving} className="w-full px-4 py-2 text-sm font-semibold text-white bg-[#F97316] rounded-lg hover:opacity-90 disabled:bg-gray-400">
+                        {isSaving ? 'Saving...' : 'Save Changes'}
                     </button>
                 </div>
+                {showSuccess && (
+                     <div className="flex items-center gap-2 text-green-600 text-sm font-medium mt-2 animate-fade-in">
+                        <CheckCircleIcon className="w-5 h-5" />
+                        <span>Profile updated successfully!</span>
+                    </div>
+                )}
             </form>
         </div>
     );

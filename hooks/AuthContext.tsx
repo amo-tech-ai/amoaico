@@ -67,6 +67,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return () => subscription.unsubscribe();
     }, []);
 
+    // Set up a realtime subscription to profile changes
+    useEffect(() => {
+        if (!user) return;
+
+        const profileChannel = supabase
+            .channel(`profile-changes-for-${user.id}`)
+            .on<UserProfile>(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'profiles',
+                    filter: `id=eq.${user.id}`,
+                },
+                (payload) => {
+                    console.log('Realtime profile update received:', payload.new);
+                    setProfile(payload.new);
+                }
+            )
+            .subscribe();
+        
+        return () => {
+            supabase.removeChannel(profileChannel);
+        };
+
+    }, [user]);
+
+
     const logout = async () => {
         await supabase.auth.signOut();
     };

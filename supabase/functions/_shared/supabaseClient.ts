@@ -1,7 +1,6 @@
 // supabase/functions/_shared/supabaseClient.ts
-// FIX: Updated Deno types reference to use a more reliable CDN (esm.sh)
-// to resolve Deno runtime and Supabase functions type definition errors.
-/// <reference types="https://esm.sh/@supabase/functions-js@2" />
+// FIX: Add Deno type reference to resolve error on 'Deno.env'.
+/// <reference types="https://deno.land/x/deno/cli/types.d.ts" />
 
 import { createClient } from '@supabase/supabase-js';
 

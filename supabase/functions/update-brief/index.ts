@@ -1,15 +1,13 @@
 // supabase/functions/update-brief/index.ts
 // This function securely updates a user's project brief.
 
-// FIX: Updated Deno types reference to use a more reliable CDN (esm.sh)
-// to resolve Deno runtime and Supabase functions type definition errors.
-/// <reference types="https://esm.sh/@supabase/functions-js@2" />
-
+// FIX: Replaced faulty Deno type reference with a direct import of `serve` from `deno.land/std` to resolve Deno runtime errors.
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { corsHeaders } from '../_shared/cors.ts';
 import { createSupabaseClient } from '../_shared/supabaseClient.ts';
 import { parseJSON, requireFields, HttpError } from '../_shared/validation.ts';
 
-Deno.serve(async (req: Request) => {
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
