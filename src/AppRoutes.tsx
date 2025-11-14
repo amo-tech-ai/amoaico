@@ -2,8 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
-import { PublicLayout } from './components/layout/PublicLayout';
 import { DashboardLayout } from './components/layout/DashboardLayout';
+import { PublicLayout } from './components/layout/PublicLayout';
 
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';
