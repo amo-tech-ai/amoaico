@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useCallback, PropsWithChildren } from 'react';
 
 type ToastType = 'success' | 'error';
 
@@ -15,7 +15,8 @@ interface ToastContextType {
 
 export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export const ToastProvider = ({ children }: { children: ReactNode }) => {
+// FIX: Used PropsWithChildren to correctly type the component and resolve the "missing children" error.
+export const ToastProvider = ({ children }: PropsWithChildren) => {
     const [toast, setToast] = useState<Toast | null>(null);
 
     const showToast = useCallback((message: string, type: ToastType) => {

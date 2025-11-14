@@ -11,6 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Overhauled `docs/progress-tracker.md` to be a comprehensive, beginner-friendly strategic roadmap with real-world analogies and impact statements for all development tasks.
 - Archived the now-redundant `docs/19-strategic-roadmap.md` as its contents have been merged into the main progress tracker.
 
+## [0.5.0] - 2024-08-27
+
+### Added
+-   **Full Dashboard Restructure:** Implemented a new multi-page dashboard with a persistent sidebar and header layout for a professional, app-like user experience.
+-   **New Dashboard Pages:** Added functional pages for Overview, Projects, Clients, Financials, and Integrations, expanding the dashboard's capabilities.
+-   **Brief Editing:** Users can now edit their generated project briefs directly from the detail page, with changes saved automatically.
+-   **Toast Notification System:** Implemented a non-blocking toast notification system to provide clean, contextual feedback for actions like saving a profile.
+
+### Changed
+-   **AI Brief Wizard Refactor:** Broke the monolithic wizard component into modular, single-purpose step components (`WelcomeStep`, `ScopeStep`, etc.) for improved maintainability and user experience.
+-   **Real-Time Updates:** Enhanced both user and admin dashboards to reflect data changes (e.g., status updates, new briefs) in real-time using Supabase Realtime.
+-   **Admin Dashboard Scalability:** Implemented server-side pagination and search to ensure the admin dashboard remains performant, even with a large number of briefs.
+
+### Fixed
+-   **Critical Layout & Routing Bugs:** Resolved architectural issues that caused inconsistent layouts and broken navigation across the application.
+-   **Numerous Minor Bugs:** Addressed various minor issues identified during a full system audit, improving overall stability and user experience.
+
 ## [0.4.0] - 2024-08-23
 
 ### Added

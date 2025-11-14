@@ -16,7 +16,8 @@ import {
 // FIX: Add CheckIcon to imports to resolve usage error.
 import { WhatsAppIcon, ArrowDownRightIcon, ArrowUpRightIcon, ChevronDownIcon, XIcon, CheckIcon } from '../assets/icons';
 
-const FaqItem = ({ q, a }: { q: string, a: string }) => {
+// FIX: Changed FaqItem to a React.FC to correctly type it as a React component, resolving an issue where the 'key' prop was being incorrectly included in the component's props type.
+const FaqItem: React.FC<{ q: string, a: string }> = ({ q, a }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="border-b border-gray-700 py-6">

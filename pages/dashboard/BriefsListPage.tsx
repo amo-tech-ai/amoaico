@@ -9,7 +9,8 @@ import { AnimatedElement } from '../../components/animations/AnimatedElement';
 import { FileTextIcon, ClockIcon, XIcon } from '../../assets/icons';
 import { supabase } from '../../services/supabaseClient';
 
-const BriefCard = ({ brief, index }: { brief: Brief; index: number }) => {
+// FIX: Changed BriefCard to a React.FC to correctly type it as a React component, resolving an issue where the 'key' prop was being incorrectly included in the component's props type.
+const BriefCard: React.FC<{ brief: Brief; index: number }> = ({ brief, index }) => {
     const statusStyles: { [key: string]: string } = {
         submitted: 'bg-blue-100 text-blue-800',
         'in-review': 'bg-yellow-100 text-yellow-800',

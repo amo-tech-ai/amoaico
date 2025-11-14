@@ -14,7 +14,7 @@ import {
 } from '../data';
 import { WhatsAppIcon, ArrowDownRightIcon, ArrowUpRightIcon, ChevronDownIcon, XIcon, CheckIcon } from '../assets/icons';
 
-const FaqItem = ({ q, a }: { q: string, a: string }) => {
+const FaqItem: React.FC<{ q: string, a: string }> = ({ q, a }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="border-b border-gray-700 py-6">

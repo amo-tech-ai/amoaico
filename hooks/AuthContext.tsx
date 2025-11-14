@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, PropsWithChildren } from 'react';
 import { supabase } from '../services/supabaseClient';
 // FIX: Changed import to 'type' import to handle potential export issues in different module resolution settings with Supabase v2, resolving "no exported member" errors.
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
@@ -21,7 +21,8 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+// FIX: Used PropsWithChildren to correctly type the component and resolve the "missing children" error.
+export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<SupabaseUser | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);

@@ -20,7 +20,8 @@ const bottomNavItems = [
     { href: '/dashboard/settings', label: 'Settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ];
 
-const NavItem = ({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) => {
+// FIX: Changed NavItem to a React.FC to correctly type it as a React component, resolving an issue where the 'key' prop was being incorrectly included in the component's props type.
+const NavItem: React.FC<{ href: string; label: string; icon: React.ReactNode }> = ({ href, label, icon }) => {
     const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
         `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
             isActive ? 'bg-sunai-orange/10 text-sunai-orange' : 'text-gray-600 hover:bg-gray-100'

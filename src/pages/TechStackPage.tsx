@@ -4,7 +4,7 @@ import { AnimatedElement } from '../components/animations/AnimatedElement';
 import { TECH_STACK_WHY_FEATURES, TECH_STACK_CORE_FRAMEWORKS, TECH_STACK_USE_CASES, TECH_STACK_FAQ } from '../data';
 import { PlusCircleIcon, XIcon } from '../assets/icons';
 
-const FaqItem = ({ q, a }: { q: string, a: string }) => {
+const FaqItem: React.FC<{ q: string, a: string }> = ({ q, a }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="border-b border-gray-200 py-6">

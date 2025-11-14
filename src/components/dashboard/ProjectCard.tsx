@@ -4,7 +4,8 @@ import { Project } from '../../types';
 import { AnimatedElement } from '../animations/AnimatedElement';
 import { FolderKanbanIcon, ClockIcon } from '../../assets/icons';
 
-export const ProjectCard = ({ project, index }: { project: Project; index: number }) => {
+// FIX: Changed ProjectCard to a React.FC to correctly type it as a React component, resolving an issue where the 'key' prop was being incorrectly included in the component's props type.
+export const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
     return (
         <AnimatedElement delay={100 * index} className="border border-gray-200 rounded-xl p-6 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
             <div className="flex-grow">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { XIcon, QuestionMarkCircleIcon } from '../../../assets/icons';
 
-const Tooltip = ({ text, children }: { text: string; children: React.ReactNode }) => (
+const Tooltip: React.FC<React.PropsWithChildren<{ text: string }>> = ({ text, children }) => (
     <div className="relative group flex items-center">
         {children}
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-gray-800 text-white text-xs rounded-md text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Link, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getBriefsForUser } from '../../services/briefService';
@@ -10,13 +9,11 @@ import { FileTextIcon, XIcon } from '../../assets/icons';
 import { supabase } from '../../services/supabaseClient';
 import { BriefCard } from '../../components/dashboard/BriefCard';
 
-// FIX: Define context type for useOutletContext.
 interface DashboardContext {
   onStartWizard: () => void;
 }
 
 export const BriefsListPage = () => {
-    // FIX: Get onStartWizard from Outlet context instead of props.
     const { onStartWizard } = useOutletContext<DashboardContext>();
     const { user, loading: authLoading } = useAuth();
     const [briefs, setBriefs] = useState<Brief[]>([]);

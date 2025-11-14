@@ -1,5 +1,4 @@
 import React from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Link } from 'react-router-dom';
 import { Brief } from '../../types';
 import { AnimatedElement } from '../animations/AnimatedElement';
@@ -13,7 +12,7 @@ const statusDescriptions: { [key: string]: string } = {
     rejected: 'This project was not approved. Please contact us for more details.',
 };
 
-export const BriefCard = ({ brief, index }: { brief: Brief; index: number }) => {
+export const BriefCard: React.FC<{ brief: Brief; index: number }> = ({ brief, index }) => {
     const statusStyles: { [key: string]: string } = {
         submitted: 'bg-blue-100 text-blue-800',
         'in-review': 'bg-yellow-100 text-yellow-800',

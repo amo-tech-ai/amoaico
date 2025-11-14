@@ -158,7 +158,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
                     
                     {/* What We Build (Core Features) */}
-                    <SectionContainer id="features" ref={el => { sectionRefs.current['features'] = el; }} className="bg-slate-50" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="features" ref={(el: HTMLElement | null) => { sectionRefs.current['features'] = el; }} className="bg-slate-50" contained={false}>
                         <div className="text-center max-w-3xl mx-auto">
                             <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">What We Build</h2></AnimatedElement>
                         </div>
@@ -176,7 +177,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
 
                     {/* Where It Pays (Use Cases & Value) */}
-                    <SectionContainer id="use-cases" ref={el => { sectionRefs.current['use-cases'] = el; }} className="bg-white" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="use-cases" ref={(el: HTMLElement | null) => { sectionRefs.current['use-cases'] = el; }} className="bg-white" contained={false}>
                         <div className="text-center max-w-3xl mx-auto">
                             <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Where It Pays Off</h2></AnimatedElement>
                         </div>
@@ -193,7 +195,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
 
                     {/* ROI Snapshot */}
-                    <SectionContainer id="roi-snapshot" ref={el => { sectionRefs.current['roi-snapshot'] = el; }} className="bg-[#00334F] text-white" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="roi-snapshot" ref={(el: HTMLElement | null) => { sectionRefs.current['roi-snapshot'] = el; }} className="bg-[#00334F] text-white" contained={false}>
                         <div className="grid md:grid-cols-3 gap-8 text-center">
                             {WEB_APP_ROI.map((item, index) => (
                                 <AnimatedElement key={item.label} delay={100 * index}>
@@ -208,7 +211,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
                     
                     {/* Real-World Patterns */}
-                    <SectionContainer id="patterns" ref={el => { sectionRefs.current['patterns'] = el; }} className="bg-white" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="patterns" ref={(el: HTMLElement | null) => { sectionRefs.current['patterns'] = el; }} className="bg-white" contained={false}>
                         <div className="text-center max-w-3xl mx-auto">
                             <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Real-World Patterns</h2></AnimatedElement>
                         </div>
@@ -226,7 +230,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
                     
                     {/* Delivery Blueprint */}
-                    <SectionContainer id="blueprint" ref={el => { sectionRefs.current['blueprint'] = el; }} className="bg-slate-50" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="blueprint" ref={(el: HTMLElement | null) => { sectionRefs.current['blueprint'] = el; }} className="bg-slate-50" contained={false}>
                         <div className="text-center max-w-3xl mx-auto">
                             <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Our Delivery Blueprint</h2></AnimatedElement>
                         </div>
@@ -247,7 +252,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
                     
                     {/* Recommended Tool Stack */}
-                    <SectionContainer id="tool-stack" ref={el => { sectionRefs.current['tool-stack'] = el; }} className="bg-white" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="tool-stack" ref={(el: HTMLElement | null) => { sectionRefs.current['tool-stack'] = el; }} className="bg-white" contained={false}>
                         <div className="grid lg:grid-cols-2 gap-16 items-center">
                             <div>
                                 <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Recommended Tool Stack</h2></AnimatedElement>
@@ -270,7 +276,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
 
                     {/* Extra AI Features */}
-                    <SectionContainer id="extra-features" ref={el => { sectionRefs.current['extra-features'] = el; }} className="bg-slate-50" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="extra-features" ref={(el: HTMLElement | null) => { sectionRefs.current['extra-features'] = el; }} className="bg-slate-50" contained={false}>
                         <div className="grid lg:grid-cols-2 gap-16 items-center">
                             <div>
                                 <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">More Than Just a Chatbot</h2></AnimatedElement>
@@ -290,7 +297,8 @@ export const AiWebApplicationsPage = () => {
                     </SectionContainer>
 
                     {/* Visuals / Architecture */}
-                    <SectionContainer id="architecture" ref={el => { sectionRefs.current['architecture'] = el; }} className="bg-white" contained={false}>
+                    {/* FIX: Explicitly typed the `ref` callback parameter to resolve type inference error. */}
+                    <SectionContainer id="architecture" ref={(el: HTMLElement | null) => { sectionRefs.current['architecture'] = el; }} className="bg-white" contained={false}>
                         <div className="text-center max-w-3xl mx-auto">
                             <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins tracking-tighter text-[#0F172A]">Example Architecture</h2></AnimatedElement>
                             <AnimatedElement delay={100}><p className="mt-4 text-[#0F172A]/80">A typical RAG (Retrieval-Augmented Generation) application flow, built on our recommended stack.</p></AnimatedElement>

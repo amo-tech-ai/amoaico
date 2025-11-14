@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Brief } from '../../../types';
 import { FileTextIcon } from '../../../assets/icons';
 
-const ActivityItem = ({ brief }: { brief: Brief }) => {
+// FIX: Changed ActivityItem to a React.FC to correctly type it as a React component, resolving an issue where the 'key' prop was being incorrectly included in the component's props type.
+const ActivityItem: React.FC<{ brief: Brief }> = ({ brief }) => {
     return (
         <Link to={`/dashboard/briefs/${brief.id}`} className="block p-4 rounded-lg hover:bg-slate-50 transition-colors">
             <div className="flex items-center gap-4">
