@@ -1,9 +1,8 @@
 import React from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
-import { DashboardHeader } from './DashboardHeader';
-import { useAuth } from '../../hooks/useAuth';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { DashboardHeader } from '@/components/layout/DashboardHeader';
+import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardLayoutProps {
     onStartWizard: () => void;
@@ -32,10 +31,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ onStartWizard 
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <DashboardHeader onStartWizard={onStartWizard} />
-                <div className="flex-1 overflow-x-hidden overflow-y-auto bg-sunai-cream">
-                    {/* FIX: Pass onStartWizard via Outlet context to avoid prop drilling issues that may be causing typing errors. */}
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-sunai-cream">
+                    {/* Pass onStartWizard via Outlet context */}
                     <Outlet context={{ onStartWizard }} />
-                </div>
+                </main>
             </div>
         </div>
     );

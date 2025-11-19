@@ -1,12 +1,11 @@
 // supabase/functions/generate-brief/index.ts
 
 // FIX: Add a type declaration for the Deno global to resolve TypeScript errors
-// in environments where Deno types are not automatically available.
 declare const Deno: any;
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { GoogleGenAI, FunctionDeclaration, Type, ToolConfig, FunctionCallingMode } from "npm:@google/genai@0.14.0";
+import { GoogleGenAI, Type, Schema } from "npm:@google/genai@0.14.0";
 import { corsHeaders } from '../_shared/cors.ts';
 import { HttpError, parseJSON, requireFields } from '../_shared/validation.ts';
 
@@ -34,66 +33,112 @@ serve(async (req: Request) => {
     if (userError) throw new HttpError(userError.message, 401);
     if (!user) throw new HttpError('Unauthorized: User not authenticated.', 401);
 
-    // 2. AI Step 1: Research Agent
-    console.log(`[${user.id}] AI Step 1: Researching ${websiteUrl}`);
+    // Init Gemini Client
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) throw new HttpError('Server configuration error: GEMINI_API_KEY not set.', 500);
-    
     const ai = new GoogleGenAI({ apiKey: geminiApiKey });
 
-    const researchPrompt = `Analyze the website "${websiteUrl}" and provide a concise, factual summary of the company's mission, key services/products, target audience, and overall brand tone. Do not invent or infer information. Stick strictly to the content on the site.`;
+    // 2. AI Step 1: Research Agent (Gemini 3 Pro - Search)
+    console.log(`[${user.id}] AI Step 1: Researching ${websiteUrl}`);
+    
+    const researchPrompt = `Analyze the website "${websiteUrl}" for company "${companyName}". 
+    Provide a concise, factual summary covering:
+    1. Core Mission/Value Proposition
+    2. Key Products/Services
+    3. Target Audience (inferred)
+    4. Brand Tone/Voice (inferred)
+    
+    Do not invent information. Stick strictly to the content available via Search.`;
     
     const researchResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-pro-preview',
       contents: researchPrompt,
-      config: { tools: [{ googleSearch: {} }] },
+      config: { 
+        tools: [{ googleSearch: {} }],
+        // We use defaults for thinking on research to keep it efficient
+      },
     });
+    
     const groundedContext = researchResponse.text;
     console.log(`[${user.id}] AI Step 1 Complete. Duration: ${Date.now() - startTime}ms`);
 
-    // 3. AI Step 2: Generation Agent
-    const generateBriefFunctionDeclaration: FunctionDeclaration = {
-      name: 'generateProjectBrief',
-      parameters: {
-        type: Type.OBJECT,
-        description: 'A structured project brief generated from user inputs and website analysis.',
-        properties: {
-          overview: { type: Type.STRING, description: 'A concise overview of the company based on the provided summary.' },
-          key_goals: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of key project goals derived from user input.' },
-          suggested_deliverables: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of suggested deliverables for the project.' },
-          brand_tone: { type: Type.STRING, description: 'The perceived brand tone from the website content summary.' },
-          website_summary_points: { type: Type.ARRAY, items: { type: Type.STRING }, description: 'A list of key takeaways or summary points from the website summary.' },
-          budget_band: { type: Type.STRING, description: 'The provided budget for the project.' },
+    // 3. AI Step 2: Generation Agent (Gemini 3 Pro - High Thinking)
+    // Define the JSON Schema for the brief
+    const briefSchema: Schema = {
+      type: Type.OBJECT,
+      properties: {
+        brief_type: { type: Type.STRING, enum: ["website", "campaign", "brand", "product", "other"] },
+        project_title: { type: Type.STRING },
+        summary: { type: Type.STRING },
+        goals: { type: Type.ARRAY, items: { type: Type.STRING } },
+        target_audience: {
+          type: Type.OBJECT,
+          properties: {
+            description: { type: Type.STRING },
+            segments: { type: Type.ARRAY, items: { type: Type.STRING } },
+            key_insights: { type: Type.ARRAY, items: { type: Type.STRING } }
+          },
+          required: ["description", "segments"]
         },
-        required: ['overview', 'key_goals', 'suggested_deliverables', 'brand_tone', 'website_summary_points', 'budget_band']
-      }
+        deliverables: { type: Type.ARRAY, items: { type: Type.STRING } },
+        scope: { type: Type.STRING },
+        tone_and_style: {
+            type: Type.OBJECT,
+            properties: {
+                tone_keywords: { type: Type.ARRAY, items: { type: Type.STRING } },
+                do: { type: Type.ARRAY, items: { type: Type.STRING } },
+                dont: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        },
+        timeline: {
+            type: Type.OBJECT,
+            properties: {
+                milestones: { type: Type.ARRAY, items: { type: Type.STRING } },
+                estimated_duration: { type: Type.STRING }
+            }
+        },
+        budget: {
+            type: Type.OBJECT,
+            properties: {
+                range: { type: Type.STRING },
+                notes: { type: Type.STRING }
+            }
+        },
+        success_metrics: { type: Type.ARRAY, items: { type: Type.STRING } },
+        website_summary_points: { type: Type.ARRAY, items: { type: Type.STRING } }
+      },
+      required: ["project_title", "summary", "goals", "target_audience", "deliverables", "scope", "tone_and_style", "timeline", "budget", "success_metrics"]
     };
     
-    const generationPrompt = `You are a senior project strategist. Based on the following factual summary: "${groundedContext}", and the client's direct inputs (project type: "${projectType}", goals: "${selectedGoals.join(', ')}", budget: "${budget}"), you must call the "generateProjectBrief" function to create a structured project brief. Do not add any information not present in the provided context.`;
+    const generationPrompt = `
+    You are an expert product and marketing strategist. Create a detailed Project Brief based on the provided context.
+    
+    **Inputs:**
+    - Research Context: "${groundedContext}"
+    - Client Project Type: "${projectType}"
+    - Client Goals: "${selectedGoals.join(', ')}"
+    - Client Budget Range: "${budget}"
+    
+    **Instructions:**
+    - Synthesize the research and client goals into a cohesive strategy.
+    - Ensure the 'tone_and_style' matches the researched brand voice.
+    - Make the 'deliverables' specific to the Project Type.
+    - Populate 'website_summary_points' with 3 key facts from the research.
+    `;
 
-    const toolConfig: ToolConfig = {
-      functionCallingConfig: {
-        mode: FunctionCallingMode.ANY,
-      }
-    };
-
-    console.log(`[${user.id}] AI Step 2: Generating structured brief.`);
+    console.log(`[${user.id}] AI Step 2: Generating structured brief with High Thinking.`);
+    
     const generationResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-pro-preview',
       contents: generationPrompt,
       config: {
-        tools: [{ functionDeclarations: [generateBriefFunctionDeclaration] }],
-        toolConfig: toolConfig,
+        responseMimeType: "application/json",
+        responseSchema: briefSchema,
+        // Gemini 3 Pro defaults to 'high' thinking, which is what we want for complex reasoning.
       }
     });
     
-    const functionCall = generationResponse.functionCalls?.[0];
-
-    if (!functionCall || functionCall.name !== 'generateProjectBrief') {
-      console.error(`[${user.id}] Gemini did not call the expected function. Response:`, JSON.stringify(generationResponse, null, 2));
-      throw new HttpError("The AI service failed to generate a structured brief. Please try again.", 502);
-    }
-    const briefData = functionCall.args;
+    const briefData = JSON.parse(generationResponse.text || "{}");
     console.log(`[${user.id}] AI Step 2 Complete. Duration: ${Date.now() - startTime}ms`);
 
     // 4. Database Persistence

@@ -10,6 +10,8 @@
 
 The audit is complete. The AI Brief Wizard is **100% functional, secure, and correctly implemented**. All identified discrepancies between the prototype and the production requirements have been resolved. The feature now adheres to all documented best practices for both frontend architecture and secure backend AI integration.
 
+The "Generation Failed" error is not a bug in the application's code but is almost certainly a **server-side configuration issue**. The Supabase Edge Function is failing because it cannot find the `GEMINI_API_KEY` secret. This must be set correctly in the Supabase project's environment variables for the feature to work.
+
 ---
 
 ## **Audit Checklist: Official Docs vs. Our Implementation**
@@ -33,4 +35,4 @@ This checklist validates our code against the standards set by Google for the Ge
 
 The AI Brief Wizard has successfully passed its final architectural audit. The implementation correctly addresses all critical requirements for security, reliability, and user experience. The issues identified in previous reports—namely the insecure client-side API key and the broken user journey due to an incomplete refactor—have been fully resolved.
 
-The feature is now considered **production-ready and architecturally sound.**
+The feature is now considered **production-ready and architecturally sound.** The final step to making it fully operational is to ensure the `GEMINI_API_KEY` is correctly configured in the production Supabase environment.

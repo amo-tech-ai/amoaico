@@ -1,12 +1,11 @@
 import React, { useState, useCallback, lazy, Suspense } from 'react';
-// FIX: Corrected react-router-dom import. Changed `BrowserRouter as HashRouter` to `HashRouter` to resolve module resolution issues.
 import { HashRouter } from 'react-router-dom';
 
 // Custom Components
-import { ScrollToTop } from '@/components/ScrollToTop';
-import { AppRoutes } from '@/AppRoutes';
+import { ScrollToTop } from './components/ScrollToTop';
+import { AppRoutes } from './AppRoutes';
 
-const AiBriefWizard = lazy(() => import('@/features/ai-brief-wizard/AiBriefWizard').then(module => ({ default: module.AiBriefWizard })));
+const AiBriefWizard = lazy(() => import('./features/ai-brief-wizard/AiBriefWizard').then(module => ({ default: module.AiBriefWizard })));
 
 const WizardLoader = () => (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -25,10 +24,6 @@ const App = () => {
     return (
         <HashRouter>
             <ScrollToTop />
-            {/* 
-              AppRoutes now controls which layout (PublicLayout, DashboardLayout, or none) is rendered
-              for any given route, preventing the "double layout" bug.
-            */}
             <AppRoutes onStartWizard={startWizard} />
             
             {isWizardOpen && (
