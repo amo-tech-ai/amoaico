@@ -1,40 +1,41 @@
+
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { PublicLayout } from '@/components/layout/PublicLayout';
+import { DashboardLayout } from './components/layout/DashboardLayout';
+import { PublicLayout } from './components/layout/PublicLayout';
 
 // Feature Components
-import { AdminRoute } from '@/components/AdminRoute';
-import { BriefRedirect } from '@/components/BriefRedirect';
+import { AdminRoute } from './components/AdminRoute';
+import { BriefRedirect } from './components/BriefRedirect';
 
 // --- Page Components (Lazy Loaded) ---
-const HomePage = lazy(() => import('@/pages/HomePage').then(m => ({ default: m.HomePage })));
-const AiWebApplicationsPage = lazy(() => import('@/pages/AiWebApplicationsPage').then(m => ({ default: m.AiWebApplicationsPage })));
-const AiSocialMediaPage = lazy(() => import('@/pages/AiSocialMediaPage').then(m => ({ default: m.AiSocialMediaPage })));
-const EcommercePage = lazy(() => import('@/pages/EcommercePage').then(m => ({ default: m.EcommercePage })));
-const WhatsAppAutomationPage = lazy(() => import('@/pages/WhatsAppAutomationPage').then(m => ({ default: m.WhatsAppAutomationPage })));
-const ProcessPage = lazy(() => import('@/pages/ProcessPage').then(m => ({ default: m.ProcessPage })));
-const ProjectsPage = lazy(() => import('@/pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
-const TechStackPage = lazy(() => import('@/pages/TechStackPage').then(m => ({ default: m.TechStackPage })));
-const ResourcesPage = lazy(() => import('@/pages/ResourcesPage').then(m => ({ default: m.ResourcesPage })));
-const AboutPage = lazy(() => import('@/pages/AboutPage').then(m => ({ default: m.AboutPage })));
-const ContactPage = lazy(() => import('@/pages/ContactPage').then(m => ({ default: m.ContactPage })));
-const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
-const TermsOfServicePage = lazy(() => import('@/pages/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
-const LoginPage = lazy(() => import('@/pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const AiWebApplicationsPage = lazy(() => import('./pages/AiWebApplicationsPage').then(m => ({ default: m.AiWebApplicationsPage })));
+const AiSocialMediaPage = lazy(() => import('./pages/AiSocialMediaPage').then(m => ({ default: m.AiSocialMediaPage })));
+const EcommercePage = lazy(() => import('./pages/EcommercePage').then(m => ({ default: m.EcommercePage })));
+const WhatsAppAutomationPage = lazy(() => import('./pages/WhatsAppAutomationPage').then(m => ({ default: m.WhatsAppAutomationPage })));
+const ProcessPage = lazy(() => import('./pages/ProcessPage').then(m => ({ default: m.ProcessPage })));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then(m => ({ default: m.ProjectsPage })));
+const TechStackPage = lazy(() => import('./pages/TechStackPage').then(m => ({ default: m.TechStackPage })));
+const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then(m => ({ default: m.ResourcesPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
 
 // Dashboard Page Components (Lazy Loaded)
-const OverviewPage = lazy(() => import('@/pages/dashboard/OverviewPage').then(m => ({ default: m.OverviewPage })));
-const BriefsListPage = lazy(() => import('@/pages/dashboard/BriefsListPage').then(m => ({ default: m.BriefsListPage })));
-const BriefDetailPage = lazy(() => import('@/pages/dashboard/BriefDetailPage').then(m => ({ default: m.BriefDetailPage })));
-const ProjectsListPage = lazy(() => import('@/pages/dashboard/ProjectsListPage').then(m => ({ default: m.ProjectsListPage })));
-const ClientsListPage = lazy(() => import('@/pages/dashboard/ClientsListPage').then(m => ({ default: m.ClientsListPage })));
-const FinancialsPage = lazy(() => import('@/pages/dashboard/FinancialsPage').then(m => ({ default: m.FinancialsPage })));
-const SettingsPage = lazy(() => import('@/pages/dashboard/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const IntegrationsPage = lazy(() => import('@/pages/dashboard/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
+const OverviewPage = lazy(() => import('./pages/dashboard/OverviewPage').then(m => ({ default: m.OverviewPage })));
+const BriefsListPage = lazy(() => import('./pages/dashboard/BriefsListPage').then(m => ({ default: m.BriefsListPage })));
+const BriefDetailPage = lazy(() => import('./pages/dashboard/BriefDetailPage').then(m => ({ default: m.BriefDetailPage })));
+const ProjectsListPage = lazy(() => import('./pages/dashboard/ProjectsListPage').then(m => ({ default: m.ProjectsListPage })));
+const ClientsListPage = lazy(() => import('./pages/dashboard/ClientsListPage').then(m => ({ default: m.ClientsListPage })));
+const FinancialsPage = lazy(() => import('./pages/dashboard/FinancialsPage').then(m => ({ default: m.FinancialsPage })));
+const SettingsPage = lazy(() => import('./pages/dashboard/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const IntegrationsPage = lazy(() => import('./pages/dashboard/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
 
 
 interface AppRoutesProps {
