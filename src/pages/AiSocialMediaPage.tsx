@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '../components/layout/SectionContainer';
-import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { USE_CASES_PLATFORMS } from '../data';
-import { Share2Icon } from '../assets/icons';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { USE_CASES_PLATFORMS } from '@/data';
+import { Share2Icon } from '@/assets/icons';
 
 interface PublicLayoutContext {
   onStartWizard: () => void;

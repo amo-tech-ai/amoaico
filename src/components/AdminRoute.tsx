@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { SectionContainer } from './layout/SectionContainer';
+import { useAuth } from '@/hooks/useAuth';
+import { SectionContainer } from '@/components/layout/SectionContainer';
 
 export const AdminRoute = () => {
     const { user, loading } = useAuth();

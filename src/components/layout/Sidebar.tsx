@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { 
     LogoIcon, LayoutDashboardIcon, FileTextIcon, RocketIcon, UsersIcon, 
     DollarSignIcon, SettingsIcon, LifeBuoyIcon, LogOutIcon 
-} from '../../assets/icons';
+} from '@/assets/icons';
 
 const navItems = [
     { href: '/dashboard/overview', label: 'Overview', icon: <LayoutDashboardIcon className="w-5 h-5" /> },

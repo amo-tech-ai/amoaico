@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '../components/layout/SectionContainer';
-import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { ShoppingCartIcon, TrendingUpIcon } from '../assets/icons';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { ShoppingCartIcon, TrendingUpIcon } from '@/assets/icons';
 
 const ECOMMERCE_FEATURES = [
     { title: "Personalized Recommendations", description: "Increase average order value with AI-driven product suggestions." },

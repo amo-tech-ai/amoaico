@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS, SERVICE_LINKS } from '@/data';
@@ -61,9 +62,9 @@ export const Header = ({ onStartWizard }: { onStartWizard: () => void; }) => {
         <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-lg border-b border-gray-200/80' : 'bg-white'}`}>
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 relative">
                 <div className="flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2">
-                        <LogoIcon className="w-8 h-8" />
-                        <span className="text-xl font-semibold font-poppins text-[#0F172A]">Sunai</span>
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <LogoIcon className="w-10 h-10 transition-transform duration-300 group-hover:scale-105" />
+                        <span className="text-2xl font-bold font-poppins text-[#0F172A] tracking-tight">Sunai</span>
                     </Link>
                     <div className="hidden md:flex items-center space-x-8">
                         {NAV_LINKS.map(link => {

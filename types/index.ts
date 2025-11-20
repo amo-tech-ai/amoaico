@@ -8,12 +8,40 @@ export interface NavLink {
 }
 
 export interface BriefData {
-    overview: string;
-    key_goals: string[];
-    suggested_deliverables: string[];
-    brand_tone: string;
-    budget_band: string;
-    website_summary_points: string[];
+    // Gemini 3 Structured Output Fields
+    brief_type?: "website" | "campaign" | "brand" | "product" | "other";
+    project_title?: string;
+    summary?: string;
+    goals?: string[];
+    target_audience?: {
+        description: string;
+        segments: string[];
+        key_insights: string[];
+    };
+    deliverables?: string[];
+    scope?: string;
+    tone_and_style?: {
+        tone_keywords: string[];
+        do: string[];
+        dont: string[];
+    };
+    timeline?: {
+        milestones: string[];
+        estimated_duration?: string;
+    };
+    budget?: {
+        range: string;
+        notes?: string;
+    };
+    success_metrics?: string[];
+    website_summary_points?: string[]; // Kept from research phase
+
+    // Legacy fields for backward compatibility
+    overview?: string;
+    key_goals?: string[];
+    suggested_deliverables?: string[];
+    brand_tone?: string;
+    budget_band?: string;
 }
 
 export interface Brief extends BriefData {

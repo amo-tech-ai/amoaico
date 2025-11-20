@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
-import { Brief } from '../types';
-import { getAllBriefs, updateBriefStatus } from '../services/briefService';
-import { supabase } from '../services/supabaseClient';
-import { SectionContainer } from '../components/layout/SectionContainer';
-import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { useDebounce } from '../hooks/useDebounce';
-import { useToast } from '../hooks/useToast';
-import { FileTextIcon, XIcon, SearchIcon } from '../assets/icons';
+import { Brief } from '@/types';
+import { getAllBriefs, updateBriefStatus } from '@/services/briefService';
+import { supabase } from '@/services/supabaseClient';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useToast } from '@/hooks/useToast';
+import { FileTextIcon, XIcon, SearchIcon } from '@/assets/icons';
 
 export const AdminDashboardPage = () => {
     const [briefs, setBriefs] = useState<Brief[]>([]);

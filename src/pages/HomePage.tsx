@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '../components/layout/SectionContainer';
-import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { Counter } from '../components/animations/Counter';
-import { HOME_CORE_SERVICES, HOME_PROCESS_STEPS, HOME_RESULT_METRICS, INVESTMENT_LEVELS } from '../data';
-import { CodeIcon, Share2Icon, MessageCircleIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, CheckCircleIcon, CheckIcon, XIcon } from '../assets/icons';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { Counter } from '@/components/animations/Counter';
+import { HOME_CORE_SERVICES, HOME_PROCESS_STEPS, HOME_RESULT_METRICS, INVESTMENT_LEVELS } from '@/data';
+import { CodeIcon, Share2Icon, MessageCircleIcon, ClockIcon, DollarSignIcon, TrendingUpIcon, CheckCircleIcon, CheckIcon, XIcon } from '@/assets/icons';
 
 const PermissionErrorBanner = ({ message }: { message: string }) => {
     const [isVisible, setIsVisible] = useState(true);

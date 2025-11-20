@@ -1,11 +1,11 @@
+
 import React from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Link } from 'react-router-dom';
-import { SectionContainer } from './SectionContainer';
-import { AnimatedElement } from '../animations/AnimatedElement';
-import { BotIcon, LogoIcon } from '../../assets/icons';
-import { SERVICE_LINKS, CONTACT_INFO } from '../../data';
-import { useAuth } from '../../hooks/useAuth';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { BotIcon, LogoIcon } from '@/assets/icons';
+import { SERVICE_LINKS, CONTACT_INFO } from '@/data';
+import { useAuth } from '@/hooks/useAuth';
 
 export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     const { user } = useAuth();
@@ -32,9 +32,9 @@ export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         <div className="lg:col-span-3">
-                            <Link to="/" className="flex items-center gap-2">
-                                <LogoIcon className="w-8 h-8" />
-                                <span className="text-xl font-semibold font-poppins">Sunai</span>
+                            <Link to="/" className="flex items-center gap-3 mb-6">
+                                <LogoIcon className="w-12 h-12" />
+                                <span className="text-3xl font-bold font-poppins tracking-tight">Sunai</span>
                             </Link>
                             <p className="mt-4 text-gray-300 text-sm">Built by Intelligence, Measured by Results.</p>
                              <div className="mt-6 space-y-2 text-sm">

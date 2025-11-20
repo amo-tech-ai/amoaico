@@ -1,9 +1,10 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
-import { Brief } from '../../types';
-import { XIcon } from '../../assets/icons';
-import { generateBriefFromApi } from '../../services/aiService';
-import { useAuth } from '../../hooks/useAuth';
-import { Auth } from '../../components/Auth';
+import { Brief } from '@/types';
+import { XIcon } from '@/assets/icons';
+import { generateBriefFromApi } from '@/services/aiService';
+import { useAuth } from '@/hooks/useAuth';
+import { Auth } from '@/components/Auth';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ScopeStep } from './steps/ScopeStep';
 import { GeneratingStep } from './steps/GeneratingStep';

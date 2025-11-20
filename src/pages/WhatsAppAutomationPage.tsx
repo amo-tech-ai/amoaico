@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '../components/layout/SectionContainer';
-import { AnimatedElement } from '../components/animations/AnimatedElement';
-import { Counter } from '../components/animations/Counter';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { Counter } from '@/components/animations/Counter';
 import { 
     WHATSAPP_METRICS, 
     WHATSAPP_CORE_SERVICES, 
@@ -11,8 +12,8 @@ import {
     WHATSAPP_PROCESS,
     WHATSAPP_TECHNOLOGIES,
     WHATSAPP_FAQ
-} from '../data';
-import { WhatsAppIcon, ArrowDownRightIcon, ArrowUpRightIcon, ChevronDownIcon, XIcon, CheckIcon } from '../assets/icons';
+} from '@/data';
+import { WhatsAppIcon, ArrowDownRightIcon, ArrowUpRightIcon, ChevronDownIcon, XIcon, CheckIcon } from '@/assets/icons';
 
 const FaqItem: React.FC<{ q: string, a: string }> = ({ q, a }) => {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,11 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { getClientsForUser } from '../../services/clientService';
-import { Client } from '../../types';
-import { SectionContainer } from '../../components/layout/SectionContainer';
-import { AnimatedElement } from '../../components/animations/AnimatedElement';
-import { ClientCard } from '../../components/dashboard/ClientCard';
-import { UsersIcon, XIcon } from '../../assets/icons';
+import { useAuth } from '@/hooks/useAuth';
+import { getClientsForUser } from '@/services/clientService';
+import { Client } from '@/types';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { ClientCard } from '@/components/dashboard/ClientCard';
+import { UsersIcon, XIcon } from '@/assets/icons';
 
 export const ClientsListPage = () => {
     const { user } = useAuth();

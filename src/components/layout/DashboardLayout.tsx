@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
-import { DashboardHeader } from './DashboardHeader';
-import { useAuth } from '../../hooks/useAuth';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { DashboardHeader } from '@/components/layout/DashboardHeader';
+import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardLayoutProps {
     onStartWizard: () => void;

@@ -1,4 +1,5 @@
-import { FinancialSummary, Invoice } from '../types';
+
+import { FinancialSummary, Invoice } from '@/types';
 
 // Mock data for the financial summary
 const mockFinancialSummary: FinancialSummary = {

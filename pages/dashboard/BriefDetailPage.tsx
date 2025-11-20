@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // FIX: Ensured all react-router imports are from 'react-router-dom'.
-import { useParams, Link, useBlocker } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Brief } from '../../types';
 import { getBriefById, updateBrief } from '../../services/briefService';
 import { useAuth } from '../../hooks/useAuth';
@@ -81,15 +81,6 @@ export const BriefDetailPage = () => {
     const [autosaveStatus, setAutosaveStatus] = useState<AutosaveStatus>('idle');
 
     const debouncedData = useDebounce(editableData, 2000); // Debounce changes by 2 seconds
-
-    useBlocker(() => {
-        if (isDirty) {
-            return !window.confirm(
-                'You have unsaved changes that are not yet saved. Are you sure you want to leave?'
-            );
-        }
-        return false;
-    });
     
     useEffect(() => {
         if (!briefId) {

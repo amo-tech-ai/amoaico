@@ -1,13 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { getBriefsForUser } from '../../services/briefService';
-import { Brief } from '../../types';
-import { SectionContainer } from '../../components/layout/SectionContainer';
-import { AnimatedElement } from '../../components/animations/AnimatedElement';
-import { FileTextIcon, XIcon } from '../../assets/icons';
-import { supabase } from '../../services/supabaseClient';
-import { BriefCard } from '../../components/dashboard/BriefCard';
+import { useAuth } from '@/hooks/useAuth';
+import { getBriefsForUser } from '@/services/briefService';
+import { Brief } from '@/types';
+import { SectionContainer } from '@/components/layout/SectionContainer';
+import { AnimatedElement } from '@/components/animations/AnimatedElement';
+import { FileTextIcon, XIcon, BotIcon } from '@/assets/icons';
+import { supabase } from '@/services/supabaseClient';
+import { BriefCard } from '@/components/dashboard/BriefCard';
 
 interface DashboardContext {
   onStartWizard: () => void;
@@ -149,15 +150,20 @@ export const BriefsListPage = () => {
                         {briefs.map((brief, index) => <BriefCard key={brief.id} brief={brief} index={index} />)}
                     </div>
                 ) : (
-                    <AnimatedElement className="text-center py-16 border-2 border-dashed border-gray-300 rounded-2xl">
-                        <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                            <FileTextIcon className="w-8 h-8 text-gray-500" />
+                    <AnimatedElement className="text-center py-20 border-2 border-dashed border-gray-200 rounded-3xl bg-slate-50/50">
+                        <div className="w-24 h-24 mx-auto bg-white rounded-full shadow-sm flex items-center justify-center mb-6 border border-gray-100">
+                            <BotIcon className="w-12 h-12 text-sunai-orange" />
                         </div>
-                        <h2 className="mt-6 text-xl font-semibold font-poppins text-sunai-blue">No Briefs Yet</h2>
-                        <p className="mt-2 text-gray-600">You haven't created any project briefs. Let's build one!</p>
-                        <div className="mt-6">
-                            <button onClick={onStartWizard} className="px-6 py-2.5 rounded-lg font-semibold bg-sunai-blue text-white hover:opacity-90 transition-opacity">
-                                Start Your First AI Brief
+                        <h2 className="text-2xl font-bold font-poppins text-sunai-slate">No Briefs Yet</h2>
+                        <p className="mt-3 text-gray-600 max-w-md mx-auto text-lg">
+                            Your dashboard is empty. Let's create your first AI-powered project brief to get started.
+                        </p>
+                        <div className="mt-8">
+                            <button 
+                                onClick={onStartWizard} 
+                                className="px-8 py-4 rounded-xl font-bold text-white bg-sunai-orange shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:-translate-y-1 transition-all duration-300"
+                            >
+                                + Create New Brief
                             </button>
                         </div>
                     </AnimatedElement>
