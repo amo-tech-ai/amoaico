@@ -1,6 +1,5 @@
-
-import { supabase } from '@/services/supabaseClient';
-import { Client } from '@/types';
+import { supabase } from './supabaseClient';
+import { Client } from '../types';
 
 /**
  * Fetches all briefs for a user and processes them to generate a unique list of clients.

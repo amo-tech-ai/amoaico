@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { StatCard } from '@/components/dashboard/overview/StatCard';
-import { getFinancialSummary, getInvoices } from '@/services/financialService';
-import { FinancialSummary, Invoice } from '@/types';
-import { DollarSignIcon, TrendingUpIcon, ClockIcon, CheckCircleIcon, XIcon } from '@/assets/icons';
+import { SectionContainer } from '../../components/layout/SectionContainer';
+import { AnimatedElement } from '../../components/animations/AnimatedElement';
+import { StatCard } from '../../components/dashboard/overview/StatCard';
+import { getFinancialSummary, getInvoices } from '../../services/financialService';
+import { FinancialSummary, Invoice } from '../../types';
+import { DollarSignIcon, TrendingUpIcon, ClockIcon, CheckCircleIcon, XIcon } from '../../assets/icons';
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {

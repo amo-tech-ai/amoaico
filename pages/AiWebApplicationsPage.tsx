@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useEffect, useRef } from 'react';
 // FIX: Use useOutletContext to get onStartWizard from PublicLayout instead of props.
 import { Link, useOutletContext } from 'react-router-dom';
@@ -98,13 +94,13 @@ export const AiWebApplicationsPage = () => {
         );
     
         const currentRefs = sectionRefs.current;
-        Object.values(currentRefs).forEach(ref => {
-            if (ref) observer.observe(ref);
+        Object.values(currentRefs).forEach((ref) => {
+            if (ref instanceof Element) observer.observe(ref);
         });
     
         return () => {
-            Object.values(currentRefs).forEach(ref => {
-                if (ref) observer.unobserve(ref);
+            Object.values(currentRefs).forEach((ref) => {
+                if (ref instanceof Element) observer.unobserve(ref);
             });
         };
     }, []);
