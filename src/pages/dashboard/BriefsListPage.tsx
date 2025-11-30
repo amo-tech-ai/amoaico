@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { getBriefsForUser } from '@/services/briefService';
-import { Brief } from '@/types';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { FileTextIcon, XIcon, BotIcon } from '@/assets/icons';
-import { supabase } from '@/services/supabaseClient';
-import { BriefCard } from '@/components/dashboard/BriefCard';
+import { useAuth } from '../../hooks/useAuth';
+import { getBriefsForUser } from '../../services/briefService';
+import { Brief } from '../../types';
+import { SectionContainer } from '../../components/layout/SectionContainer';
+import { AnimatedElement } from '../../components/animations/AnimatedElement';
+import { FileTextIcon, XIcon, BotIcon } from '../../assets/icons';
+import { supabase } from '../../services/supabaseClient';
+import { BriefCard } from '../../components/dashboard/BriefCard';
 
 interface DashboardContext {
   onStartWizard: () => void;

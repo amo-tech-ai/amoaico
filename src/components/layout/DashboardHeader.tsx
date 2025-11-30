@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { SearchIcon, BellIcon, ChevronDownIcon, PlusCircleIcon } from '@/assets/icons';
+import { useAuth } from '../../hooks/useAuth';
+import { SearchIcon, BellIcon, ChevronDownIcon, PlusCircleIcon } from '../../assets/icons';
 
 const UserMenu = () => {
     const { user, logout } = useAuth();

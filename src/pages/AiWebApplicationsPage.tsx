@@ -1,14 +1,14 @@
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { Counter } from '@/components/animations/Counter';
+import { SectionContainer } from '../components/layout/SectionContainer';
+import { AnimatedElement } from '../components/animations/AnimatedElement';
+import { Counter } from '../components/animations/Counter';
 import { 
     MessageCircleIcon, FileTextIcon, UserCheckIcon, BotIcon, PencilRulerIcon, 
     UsersIcon, BrainCircuitIcon, CheckCircleIcon, CheckIcon, ArrowRightIcon, ChevronDownIcon,
     ZapIcon, BarChartIcon, GlobeIcon
-} from '@/assets/icons';
+} from '../assets/icons';
 
 interface PublicLayoutContext {
   onStartWizard: () => void;
@@ -67,6 +67,33 @@ export const AiWebApplicationsPage = () => {
         { name: "n8n", description: "Workflow Automation" },
     ];
 
+    const [activeSection, setActiveSection] = useState('');
+    const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { rootMargin: '-25% 0px -75% 0px', threshold: 0.1 }
+        );
+    
+        const currentRefs = sectionRefs.current;
+        Object.values(currentRefs).forEach((ref) => {
+            if (ref instanceof Element) observer.observe(ref);
+        });
+    
+        return () => {
+            Object.values(currentRefs).forEach((ref) => {
+                if (ref instanceof Element) observer.unobserve(ref);
+            });
+        };
+    }, []);
+
     const handleScrollToContact = () => {
         const contactSection = document.getElementById('contact-cta');
         if (contactSection) {
@@ -102,7 +129,7 @@ export const AiWebApplicationsPage = () => {
             </SectionContainer>
             
             {/* 2. Main Services Grid */}
-            <SectionContainer className="bg-slate-50">
+            <SectionContainer id="features" ref={(el: HTMLElement | null) => { sectionRefs.current['features'] = el; }} className="bg-slate-50">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <AnimatedElement>
                         <h2 className="text-3xl md:text-4xl font-bold font-poppins text-sunai-slate">Intelligent Capabilities</h2>
@@ -125,7 +152,7 @@ export const AiWebApplicationsPage = () => {
             </SectionContainer>
 
             {/* 3. Where It Pays Off (Impact Metrics) */}
-            <SectionContainer className="bg-sunai-blue text-white">
+            <SectionContainer id="use-cases" ref={(el: HTMLElement | null) => { sectionRefs.current['use-cases'] = el; }} className="bg-sunai-blue text-white">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     <div>
                         <AnimatedElement>
@@ -168,7 +195,7 @@ export const AiWebApplicationsPage = () => {
             </SectionContainer>
 
             {/* 4. Real-World Patterns */}
-            <SectionContainer className="bg-white">
+            <SectionContainer id="patterns" ref={(el: HTMLElement | null) => { sectionRefs.current['patterns'] = el; }} className="bg-white">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <AnimatedElement>
                         <h2 className="text-3xl md:text-4xl font-bold font-poppins text-sunai-slate">Real-World Patterns</h2>
@@ -196,7 +223,7 @@ export const AiWebApplicationsPage = () => {
             </SectionContainer>
             
             {/* 5. Delivery Blueprint */}
-            <SectionContainer className="bg-slate-50">
+            <SectionContainer id="blueprint" ref={(el: HTMLElement | null) => { sectionRefs.current['blueprint'] = el; }} className="bg-slate-50">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <AnimatedElement><h2 className="text-3xl md:text-4xl font-bold font-poppins text-sunai-slate">Delivery Blueprint</h2></AnimatedElement>
                 </div>
@@ -214,7 +241,7 @@ export const AiWebApplicationsPage = () => {
             </SectionContainer>
             
             {/* 6. Recommended Tool Stack */}
-            <SectionContainer className="bg-white">
+            <SectionContainer id="tool-stack" ref={(el: HTMLElement | null) => { sectionRefs.current['tool-stack'] = el; }} className="bg-white">
                  <div className="text-center max-w-3xl mx-auto mb-16">
                     <AnimatedElement>
                         <h2 className="text-3xl md:text-4xl font-bold font-poppins text-sunai-slate">Production-Ready Stack</h2>
@@ -244,7 +271,7 @@ export const AiWebApplicationsPage = () => {
             </SectionContainer>
 
             {/* 7. Architecture & CTA */}
-            <SectionContainer id="contact-cta" className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white text-center pt-20 pb-24">
+            <SectionContainer id="contact-cta" ref={(el: HTMLElement | null) => { sectionRefs.current['architecture'] = el; }} className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white text-center pt-20 pb-24">
                 <AnimatedElement>
                     <span className="inline-block py-1 px-3 rounded-full bg-white/10 text-white text-sm font-semibold mb-6 border border-white/20">
                         Ready to Build?

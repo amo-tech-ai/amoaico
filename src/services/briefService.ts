@@ -1,6 +1,6 @@
 
-import { supabase } from '@/services/supabaseClient';
-import { Brief, BriefData, Project } from '@/types';
+import { supabase } from './supabaseClient';
+import { Brief, BriefData, Project } from '../types';
 
 /**
  * Fetches all briefs for a specific user from the Supabase database.

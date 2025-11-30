@@ -1,10 +1,10 @@
+
 import React, { lazy, Suspense } from 'react';
-// FIX: Ensured all react-router imports are from 'react-router-dom'.
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout Components
 import { DashboardLayout } from './components/layout/DashboardLayout';
-import { PublicLayout } from './src/components/layout/PublicLayout';
+import { PublicLayout } from './components/layout/PublicLayout';
 
 // Feature Components
 import { AdminRoute } from './components/AdminRoute';

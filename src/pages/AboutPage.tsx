@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { Counter } from '@/components/animations/Counter';
+import { SectionContainer } from '../components/layout/SectionContainer';
+import { AnimatedElement } from '../components/animations/AnimatedElement';
+import { Counter } from '../components/animations/Counter';
 import {
     ABOUT_PAGE_HERO_METRICS,
     ABOUT_PAGE_MISSION_VISION,
@@ -13,8 +13,8 @@ import {
     ABOUT_PAGE_TESTIMONIALS,
     ABOUT_PAGE_TRUSTED_METRICS,
     ABOUT_PAGE_BUILD_FUTURE_CARDS
-} from '@/data';
-import { CheckIcon, StarIcon } from '@/assets/icons';
+} from '../data';
+import { CheckIcon, StarIcon } from '../assets/icons';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">

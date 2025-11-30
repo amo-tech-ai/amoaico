@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/services/supabaseClient';
-import { useToast } from '@/hooks/useToast';
-import { CheckCircleIcon } from '@/assets/icons';
+import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../services/supabaseClient';
+import { useToast } from '../hooks/useToast';
+import { CheckCircleIcon } from '../assets/icons';
 
 export const ProfileManager = () => {
     const { user } = useAuth();

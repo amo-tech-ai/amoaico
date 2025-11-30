@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { BotIcon, LogoIcon } from '@/assets/icons';
-import { SERVICE_LINKS, CONTACT_INFO } from '@/data';
-import { useAuth } from '@/hooks/useAuth';
+import { SectionContainer } from './SectionContainer';
+import { AnimatedElement } from '../animations/AnimatedElement';
+import { BotIcon, LogoIcon } from '../../assets/icons';
+import { SERVICE_LINKS, CONTACT_INFO } from '../../data';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Footer = ({ onStartWizard }: { onStartWizard: () => void; }) => {
     const { user } = useAuth();

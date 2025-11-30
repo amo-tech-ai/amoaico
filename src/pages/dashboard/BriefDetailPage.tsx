@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Brief } from '../../types';
-import { getBriefById, updateBrief } from '@/services/briefService';
-import { useAuth } from '@/hooks/useAuth';
-import { useDebounce } from '@/hooks/useDebounce';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { ClockIcon, XIcon, ArrowLeftIcon, CheckCircleIcon } from '@/assets/icons';
+import { getBriefById, updateBrief } from '../../services/briefService';
+import { useAuth } from '../../hooks/useAuth';
+import { useDebounce } from '../../hooks/useDebounce';
+import { SectionContainer } from '../../components/layout/SectionContainer';
+import { AnimatedElement } from '../../components/animations/AnimatedElement';
+import { ClockIcon, XIcon, ArrowLeftIcon, CheckCircleIcon } from '../../assets/icons';
 
 // Reusable component for editable text fields (input/textarea)
 const EditableField = ({ label, value, name, onChange, type = 'text' }: { label: string, value: string, name: string, onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void, type?: 'text' | 'textarea' }) => (

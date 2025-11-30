@@ -1,17 +1,17 @@
 
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { Counter } from '@/components/animations/Counter';
+import { SectionContainer } from '../components/layout/SectionContainer';
+import { AnimatedElement } from '../components/animations/AnimatedElement';
+import { Counter } from '../components/animations/Counter';
 import { 
     PROCESS_PAGE_TIMELINE, 
     PROCESS_PAGE_COMPARISON, 
     PROCESS_PAGE_METRICS, 
     PROCESS_PAGE_QUALITY_METRICS, 
     PROCESS_PAGE_CALCULATOR 
-} from '@/data';
-import { CheckIcon } from '@/assets/icons';
+} from '../data';
+import { CheckIcon } from '../assets/icons';
 
 interface PublicLayoutContext {
   onStartWizard: () => void;

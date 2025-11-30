@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { getProjectsForUser } from '@/services/briefService';
-import { Project } from '@/types';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { ProjectCard } from '@/components/dashboard/ProjectCard';
-import { RocketIcon, XIcon } from '@/assets/icons';
+import { useAuth } from '../../hooks/useAuth';
+import { getProjectsForUser } from '../../services/briefService';
+import { Project } from '../../types';
+import { SectionContainer } from '../../components/layout/SectionContainer';
+import { AnimatedElement } from '../../components/animations/AnimatedElement';
+import { ProjectCard } from '../../components/dashboard/ProjectCard';
+import { RocketIcon, XIcon } from '../../assets/icons';
 
 export const ProjectsListPage = () => {
     const { user } = useAuth();

@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { IntegrationCard } from '@/components/dashboard/IntegrationCard';
-import { StripeIcon, SlackIcon } from '@/assets/icons';
+import { SectionContainer } from '../../components/layout/SectionContainer';
+import { AnimatedElement } from '../../components/animations/AnimatedElement';
+import { IntegrationCard } from '../../components/dashboard/IntegrationCard';
+import { StripeIcon, SlackIcon } from '../../assets/icons';
 
 const availableIntegrations = [
     {

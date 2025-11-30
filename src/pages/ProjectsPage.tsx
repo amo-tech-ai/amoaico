@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { SectionContainer } from '@/components/layout/SectionContainer';
-import { AnimatedElement } from '@/components/animations/AnimatedElement';
-import { Counter } from '@/components/animations/Counter';
-import { getProjectStories } from '@/services/projectService';
-import { PROJECTS_TECH_STACK } from '@/data';
-import { ExternalLinkIcon, XIcon } from '@/assets/icons';
-import { ProjectStory } from '@/types';
+import { SectionContainer } from '../components/layout/SectionContainer';
+import { AnimatedElement } from '../components/animations/AnimatedElement';
+import { Counter } from '../components/animations/Counter';
+import { getProjectStories } from '../services/projectService';
+import { PROJECTS_TECH_STACK } from '../data';
+import { ExternalLinkIcon, XIcon } from '../assets/icons';
+import { ProjectStory } from '../types';
 
 const ProjectStoryCard = ({ story }: { story: ProjectStory }) => {
     return (

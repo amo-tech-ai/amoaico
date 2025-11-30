@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { NAV_LINKS, SERVICE_LINKS } from '@/data';
-import { useAuth } from '@/hooks/useAuth';
-import { MenuIcon, XIcon, ChevronDownIcon, LogoIcon } from '@/assets/icons';
+import { NAV_LINKS, SERVICE_LINKS } from '../../data';
+import { useAuth } from '../../hooks/useAuth';
+import { MenuIcon, XIcon, ChevronDownIcon, LogoIcon } from '../../assets/icons';
 
 const UserMenu = ({ user, logout }: { user: any; logout: () => void; }) => (
     <div className="relative group">
