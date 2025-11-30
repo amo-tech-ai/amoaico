@@ -11,6 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Overhauled `docs/progress-tracker.md` to be a comprehensive, beginner-friendly strategic roadmap with real-world analogies and impact statements for all development tasks.
 - Archived the now-redundant `docs/19-strategic-roadmap.md` as its contents have been merged into the main progress tracker.
 
+## [0.6.0] - Current
+
+### Added
+-   **Gemini 3 Pro Integration:** Upgraded `generate-brief` Edge Function to use `gemini-3-pro-preview` with high-reasoning capabilities.
+-   **Two-Step AI Chain:** Implemented a Research Agent (Search) followed by a Generation Agent (Structured JSON) for brief creation.
+-   **Path Alias Resolution:** Fixed all "Failed to resolve module specifier" errors by standardizing `@/` aliases in Vite and TSConfig.
+-   **Supabase Realtime:** Added WebSocket subscriptions to `BriefsListPage` and `AdminDashboardPage` for instant UI updates.
+-   **Secure Brief Updates:** Implemented `update-brief` Edge Function to handle partial updates to JSONB data securely.
+-   **Global Search:** Implemented real-time dashboard search for briefs and projects using custom hooks and Supabase filters.
+
+### Fixed
+-   **Authentication Security:** Removed insecure development auth-bypass code.
+-   **Layout Architecture:** Consolidated routing to use `DashboardLayout` and `PublicLayout` correctly via `AppRoutes.tsx`, resolving nested layout bugs.
+-   **Type Safety:** Updated `src/types/index.ts` to reflect the new Gemini 3 structured output schema.
+
 ## [0.5.0] - 2024-08-27
 
 ### Added

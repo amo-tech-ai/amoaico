@@ -66,6 +66,11 @@ export interface User {
     role?: string;
 }
 
+export interface SearchResults {
+    briefs: Brief[];
+    projects: Project[];
+}
+
 // Type for a single project story/case study
 export interface ProjectStory {
     id: string;
