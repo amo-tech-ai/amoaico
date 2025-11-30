@@ -141,7 +141,7 @@ export const getAllBriefs = async ({
             status,
             created_at,
             brief_data,
-            user:profiles(id, full_name, email)
+            user:profiles(id, full_name)
         `, { count: 'exact' });
 
     if (statusFilter !== 'all') {
@@ -176,7 +176,7 @@ export const getAllBriefs = async ({
             user: item.user ? {
                 id: item.user.id,
                 full_name: item.user.full_name,
-                email: item.user.email || '', // Email is not in profiles, but may be added later.
+                email: '', // Email is not in profiles table
             } : undefined,
         };
     });

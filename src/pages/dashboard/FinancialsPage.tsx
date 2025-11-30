@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { SectionContainer } from '../../components/layout/SectionContainer';
 import { AnimatedElement } from '../../components/animations/AnimatedElement';
 import { StatCard } from '../../components/dashboard/overview/StatCard';
 import { getFinancialSummary, getInvoices } from '../../services/financialService';
 import { FinancialSummary, Invoice } from '../../types';
-import { DollarSignIcon, TrendingUpIcon, ClockIcon, CheckCircleIcon, XIcon } from '../../assets/icons';
+import { DollarSignIcon, TrendingUpIcon, ClockIcon, XIcon } from '../../assets/icons';
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -93,7 +94,7 @@ export const FinancialsPage = () => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {invoices.map(invoice => (
-                                        <tr key={invoice.id}>
+                                        <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{invoice.id}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{invoice.clientName}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(invoice.amount)}</td>

@@ -11,7 +11,7 @@
 **Status:** **Core MVP is Production-Ready (Frontend + Main Backend Logic)**.
 The application has successfully migrated from a prototype to a secure, full-stack architecture. The "AI Brief Wizard" — the primary feature — is fully implemented with a robust **Two-Step AI Chain** (Research → Generation) running on Supabase Edge Functions. The Dashboard, Authentication, and Real-time updates are fully functional.
 
-**Critical Gap:** While the *Brief* generation is complete, the *Pitch Deck* generation and Image generation Edge Functions are currently **placeholders** (501 Not Implemented), meaning those advanced features are not yet working.
+**Focus:** The project is now strictly focused on the **Brief Generation** and **Strategic Analysis** features. Previous plans for Pitch Deck generation have been deprecated to streamline the platform's value proposition.
 
 ---
 
@@ -29,9 +29,19 @@ The application has successfully migrated from a prototype to a secure, full-sta
 | **Edge Fn: Update** | 🟢 Completed | Secure `update-brief` function | 100% | `supabase/functions/update-brief/index.ts` implements secure merging of JSONB data. | — | — |
 | **Realtime Updates** | 🟢 Completed | Live dashboard updates via WebSockets | 100% | `src/pages/dashboard/BriefsListPage.tsx` contains `supabase.channel` subscription logic. | — | — |
 | **Global Search** | 🟢 Completed | Real-time Dashboard Search | 100% | `src/hooks/useSearch.ts` and `DashboardHeader.tsx` implement debounced global search across Briefs and Projects. | — | — |
-| **Edge Fn: Deck Gen** | 🟡 In Progress | Pitch Deck Generation Logic | 10% | File exists: `supabase/functions/generate-deck/index.ts` but contains placeholder 501 response. | Logic missing. | Implement Gemini logic in `generate-deck`. |
-| **Edge Fn: Images** | 🟡 In Progress | Image Gen & Editing | 10% | `generate-slide-image` and `edit-slide-image` are placeholder files. | Logic missing. | Implement Gemini Imagen logic. |
 | **Testing** | 🔴 Not Started | Unit & E2E Tests | 0% | Strategy exists in `docs/38-testing-strategy.md`. | No `*.test.tsx` files or `e2e/` folder found. | Set up Vitest and Playwright. |
+
+---
+
+### 🚀 **Phase 4: Operational Hardening & AI Expansion**
+
+| Task Name | Priority | Description | Tech Stack / Tooling |
+| :--- | :--- | :--- | :--- |
+| **API Rate Limiting** | 🟥 Critical | Prevent abuse of expensive Gemini 3 Pro calls. | **Upstash Redis** + Supabase Edge Functions. |
+| **PDF Export** | 🟧 High | Allow users to download Briefs as PDF. | `react-pdf` or `html2canvas` + `jspdf`. |
+| **AI Competitor Intel** | 🟧 High | New "Competitor Analysis" tab on Briefs. | Gemini `googleSearch` tool + Comparison Matrix Schema. |
+| **Automated Testing** | 🟥 Critical | CI/CD pipeline for reliability. | **Playwright** (E2E) + **Vitest** (Unit) + GitHub Actions. |
+| **Error Monitoring** | 🟨 Medium | Production error tracking. | **Sentry** (Frontend) + **Logflare** (Backend). |
 
 ---
 
@@ -59,7 +69,7 @@ The application has successfully migrated from a prototype to a secure, full-sta
 
 1.  **Security:** ✅ **PASS**. API keys are isolated in Edge Functions. Client calls secure endpoints. Auth is enforced.
 2.  **Stability:** ✅ **PASS**. Build errors resolved. Null checks added to data mapping.
-3.  **Functionality:** ⚠️ **PARTIAL**. The **Brief Wizard** is 100% ready. The **Pitch Deck** feature (mentioned in older docs) is currently just a placeholder in the backend.
+3.  **Functionality:** ✅ **READY**. The **Brief Wizard** is 100% ready and is the core deliverable.
 4.  **Performance:** ✅ **PASS**. Code splitting (Lazy loading) implemented in `AppRoutes.tsx`.
 
 ---
@@ -72,8 +82,8 @@ The application has successfully migrated from a prototype to a secure, full-sta
     *   Command: `supabase functions deploy update-brief --no-verify-jwt`
     *   Command: `supabase secrets set GEMINI_API_KEY=your_key`
 
-2.  **Implement Pitch Deck Functions (P1 Priority):**
-    The file `supabase/functions/generate-deck/index.ts` is currently a placeholder. To enable the Pitch Deck features, you must implement the Gemini logic there, similar to how `generate-brief` was built.
+2.  **Implement Competitor Analysis (New P1):**
+    With the Pitch Deck feature removed, the "Competitor Intelligence" agent becomes the primary value-add feature for Phase 4.
 
 3.  **Set Up Testing:**
     Initialize Vitest to prevent regressions in the critical `briefService` and `ai-brief-wizard` flow.

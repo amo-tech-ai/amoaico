@@ -1,3 +1,4 @@
+
 import { supabase } from './supabaseClient';
 import { Client } from '../types';
 
@@ -28,8 +29,9 @@ export const getClientsForUser = async (userId: string): Promise<Client[]> => {
     // Process the briefs to create a client list
     const clientMap = new Map<string, number>();
     for (const brief of data) {
-        if (brief.company_name) {
-            clientMap.set(brief.company_name, (clientMap.get(brief.company_name) || 0) + 1);
+        if (brief.company_name && brief.company_name.trim() !== '') {
+            const name = brief.company_name.trim();
+            clientMap.set(name, (clientMap.get(name) || 0) + 1);
         }
     }
 

@@ -1,3 +1,4 @@
+
 import { FinancialSummary, Invoice } from '../types';
 
 // Mock data for the financial summary
@@ -14,6 +15,7 @@ const mockInvoices: Invoice[] = [
     { id: 'INV-002', clientName: 'AutoMax AI', amount: 25000, status: 'pending', dueDate: '2024-09-15' },
     { id: 'INV-003', clientName: 'I Love Medellin', amount: 10000, status: 'overdue', dueDate: '2024-08-20' },
     { id: 'INV-004', clientName: 'TechStart Inc.', amount: 12000, status: 'paid', dueDate: '2024-07-25' },
+    { id: 'INV-005', clientName: 'GreenEnergy Co', amount: 8500, status: 'pending', dueDate: '2024-09-22' },
 ];
 
 /**
