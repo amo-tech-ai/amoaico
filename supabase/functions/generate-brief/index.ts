@@ -1,3 +1,4 @@
+
 // supabase/functions/generate-brief/index.ts
 
 // FIX: Add a type declaration for the Deno global to resolve TypeScript errors
@@ -5,9 +6,11 @@ declare const Deno: any;
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { GoogleGenAI, Type, Schema } from "npm:@google/genai@0.14.0";
+import { Type, Schema } from "npm:@google/genai@0.14.0";
 import { corsHeaders } from '../_shared/cors.ts';
 import { HttpError, parseJSON, requireFields } from '../_shared/validation.ts';
+import { createSupabaseClient } from '../_shared/supabaseClient.ts';
+import { createGeminiClient } from '../_shared/geminiClient.ts';
 
 // Main function to handle requests
 serve(async (req: Request) => {
@@ -23,20 +26,35 @@ serve(async (req: Request) => {
     requireFields({ body, fields: ['companyName', 'websiteUrl', 'projectType', 'selectedGoals', 'budget'] });
     const { companyName, websiteUrl, projectType, selectedGoals, budget } = body;
     
-    const userSupabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
-    );
+    // Use shared client for consistent auth handling
+    const userSupabaseClient = createSupabaseClient(req);
     const { data: { user }, error: userError } = await userSupabaseClient.auth.getUser();
 
     if (userError) throw new HttpError(userError.message, 401);
     if (!user) throw new HttpError('Unauthorized: User not authenticated.', 401);
 
-    // Init Gemini Client
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    if (!geminiApiKey) throw new HttpError('Server configuration error: GEMINI_API_KEY not set.', 500);
-    const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+    // RATE LIMITING (Safety Check)
+    // Create admin client to check request count (bypassing RLS for accurate count)
+    const adminSupabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count, error: countError } = await adminSupabaseClient
+        .from('briefs')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gt('created_at', oneHourAgo);
+
+    if (countError) {
+        console.error("Rate limit check failed:", countError);
+    } else if (count !== null && count >= 5) {
+        throw new HttpError("Rate limit exceeded: You have created too many briefs recently. Please try again in an hour.", 429);
+    }
+
+    // Init Gemini Client using shared helper (handles GEMINI_API_KEY logic)
+    const ai = createGeminiClient();
 
     // 2. AI Step 1: Research Agent (Gemini 3 Pro - Search)
     console.log(`[${user.id}] AI Step 1: Researching ${websiteUrl}`);
@@ -55,7 +73,6 @@ serve(async (req: Request) => {
       contents: researchPrompt,
       config: { 
         tools: [{ googleSearch: {} }],
-        // We use defaults for thinking on research to keep it efficient
       },
     });
     
@@ -126,7 +143,7 @@ serve(async (req: Request) => {
     - Populate 'website_summary_points' with 3 key facts from the research.
     `;
 
-    console.log(`[${user.id}] AI Step 2: Generating structured brief with High Thinking.`);
+    console.log(`[${user.id}] AI Step 2: Generating structured brief.`);
     
     const generationResponse = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -134,7 +151,6 @@ serve(async (req: Request) => {
       config: {
         responseMimeType: "application/json",
         responseSchema: briefSchema,
-        // Gemini 3 Pro defaults to 'high' thinking, which is what we want for complex reasoning.
       }
     });
     
@@ -142,11 +158,6 @@ serve(async (req: Request) => {
     console.log(`[${user.id}] AI Step 2 Complete. Duration: ${Date.now() - startTime}ms`);
 
     // 4. Database Persistence
-    const adminSupabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
     const { data: newBrief, error: dbError } = await adminSupabaseClient
       .from('briefs')
       .insert({

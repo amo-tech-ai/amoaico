@@ -123,7 +123,7 @@ export const AdminDashboardPage = () => {
                             name="search"
                             value={filters.search}
                             onChange={handleFilterChange}
-                            placeholder="Search company or user..."
+                            placeholder="Search company or project..."
                             className="bg-slate-100 border-transparent rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-sunai-orange focus:border-sunai-orange w-full sm:w-64 transition-all"
                         />
                     </div>
@@ -136,7 +136,7 @@ export const AdminDashboardPage = () => {
                             onChange={handleFilterChange}
                             className="rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                         >
-                            <option value="all">All</option>
+                            <option value="all">All Statuses</option>
                             {briefStatuses.map(status => (
                                 <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ')}</option>
                             ))}
@@ -197,8 +197,8 @@ export const AdminDashboardPage = () => {
                                 Showing <span className="font-medium">{(pagination.page - 1) * pagination.pageSize + 1}</span> to <span className="font-medium">{Math.min(pagination.page * pagination.pageSize, pagination.totalCount)}</span> of <span className="font-medium">{pagination.totalCount}</span> results
                             </div>
                             <div className="flex-1 flex justify-between sm:justify-end gap-2">
-                                <button onClick={() => setPagination(p => ({...p, page: p.page - 1}))} disabled={pagination.page <= 1} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">Previous</button>
-                                <button onClick={() => setPagination(p => ({...p, page: p.page + 1}))} disabled={pagination.page >= totalPages} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">Next</button>
+                                <button onClick={() => setPagination(p => ({...p, page: p.page - 1}))} disabled={pagination.page <= 1} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 transition-opacity">Previous</button>
+                                <button onClick={() => setPagination(p => ({...p, page: p.page + 1}))} disabled={pagination.page >= totalPages} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 transition-opacity">Next</button>
                             </div>
                         </div>
                     </div>

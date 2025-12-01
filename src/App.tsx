@@ -5,6 +5,7 @@ import { HashRouter } from 'react-router-dom';
 // Custom Components
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppRoutes } from './AppRoutes';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const AiBriefWizard = lazy(() => import('./features/ai-brief-wizard/AiBriefWizard').then(module => ({ default: module.AiBriefWizard })));
 
@@ -23,16 +24,18 @@ const App = () => {
     const closeWizard = useCallback(() => setIsWizardOpen(false), []);
 
     return (
-        <HashRouter>
-            <ScrollToTop />
-            <AppRoutes onStartWizard={startWizard} />
-            
-            {isWizardOpen && (
-                <Suspense fallback={<WizardLoader />}>
-                    <AiBriefWizard onClose={closeWizard} />
-                </Suspense>
-            )}
-        </HashRouter>
+        <ErrorBoundary>
+            <HashRouter>
+                <ScrollToTop />
+                <AppRoutes onStartWizard={startWizard} />
+                
+                {isWizardOpen && (
+                    <Suspense fallback={<WizardLoader />}>
+                        <AiBriefWizard onClose={closeWizard} />
+                    </Suspense>
+                )}
+            </HashRouter>
+        </ErrorBoundary>
     );
 };
 

@@ -1,3 +1,4 @@
+
 // supabase/functions/_shared/geminiClient.ts
 // FIX: Add a type declaration for the Deno global to resolve TypeScript errors
 // in environments where Deno types are not automatically available.
@@ -7,7 +8,7 @@ declare const Deno: {
   };
 };
 
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from 'npm:@google/genai@0.14.0';
 
 /**
  * Creates and returns a GoogleGenAI client instance.
@@ -15,14 +16,14 @@ import { GoogleGenAI } from '@google/genai';
  * @returns A GoogleGenAI client instance.
  */
 export const createGeminiClient = () => {
-    // Use the nullish coalescing operator (??) to check for the primary
-    // environment variable and fall back to the secondary one.
-    const apiKey = Deno.env.get("GEMINI_API_KEY") ?? Deno.env.get("API_KEY");
+    // Strictly use GEMINI_API_KEY as the single source of truth for the server-side key.
+    // This removes ambiguity and aligns with the project documentation.
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
 
     if (!apiKey) {
-      // Throw a single, clear error message if neither key is found.
+      console.error("Configuration Error: GEMINI_API_KEY is not set in the environment.");
       throw new Error(
-        "Gemini API key not set. Expected GEMINI_API_KEY or API_KEY in server environment."
+        "Server configuration error: GEMINI_API_KEY environment variable is missing. Please set this secret in your Supabase project."
       );
     }
     

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -64,4 +65,67 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Print Styles for PDF Export */
+@media print {
+    /* Hide Sidebars, Headers, Footers, and Buttons */
+    aside, header, footer, button, .no-print {
+        display: none !important;
+    }
+
+    /* Reset Layout */
+    body, main, div, section {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        width: 100% !important;
+        height: auto !important;
+        position: static !important;
+    }
+
+    /* Ensure container is full width */
+    .max-w-4xl, .max-w-7xl {
+        max-width: 100% !important;
+    }
+
+    /* Typography Adjustments */
+    h1 {
+        font-size: 24pt !important;
+        margin-bottom: 20px !important;
+        color: #000 !important;
+    }
+    h2, h3 {
+        font-size: 18pt !important;
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
+        border-bottom: 1px solid #ddd !important;
+        padding-bottom: 5px !important;
+        color: #000 !important;
+    }
+    p, li {
+        font-size: 12pt !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Form Elements as Text */
+    input, textarea {
+        border: none !important;
+        background: transparent !important;
+        resize: none !important;
+        padding: 0 !important;
+        margin-top: 5px !important;
+        width: 100% !important;
+        font-family: 'Inter', sans-serif !important;
+        white-space: pre-wrap !important;
+    }
+    
+    /* Page Breaks */
+    section {
+        page-break-inside: avoid;
+    }
 }

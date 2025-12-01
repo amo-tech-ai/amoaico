@@ -7,7 +7,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useDebounce } from '../../hooks/useDebounce';
 import { SectionContainer } from '../../components/layout/SectionContainer';
 import { AnimatedElement } from '../../components/animations/AnimatedElement';
-import { ClockIcon, XIcon, ArrowLeftIcon, CheckCircleIcon } from '../../assets/icons';
+import { ClockIcon, XIcon, ArrowLeftIcon, CheckCircleIcon, DownloadIcon } from '../../assets/icons';
 
 // Reusable component for editable text fields (input/textarea)
 const EditableField = ({ label, value, name, onChange, type = 'text' }: { label: string, value: string, name: string, onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void, type?: 'text' | 'textarea' }) => (
@@ -20,7 +20,7 @@ const EditableField = ({ label, value, name, onChange, type = 'text' }: { label:
                 value={value}
                 onChange={onChange}
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition print:bg-transparent print:border-none print:shadow-none print:p-0"
             />
         ) : (
             <input
@@ -29,7 +29,7 @@ const EditableField = ({ label, value, name, onChange, type = 'text' }: { label:
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition print:bg-transparent print:border-none print:shadow-none print:p-0"
             />
         )}
     </div>
@@ -45,7 +45,7 @@ const EditableList = ({ label, items, name, onChange }: { label: string, items: 
             value={(items || []).join('\n')}
             onChange={onChange}
             rows={(items || []).length > 3 ? items.length + 1 : 4}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-sunai-orange focus:ring-sunai-orange sm:text-sm bg-slate-50 p-3 transition print:bg-transparent print:border-none print:shadow-none print:p-0"
             placeholder="Enter each item on a new line"
         />
     </div>
@@ -56,13 +56,13 @@ type AutosaveStatus = 'idle' | 'dirty' | 'saving' | 'success' | 'error';
 const AutosaveStatusIndicator = ({ status }: { status: AutosaveStatus }) => {
     switch (status) {
         case 'dirty':
-            return <span className="text-xs text-gray-500 font-medium">Unsaved changes</span>;
+            return <span className="text-xs text-gray-500 font-medium no-print">Unsaved changes</span>;
         case 'saving':
-            return <div className="flex items-center gap-2 text-xs text-gray-500 font-medium"><div className="w-3 h-3 border-2 border-t-sunai-orange rounded-full animate-spin"></div>Saving...</div>;
+            return <div className="flex items-center gap-2 text-xs text-gray-500 font-medium no-print"><div className="w-3 h-3 border-2 border-t-sunai-orange rounded-full animate-spin"></div>Saving...</div>;
         case 'success':
-            return <div className="flex items-center gap-2 text-xs text-green-600 font-medium animate-fade-in"><CheckCircleIcon className="w-4 h-4" />All changes saved</div>;
+            return <div className="flex items-center gap-2 text-xs text-green-600 font-medium animate-fade-in no-print"><CheckCircleIcon className="w-4 h-4" />All changes saved</div>;
         case 'error':
-            return <span className="text-xs text-red-600 font-medium">Error saving</span>;
+            return <span className="text-xs text-red-600 font-medium no-print">Error saving</span>;
         default:
             return null;
     }
@@ -171,6 +171,10 @@ export const BriefDetailPage = () => {
         }));
     };
 
+    const handlePrint = () => {
+        window.print();
+    };
+
     const statusStyles: { [key: string]: string } = {
         submitted: 'bg-blue-100 text-blue-800',
         'in-review': 'bg-yellow-100 text-yellow-800',
@@ -186,8 +190,8 @@ export const BriefDetailPage = () => {
     if (!brief) return <SectionContainer><p>Brief not found.</p></SectionContainer>;
 
     return (
-        <main>
-            <SectionContainer className="pt-8 md:pt-12">
+        <main className="print:bg-white print:p-0">
+            <SectionContainer className="pt-8 md:pt-12 no-print">
                 <AnimatedElement>
                     <Link to="/dashboard/briefs" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-sunai-slate transition-colors mb-4">
                         <ArrowLeftIcon className="w-4 h-4" /> Back to All Briefs
@@ -206,27 +210,37 @@ export const BriefDetailPage = () => {
                              <span className={`text-sm font-medium px-3 py-1 rounded-full ${statusStyles[brief.status] || statusStyles.draft}`}>
                                 {brief.status.replace('-', ' ')}
                             </span>
+                             <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold bg-sunai-slate text-white hover:opacity-90 transition-opacity">
+                                <DownloadIcon className="w-4 h-4" />
+                                Export PDF
+                             </button>
                         </div>
                     </div>
                 </AnimatedElement>
             </SectionContainer>
             
-            <SectionContainer className="pt-0">
+            {/* Print Header */}
+            <div className="hidden print:block mb-8 border-b pb-4">
+                <h1 className="text-3xl font-bold font-poppins text-black">{editableData.project_title || brief.company_name}</h1>
+                <p className="text-gray-600">{brief.project_type} Brief | Generated by Sunai</p>
+            </div>
+
+            <SectionContainer className="pt-0 print:pt-0 print:w-full print:max-w-none">
                 <AnimatedElement>
-                    <div className="bg-white p-8 sm:p-12 rounded-2xl border border-gray-200 shadow-lg max-w-4xl mx-auto">
-                        <div className="space-y-10">
+                    <div className="bg-white p-8 sm:p-12 rounded-2xl border border-gray-200 shadow-lg max-w-4xl mx-auto print:shadow-none print:border-none print:p-0">
+                        <div className="space-y-10 print:space-y-6">
                             
                             {/* Core Info */}
-                            <section className="space-y-6">
-                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2">Core Strategy</h3>
+                            <section className="space-y-6 print:space-y-2">
+                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 print:text-black print:border-gray-300">Core Strategy</h3>
                                 <EditableField label="Project Title" name="project_title" value={editableData.project_title || ''} onChange={handleInputChange} />
                                 <EditableField label="Executive Summary" name="summary" value={editableData.summary || ''} onChange={handleInputChange} type="textarea" />
                                 <EditableList label="Primary Goals" name="goals" items={(editableData.goals || [])} onChange={handleListChange} />
                             </section>
 
                             {/* Audience */}
-                            <section className="space-y-6">
-                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2">Target Audience</h3>
+                            <section className="space-y-6 print:space-y-2">
+                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 print:text-black print:border-gray-300">Target Audience</h3>
                                 <EditableField 
                                     label="Audience Description" 
                                     name="target_audience_description" 
@@ -243,15 +257,15 @@ export const BriefDetailPage = () => {
                             </section>
 
                             {/* Execution */}
-                            <section className="space-y-6">
-                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2">Execution</h3>
+                            <section className="space-y-6 print:space-y-2">
+                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 print:text-black print:border-gray-300">Execution</h3>
                                 <EditableList label="Deliverables" name="deliverables" items={(editableData.deliverables || [])} onChange={handleListChange} />
                                 <EditableField label="Scope & Constraints" name="scope" value={editableData.scope || ''} onChange={handleInputChange} type="textarea" />
                             </section>
 
                             {/* Tone & Style */}
-                            <section className="space-y-6">
-                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2">Tone & Brand</h3>
+                            <section className="space-y-6 print:space-y-2">
+                                <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 print:text-black print:border-gray-300">Tone & Brand</h3>
                                 <EditableList 
                                     label="Tone Keywords" 
                                     name="tone_keywords" 
@@ -275,9 +289,9 @@ export const BriefDetailPage = () => {
                             </section>
 
                             {/* Logistics */}
-                            <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 mb-4">Timeline</h3>
+                            <section className="grid grid-cols-1 md:grid-cols-2 gap-8 print:block">
+                                <div className="print:mb-4">
+                                    <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 mb-4 print:text-black print:border-gray-300">Timeline</h3>
                                     <EditableList 
                                         label="Key Milestones" 
                                         name="timeline_milestones" 
@@ -286,7 +300,7 @@ export const BriefDetailPage = () => {
                                     />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 mb-4">Budget</h3>
+                                    <h3 className="text-xl font-bold text-sunai-blue border-b pb-2 mb-4 print:text-black print:border-gray-300">Budget</h3>
                                     <EditableField 
                                         label="Range" 
                                         name="budget_range" 
@@ -302,7 +316,7 @@ export const BriefDetailPage = () => {
                                 </div>
                             </section>
 
-                            {autosaveStatus === 'error' && <p className="text-red-600 text-sm font-semibold">{error}</p>}
+                            {autosaveStatus === 'error' && <p className="text-red-600 text-sm font-semibold no-print">{error}</p>}
                         </div>
                     </div>
                 </AnimatedElement>

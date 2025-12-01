@@ -22,7 +22,7 @@ export const getBriefsForUser = async (userId: string): Promise<Brief[]> => {
     }
 
     // Map the raw data, which has brief_data as a JSONB column, to the flat Brief type.
-    return data.map((item: any) => {
+    return (data || []).map((item: any) => {
         const briefData = item.brief_data || {};
         return {
             id: item.id,
@@ -57,7 +57,7 @@ export const getProjectsForUser = async (userId: string): Promise<Project[]> => 
         throw error;
     }
 
-    return data.map((item: any) => {
+    return (data || []).map((item: any) => {
         const briefData = item.brief_data || {};
         return {
             id: item.id,
@@ -132,6 +132,8 @@ export const getAllBriefs = async ({
 }: GetAllBriefsParams): Promise<{ briefs: Brief[], count: number }> => {
     console.log(`Fetching briefs for admin: page ${page}, filter ${statusFilter}, search '${searchQuery}'`);
     
+    // Select essential fields and join with profiles to get user name
+    // FIX: Removed 'email' from profiles selection as it does not exist in the public schema.
     let query = supabase
         .from('briefs')
         .select(`
@@ -144,18 +146,23 @@ export const getAllBriefs = async ({
             user:profiles(id, full_name)
         `, { count: 'exact' });
 
+    // Apply Status Filter
     if (statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
     }
     
+    // Apply Search Query (Company Name or Project Type)
     if (searchQuery) {
-        // Search on company name or user's full name
-        query = query.or(`company_name.ilike.%${searchQuery}%,user.full_name.ilike.%${searchQuery}%`);
+        query = query.or(`company_name.ilike.%${searchQuery}%,project_type.ilike.%${searchQuery}%`);
     }
 
+    // Apply Pagination
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    
     query = query
         .order('created_at', { ascending: false })
-        .range((page - 1) * pageSize, page * pageSize - 1);
+        .range(from, to);
         
     const { data, error, count } = await query;
 
@@ -164,7 +171,7 @@ export const getAllBriefs = async ({
         throw error;
     }
 
-    const briefs = data.map((item: any) => {
+    const briefs = (data || []).map((item: any) => {
         const briefData = item.brief_data || {};
         return {
             id: item.id,
@@ -176,7 +183,7 @@ export const getAllBriefs = async ({
             user: item.user ? {
                 id: item.user.id,
                 full_name: item.user.full_name,
-                email: '', // Email is not in profiles table
+                email: '', // Email not exposed in public profile
             } : undefined,
         };
     });
